@@ -9,9 +9,3 @@ const commands = require('./commands'),
 commands[arguments._[0]]
     ? (new (commands[arguments._[0]])(arguments)).handle()
     : colour.error(`command: ${arguments._[0]} does not exist`)
-
-// colour.comment('test')
-// colour.error('test')
-// colour.warning('test')
-// colour.success('test')
-
