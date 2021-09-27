@@ -23,5 +23,5 @@ module.exports = class Controller {
             data: data
         })
         res.end()
-    };
+    }
 }
