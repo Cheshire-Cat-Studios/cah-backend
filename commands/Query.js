@@ -1,28 +1,47 @@
 const Command = require('./Command'),
-    DataBaseService = new(require('../services/DatabaseService')),
-    migrations = require('../database/migrations'),
-    seeders = require('../database/seeders'),
-    fs = require('fs'),
-    colour = require('../helpers/colour')
+    colour = require('../helpers/colour'),
+    QueryBuilder = new (require('../database/query/Query'))
 
-module.exports = class Query extends Command{
-    description = 'will create and populate the database'
+module.exports = class Query extends Command {
+    description = 'command for quickly '
 
-    handle(){
-        try{
-            if(!this.options.table){
+    handle() {
+        try {
+            if (!this.options.table) {
                 throw new Error('--table is a required parameter!')
             }
 
-            console.log(this.options)
-            console.log((new (require('../services/DatabaseService'))).selectFrom('games'))
 
-            //TODO: implement models or something similar
-            // this.options.id
-            //     ? DataBaseService.selectFrom(this.options.table)
-            //     : DataBaseService.selectFrom(this.options.table)
+            QueryBuilder.setTable(this.options.table)
+                .when(
+                    this.options.limit,
+                    (query, limit) => {
+                        query.setLimit(limit)
+                    }
+                )
+                .when(
+                    this.options.offset,
+                    (query, offset) => {
+                        query.setOffset(offset)
+                    }
+                )
+                .when(
+                    this.options.order,
+                    (query, order) => {
+                        query.orderBy(
+                            order,
+                            !!this.options.asc
+                        )
+                    }
+                )
 
-        }catch (e){
+            console.table(
+                this.options.find
+                    ? [QueryBuilder.find(this.options.find)]
+                    : QueryBuilder.get()
+            )
+
+        } catch (e) {
             colour.error(e.toString())
         }
     }

@@ -5,8 +5,6 @@ const applyTraits = require('../../helpers/applyTraits'),
     DatabaseService = require('../../services/DatabaseService')
 
 module.exports = class Query {
-    table_name = 'users'
-
     constructor() {
         // super()
         this.query = {
@@ -19,6 +17,7 @@ module.exports = class Query {
         this.order_by = ''
         this.order_by_desc = true
         this.selects = ['*']
+        this.table_name = null
 
         applyTraits(
             this,
@@ -27,6 +26,12 @@ module.exports = class Query {
                 require('./traits/can_where'),
             ]
         )
+    }
+
+    setTable(table_name){
+        this.table_name = table_name
+
+        return this
     }
 
     setLimit(limit) {
@@ -71,9 +76,11 @@ module.exports = class Query {
     }
 
     select(select) {
-        typeof (select) === 'string'
-            ? this.selects = [select]
-            : this.selects = select
+        this.selects = (
+            typeof (select) === 'string'
+                ? [select]
+                : select
+        )
 
         return this
     }
@@ -90,6 +97,7 @@ module.exports = class Query {
 
         return this
     }
+
 
     handle() {
         let query = {
@@ -128,26 +136,36 @@ module.exports = class Query {
         return query
     }
 
-    handleSelect(){
+    update() {
 
     }
 
-    update(){
-
-    }
-
-    delete(){
+    delete() {
 
     }
 
     get() {
         const query = this.handle()
 
-        let test = (new DatabaseService)
+        return (new DatabaseService)
             .database
             .prepare(query.sql)
             .all(query.bindings)
+    }
 
-        return test
+    first() {
+        const query = this.handle()
+
+        return (new DatabaseService)
+            .database
+            .prepare(query.sql)
+            .get(query.bindings)
+    }
+
+    find(id){
+        this.where_clauses = [new WhereQuery('id',id)]
+
+        console.log(this)
+        return this.first()
     }
 }

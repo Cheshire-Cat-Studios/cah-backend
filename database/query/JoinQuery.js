@@ -36,7 +36,6 @@ module.exports = class JoinQuery {
                     ]
                 })
         }else{
-            console.log(`${this.column} ${this.comparator} ${this.value}`)
             query.sql+=`${this.column} ${this.comparator} ${this.value}`
         }
 
