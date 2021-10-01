@@ -12,23 +12,21 @@ module.exports = class RouteServiceProvider extends ServiceProvider {
 
     handle() {
         this.buildRoutes()
-        // console.log(123)
-        // console.log(this.route)
-        // console.log(this.route.routes[0])
         this.parseRoutes()
     }
 
     buildRoutes() {
-        this.route.group(route => {
-            route()
-                .setPath('abc')
-                .setName('abc')
-                .group(require('../routes/test'))
-        })
+        this.route
+            .group(route => {
+                route()
+                    .setPath('abc')
+                    .setName('abc')
+                    .group(require('../routes/test'))
+
+            })
     }
 
     parseRoutes() {
-
         this.route
             .routes
             .forEach(this.parseRoute, this)

@@ -37,11 +37,6 @@ module.exports = class Route {
 
         return this
     }
-    //
-    // post(url, closure) {
-    //     this.routes
-    //         .push(new this.setVerb('GET').set)
-    // }
 
     getState(){
         return {
@@ -53,13 +48,10 @@ module.exports = class Route {
     }
 
     setMethod(method){
-        console.log(method)
         this.method = method
     }
 
     group(closure) {
-        const self = this
-
         let routes = []
 
         closure(
