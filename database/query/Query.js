@@ -118,6 +118,12 @@ module.exports = class Query {
             })
 
         this.handleWheres()
+
+        if (this.limit) {
+            this.query.sql += ` LIMIT ${this.limit} `
+            this.offset
+            && (this.query.sql+= ` OFFSET ${this.offset}`)
+        }
     }
 
     handleWheres() {
@@ -176,7 +182,7 @@ module.exports = class Query {
     get() {
         this.handleSelect()
 
-        // console.log(this.query)
+        console.log(this.query)
         return (new DatabaseService)
             .database
             .prepare(this.query.sql)
