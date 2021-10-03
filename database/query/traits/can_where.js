@@ -1,4 +1,5 @@
-const WhereQuery = require('../WhereQuery')
+const WhereQuery = require('../WhereQuery'),
+ RawQuery = require('../RawQuery')
 
 module.exports = () => ({
     where_clauses: [],
@@ -33,5 +34,11 @@ module.exports = () => ({
         this.where_clauses = where_clauses
 
         return this
-    }
+    },
+    whereRaw(sql, bindings = []){
+        this.where_clauses
+            .push(new RawQuery(sql, bindings))
+
+        return this
+    },
 })

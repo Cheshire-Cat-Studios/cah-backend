@@ -3,7 +3,7 @@ const Command = require('./Command'),
     QueryBuilder = new (require('../database/query/Query'))
 
 module.exports = class Query extends Command {
-    description = 'command for quickly '
+    description = 'command for quickly viewing table data'
 
     handle() {
         try {
@@ -11,8 +11,14 @@ module.exports = class Query extends Command {
                 throw new Error('--table is a required parameter!')
             }
 
-
             QueryBuilder.setTable(this.options.table)
+                .when(
+                    this.options.where,
+                    (query, where) => {
+                        query.whereRaw(where)
+                    }
+                )
+
                 .when(
                     this.options.limit,
                     (query, limit) => {

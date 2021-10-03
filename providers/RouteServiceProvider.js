@@ -65,12 +65,8 @@ module.exports = class RouteServiceProvider extends ServiceProvider {
                 : this.app.post(`${route.path}/${parent.path}`, middleware[middleware_closure])
         })
 
-        console.log(`${route.path}/${parent.path}`)
-
         route.is_get
             ? this.app.get(`${route.path}/${parent.path}`, route.method)
             : this.app.post(`${route.path}/${parent.path}`, route.method)
     }
-
-
 }

@@ -28,7 +28,7 @@ module.exports = class Query {
         )
     }
 
-    setTable(table_name){
+    setTable(table_name) {
         this.table_name = table_name
 
         return this
@@ -98,9 +98,8 @@ module.exports = class Query {
         return this
     }
 
-
-    handle() {
-        let query = {
+    handleSelect() {
+        this.query = {
             sql: `SELECT ${this.selects.join()} FROM ${this.table_name} `,
             bindings: []
         }
@@ -111,61 +110,91 @@ module.exports = class Query {
                 const sub_query = join.handle()
 
 
-                query.sql = query.sql += sub_query.sql
-                query.bindings = [
-                    ...query.bindings,
+                this.query.sql = this.query.sql += sub_query.sql
+                this.query.bindings = [
+                    ...this.query.bindings,
                     ...sub_query.bindings,
                 ]
             })
 
+        this.handleWheres()
+    }
+
+    handleWheres() {
         if (this.where_clauses.length) {
-            query.sql += ' WHERE '
+            this.query.sql += ' WHERE '
 
             this.where_clauses
                 .forEach((where, index) => {
                     const sub_query = where.handle(index)
 
-                    query.sql = query.sql += sub_query.sql
-                    query.bindings = [
-                        ...query.bindings,
+                    this.query.sql = this.query.sql += sub_query.sql
+                    this.query.bindings = [
+                        ...this.query.bindings,
                         ...sub_query.bindings,
                     ]
                 })
         }
-
-        return query
     }
 
-    update() {
+    update(data) {
+        const data_keys = Object.keys(data)
 
+        this.query = {
+            sql: `UPDATE ${this.table_name} SET `,
+            bindings: []
+        }
+
+        data_keys.forEach((column, index) => {
+            this.query.sql += `${column} = ? ${index === (data_keys.length - 1) ? '' : ','} `
+            this.query.bindings.push(data[column])
+        })
+
+        this.handleWheres();
+
+        (new DatabaseService)
+            .database
+            .prepare(this.query.sql)
+            .run(this.query.bindings)
     }
 
     delete() {
+        this.query = {
+            sql: `DELETE FROM ${this.table_name} `,
+            bindings: []
+        }
+
+        this.handleWheres();
+
+        (new DatabaseService)
+            .database
+            .prepare(this.query.sql)
+            .run(this.query.bindings)
 
     }
 
     get() {
-        const query = this.handle()
+        this.handleSelect()
 
+        // console.log(this.query)
         return (new DatabaseService)
             .database
-            .prepare(query.sql)
-            .all(query.bindings)
+            .prepare(this.query.sql)
+            .all(this.query.bindings)
     }
 
     first() {
-        const query = this.handle()
+        this.handleSelect()
 
         return (new DatabaseService)
             .database
-            .prepare(query.sql)
-            .get(query.bindings)
+            .prepare(this.query.sql)
+            .get(this.query.bindings)
     }
 
-    find(id){
-        this.where_clauses = [new WhereQuery('id',id)]
+    find(id) {
+        this.where_clauses = [new WhereQuery('id', id)]
 
-        console.log(this)
         return this.first()
     }
 }
