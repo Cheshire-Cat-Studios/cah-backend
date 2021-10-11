@@ -20,13 +20,13 @@ module.exports = class Route {
         return this
     }
 
-    setGet() {
+    get() {
         this.is_get = true
 
         return this
     }
 
-    setPost() {
+    post() {
         this.is_get = false
 
         return this

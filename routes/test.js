@@ -1,15 +1,18 @@
-const game_controller = require('../controllers/game_controller')
+const game_controller = require('../controllers/game_controller'),
+    CreateUserRequest = require('../validation')
 
 module.exports = (route) => {
 
         route()
         .setPath('/test')
-        .setMiddleware([])
         .group(route => {
 
             route()
                 .setGet()
                 .setPath('/hmm')
+                .setMiddleware([
+                    CreateUserRequest
+                ])
                 .setMethod(game_controller.index)
 
         })

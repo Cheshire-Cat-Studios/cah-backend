@@ -1,7 +1,9 @@
 const Command = require('./Command'),
     colour = require('../helpers/colour'),
     WhereQuery = require('../database/query/WhereQuery'),
-    query = new (require('../database/query/Query'))
+    query = new (require('../database/query/Query')),
+    createUniqueId = require('../helpers/createUniqueId'),
+    faker = require('faker')
 
 module.exports = class Test extends Command {
     handle() {
@@ -10,26 +12,15 @@ module.exports = class Test extends Command {
         colour.comment('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
 
-        let a  = query
-            // .joinOn(
-            //     'test',
-            //     (query) => {
-            //         query().where('a','>','b')
-            //             .orWhereEquals('a','b')
-            //     }
-            // )
-            // .join('test_1','aff')
-            .setLimit(5)
-            .setOffset(5)
-            .setTable('users')
-            .where('users.id','>', '1')
-            .whereGroup(query => {
-                query().where('users.uuid','like', 'userktvkoo3xts48fwcv%')
-                    .orWhereEquals('users.id', 3)
+        let a  = query.setTable('users')
+            .create({
+                id: null,
+                uuid: createUniqueId('user'),
+                name: faker.name.findName(),
+                secret: faker.random.alpha(25),
             })
-            .join('games','games.id','=','users.id')
 
-        console.log(a.handle())
-        console.log(a.first())
+
+        console.log(a)
     }
 }

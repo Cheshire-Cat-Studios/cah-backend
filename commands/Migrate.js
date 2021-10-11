@@ -6,6 +6,7 @@ const Command = require('./Command'),
 
 
 module.exports = class Migrate extends Command {
+    name = 'migration'
     description = 'will create and populate the database'
 
     handle() {

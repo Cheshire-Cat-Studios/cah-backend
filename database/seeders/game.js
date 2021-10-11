@@ -13,4 +13,5 @@ module.exports = () => ({
     max_players: faker.datatype.number(3, 10),
     round_time_limit_mins: faker.datatype.number(5, 20),
     game_time_limit_mins: faker.datatype.number(10, 60),
+    secret: faker.random.alpha(25),
 })

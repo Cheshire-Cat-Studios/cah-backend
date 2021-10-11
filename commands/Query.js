@@ -3,7 +3,9 @@ const Command = require('./Command'),
     QueryBuilder = new (require('../database/query/Query'))
 
 module.exports = class Query extends Command {
+    name = 'query'
     description = 'command for quickly viewing table data'
+    options_description = 'table'
 
     handle() {
         try {

@@ -1,72 +1,76 @@
 const ServiceProvider = require('./ServiceProvider'),
-    // GameRoutes = new (require('../routes/GamesRoutes'))
-    // GameRoutes = require('../routes/GamesRoutes')
-    // game = require('../routes/game'),
-    middleware = require('../middleware')
-router = require('express').Router()
+	// game = require('../routes/game'),
+	middleware = require('../middleware')
 
 
 module.exports = class RouteServiceProvider extends ServiceProvider {
 
-    route = new (require('../routes/Route'))
+	route = new (require('../routes/Route'))
 
-    handle() {
-        this.buildRoutes()
-        this.parseRoutes()
-    }
+	handle() {
+		this.buildRoutes()
+		this.parseRoutes()
+	}
 
-    buildRoutes() {
-        this.route
-            .group(route => {
-                route()
-                    .setPath('abc')
-                    .setName('abc')
-                    .group(require('../routes/test'))
+	buildRoutes() {
+		this.route
+			.group(route => {
+				route()
+					.setPath('users')
+					.setName('users')
+					.group(require('../routes/user'))
+			})
+	}
 
-            })
-    }
+	parseRoutes() {
+		this.route
+			.routes
+			.forEach(this.parseRoute, this)
+	}
 
-    parseRoutes() {
-        this.route
-            .routes
-            .forEach(this.parseRoute, this)
-    }
+	parseRoute(route, parent) {
+		let self = this
 
-    parseRoute(route, parent) {
-        let self = this
+		route.method
+			? self.createExpressRoute(route, parent)
+			: route.routes.forEach(child_route => {
 
-        route.method
-            ? self.createExpressRoute(route, parent)
-            : route.routes.forEach(child_route => {
+				const new_parent = {
+					path: `${parent.path || ''}/${route.path || ''}`,
+					name: `${parent.path || ''}.${route.path || ''}`,
+					middleware: [
+						...(parent.middleware || []),
+						...route.middleware,
+					]
+				}
 
-                const new_parent = {
-                    path: `${parent.path}/${route.path}`,
-                    name: `${parent.path}.${route.path}`,
-                    middleware: [
-                        ...(parent.middleware || []),
-                        ...route.middleware,
-                    ]
-                }
+				self.parseRoute(child_route, new_parent)
+			}, this)
+	}
 
-                self.parseRoute(child_route, new_parent)
-            }, this)
-    }
+	//TODO: consider fucking off express routes, only using express for routing and sockets, node can do both adequately
+	createExpressRoute(route, parent) {
+		[
+			...(parent.middleware || []),
+			...route.middleware,
+		].forEach(name => {
+			const middleware_closure = middleware[name]
 
-    createExpressRoute(route, parent) {
-        [
-            ...(parent.middleware || []),
-            ...route.middleware,
-        ].forEach(name => {
-            const middleware_closure = middleware[name]
+			middleware_closure
+			&& route.is_get
+				? this.app.get(`${parent.path}/${route.path}`.replace(/\/+/g, '/'), (req, res, next) => {
+					middleware[middleware_closure].handle(req, res, next)
+				})
+				: this.app.post(`${parent.path}/${route.path}`.replace(/\/+/g, '/'), (req, res, next) => {
+					typeof name === 'string'
+						? middleware[middleware_closure].handle(req, res, next)
+						: name.handle(req, res, next)
+				})
+		})
 
-            middleware_closure
-            && route.is_get
-                ? this.app.get(`${route.path}/${parent.path}`, middleware[middleware_closure])
-                : this.app.post(`${route.path}/${parent.path}`, middleware[middleware_closure])
-        })
-
-        route.is_get
-            ? this.app.get(`${route.path}/${parent.path}`, route.method)
-            : this.app.post(`${route.path}/${parent.path}`, route.method)
-    }
+		//TODO: consider wrapping below similar to above to allow for more complex controllers and middleware
+		route.is_get
+			? this.app.get(`${parent.path}/${route.path}`.replace(/\/+/g, '/'), route.method)
+			: this.app.post(`${parent.path}/${route.path}`.replace(/\/+/g, '/'), route.method)
+	}
 }
