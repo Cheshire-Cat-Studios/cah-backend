@@ -1,0 +1,42 @@
+const Middleware = require('./Middleware'),
+	redisClient = require('../helpers/redis'),
+	moment = require('moment'),
+	sendJsend = require('../helpers/sendJsend')
+
+module.exports = class Throttle extends Middleware {
+	constructor(request_limit = 5, limit_window_secs = 20) {
+		super();
+
+		this.request_limit = request_limit
+		this.limit_window_secs = limit_window_secs
+	}
+
+	async handle(req, res, next) {
+
+		const redis_key = `${req.path}|${req.ip}`,
+			redis_log = await redisClient.get(redis_key),
+			now = moment.utc().unix()
+
+		let request_history = redis_log
+			? JSON.parse(redis_log)
+			: []
+
+		request_history.push(now)
+		request_history = request_history.filter(timestamp => timestamp >= (now - this.limit_window_secs))
+
+
+		// console.log(request_history)
+
+		await redisClient.set(
+			redis_key,
+			JSON.stringify(request_history),
+			{
+				EX: this.limit_window_secs
+			}
+		);
+
+		(request_history.length >= this.request_limit)
+			? sendJsend(res, 400, 'error', 'THROTTLED BIATCH')
+			: next()
+	}
+}
