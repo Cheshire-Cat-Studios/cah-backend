@@ -4,7 +4,7 @@ const Middleware = require('./Middleware'),
 	sendJsend = require('../helpers/sendJsend')
 
 module.exports = class Throttle extends Middleware {
-	constructor(request_limit = 5, limit_window_secs = 20) {
+	constructor(request_limit = 10, limit_window_secs = 60) {
 		super();
 
 		this.request_limit = request_limit
