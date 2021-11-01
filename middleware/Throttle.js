@@ -5,7 +5,7 @@ const Middleware = require('./Middleware'),
 
 module.exports = class Throttle extends Middleware {
 	constructor(request_limit = 10, limit_window_secs = 60) {
-		super();
+		super()
 
 		this.request_limit = request_limit
 		this.limit_window_secs = limit_window_secs
@@ -13,27 +13,19 @@ module.exports = class Throttle extends Middleware {
 
 	async handle(req, res, next) {
 
-		const redis_key = `${req.path}|${req.ip}`,
-			redis_log = await redisClient.get(redis_key),
+		const redis_key = `rate-limit${req.path}|${req.ip}`,
 			now = moment.utc().unix()
 
-		let request_history = redis_log
-			? JSON.parse(redis_log)
-			: []
 
-		request_history.push(now)
-		request_history = request_history.filter(timestamp => timestamp >= (now - this.limit_window_secs))
+		await redisClient.lPush(redis_key, `${now}`)
+		await redisClient.lTrim(redis_key, 0, this.request_limit)
 
 
-		// console.log(request_history)
+		const redis_log = await redisClient.lRange(redis_key, 0, -1),
+			request_history = redis_log.filter(timestamp => timestamp >= (now - this.limit_window_secs))
 
-		await redisClient.set(
-			redis_key,
-			JSON.stringify(request_history),
-			{
-				EX: this.limit_window_secs
-			}
-		);
+
+		console.log(request_history, (now - this.limit_window_secs));
 
 		(request_history.length >= this.request_limit)
 			? sendJsend(res, 400, 'error', 'THROTTLED BIATCH')
