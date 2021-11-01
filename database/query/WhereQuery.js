@@ -2,51 +2,54 @@
 const applyTraits = require('../../helpers/applyTraits')
 
 module.exports = class WhereQuery {
-    //TODO: switch condition to is_and = true
-    constructor(column, value = null, operator = '=', condition = 'and') {
-        this.column = column
-        this.value = value
-        this.operator = operator
-        this.condition = condition
+	//TODO: switch condition to is_and = true
+	constructor(column, value = null, operator = '=', condition = 'and', raw = false) {
+		this.column = column
+		this.value = value
+		this.operator = operator
+		this.condition = condition
+		this.raw = raw
 
-        applyTraits(
-            this,
-            [
-                require('./traits/can_when'),
-                require('./traits/can_where'),
-            ]
-        )
-    }
+		applyTraits(
+			this,
+			[
+				require('./traits/can_when'),
+				require('./traits/can_where'),
+			]
+		)
+	}
 
-    handle(index) {
-        let query = {
-            sql: '',
-            bindings: []
-        }
+	handle(index) {
+		let query = {
+			sql: '',
+			bindings: []
+		}
 
-        index
-        && (query.sql+= ` ${this.condition} `)
+		index
+		&& (query.sql += ` ${this.condition} `)
 
-        if (!this.where_clauses.length) {
-            query.sql += `${this.column} ${this.operator} ? `
-            query.bindings.push(this.value)
-        } else {
-            query.sql += ` ( `
-            //todo, abstract below into handleSelects() method
-            this.where_clauses
-                .forEach((where, index) => {
-                    const sub_query = where.handle(index)
+		if (!this.where_clauses.length) {
+			query.sql += `${this.column} ${this.operator} ${this.raw ? this.value : '?'} `
 
-                    query.sql = query.sql += sub_query.sql
-                    query.bindings = [
-                        ...query.bindings,
-                        ...sub_query.bindings,
-                    ]
-                })
+			!this.raw
+			&& query.bindings.push(this.value)
+		} else {
+			query.sql += ` ( `
+			//todo, abstract below into handleSelects() method
+			this.where_clauses
+				.forEach((where, index) => {
+					const sub_query = where.handle(index)
 
-            query.sql += `) `
-        }
+					query.sql = query.sql += sub_query.sql
+					query.bindings = [
+						...query.bindings,
+						...sub_query.bindings,
+					]
+				})
 
-        return query
-    }
+			query.sql += `) `
+		}
+
+		return query
+	}
 }

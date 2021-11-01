@@ -5,6 +5,7 @@ module.exports = class Rule {
 		this.message = ''
 		this.end_if_passes = false
 		this.error_if_false = true
+		this.end_if_fails = false
 	}
 
 	setData(data) {

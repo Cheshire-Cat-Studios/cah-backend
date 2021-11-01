@@ -10,6 +10,6 @@ module.exports = class Max extends Rule {
     }
 
     handle(){
-        return (this.data.length || 0) < this.max
+        return (this.data.length || 0) <= this.max
     }
 }

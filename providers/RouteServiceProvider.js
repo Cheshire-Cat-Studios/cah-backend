@@ -15,10 +15,16 @@ module.exports = class RouteServiceProvider extends ServiceProvider {
 	buildRoutes() {
 		this.route
 			.group(route => {
+				// route()
+				// 	.setPath('users')
+				// 	.setName('users')
+				// 	.group(require('../routes/user'))
+
 				route()
-					.setPath('users')
-					.setName('users')
-					.group(require('../routes/user'))
+					.setPath('games')
+					.setName('games')
+					.group(require('../routes/game'))
+
 			})
 	}
 
@@ -56,10 +62,11 @@ module.exports = class RouteServiceProvider extends ServiceProvider {
 		].forEach(name => {
 			const middleware_closure = middleware[name]
 
-			middleware_closure
-			&& route.is_get
+			route.is_get
 				? this.app.get(`${parent.path}/${route.path}`.replace(/\/+/g, '/'), (req, res, next) => {
-					middleware[middleware_closure].handle(req, res, next)
+					typeof name === 'string'
+						? middleware[middleware_closure].handle(req, res, next)
+						: name.handle(req, res, next)
 				})
 				: this.app.post(`${parent.path}/${route.path}`.replace(/\/+/g, '/'), (req, res, next) => {
 					typeof name === 'string'

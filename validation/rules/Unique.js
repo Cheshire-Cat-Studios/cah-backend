@@ -7,7 +7,7 @@ module.exports = class Unique extends Rule {
 
         this.table = table
         this.column = column
-        this.message = ':attribute is required'
+        this.message = ':attribute must be unique'
     }
 
     handle(){

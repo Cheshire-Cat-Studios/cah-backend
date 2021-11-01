@@ -191,13 +191,16 @@ module.exports = class Query {
 	first() {
 		this.handleSelect()
 
-		return (new DatabaseService)
+		const data = (new DatabaseService)
 			.database
 			.prepare(this.query.sql)
 			.get(this.query.bindings)
+
+		return data
 	}
 
 	exists() {
+		//TODO: build db raw functionality so this method can select a raw value to save time/memory
 		this.select('id')
 
 		this.handleSelect()
@@ -211,32 +214,48 @@ module.exports = class Query {
 	find(id) {
 		this.where_clauses = [new WhereQuery('id', id)]
 
-		return this.first()
+		return  this.first()
 	}
 
-	create(data) {
+	handleInsert(columns) {
 		this.query = {
 			sql: `INSERT INTO ${this.table_name} (`,
 			bindings: []
 		}
 
-		let values_query = ' VALUES ( '
+		columns.forEach((column, index, array) => {
+			this.query.sql += `${column}${Object.is(array.length - 1, index) ? ')' : ', '}`
+		})
 
-		Object.keys(data)
-			.forEach((column, index, array) => {
-				values_query += `? ${Object.is(array.length - 1, index) ? ')' : ', '}`
+	}
 
-				this.query.sql += `${column}${Object.is(array.length - 1, index) ? ')' : ', '}`
-				this.query.bindings.push(data[column])
-			})
+	handleInsertValues(data) {
+		this.query.sql += ' VALUES '
 
-		this.query.sql += values_query
+		data.forEach((row, index, array) => {
+			this.query.sql += '( '
+
+			Object.keys(row)
+				.forEach((column, index, array) => {
+					this.query.sql += `? ${Object.is(array.length - 1, index) ? ')' : ', '}`
+					this.query.bindings.push(row[column])
+				})
+
+			this.query.sql += Object.is(array.length - 1, index) ? '' : ', '
+		})
+	}
+
+	insert(data) {
+		this.handleInsert(Object.keys(data[0]))
+		this.handleInsertValues(data)
 
 		const new_id = (new DatabaseService)
 			.database
 			.prepare(this.query.sql)
 			.run(this.query.bindings)
+	}
 
-		return this.find(new_id.lastInsertRowid)
+	create(data) {
+		this.insert([data])
 	}
 }

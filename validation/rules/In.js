@@ -1,6 +1,6 @@
 const Rule = require('./Rule')
 
-module.exports = class Max extends Rule {
+module.exports = class In extends Rule {
     constructor(array) {
         super();
 

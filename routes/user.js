@@ -1,22 +1,29 @@
 const user_controller = require('../controllers/user_controller'),
 	Validation = require('../middleware/Validation'),
+	Auth = require('../middleware/Auth'),
 	CreateUserValidation = require('../validation/CreateUserValidation')
 
-module.exports = route=> {
+module.exports = route => {
+	//TODO: pointless route group below
 	route()
 		.group(route => {
-			route().post()
-				.setPath('/')
+			route()
 				.setMiddleware([
+					// new Auth,
 					new Validation(
 						new CreateUserValidation
 					),
 				])
-				.setMethod(user_controller.create)
+				.post('/', user_controller.create)
 
-			route().get()
-				.setPath('/:userId/:secret')
-				.setMethod(user_controller.get)
+			route()
+				// .setMiddleware([
+				// 	new Auth
+				// ])
+				.get('/:userId/:secret', user_controller.get)
+			// .setPath()
+			// .setMiddleware([new Auth])
+			// .setMethod()
 
 		})
 }

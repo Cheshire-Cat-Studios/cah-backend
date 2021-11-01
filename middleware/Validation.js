@@ -1,20 +1,20 @@
 const Middleware = require('./Middleware'),
 	sendJsend = require('../helpers/sendJsend')
 
-module.exports = class Example extends Middleware {
+module.exports = class Validation extends Middleware {
 	constructor(validation) {
 		super()
 
-		this.validation =  validation
+		this.validation = validation
 	}
 
 	handle(req, res, next) {
-		const errors = this.validation
+		this.validation
 			.setData(req.body)
 			.validate()
 
-		errors
-			? sendJsend(res, 400, 'error', errors)
+		Object.keys(this.validation.errors).length
+			? sendJsend(res, 400, 'error', this.validation.errors)
 			: next()
 	}
 }

@@ -22,7 +22,8 @@ module.exports = class Validation {
 	}
 
 	validate() {
-		//TODO: add reset errors state
+		this.errors = {}
+
 		const rules = this.getRules()
 
 		Object.keys(rules)
@@ -37,10 +38,15 @@ module.exports = class Validation {
 					}else{
 						rule.error_if_false
 						&& this.pushError(index, rule)
+
+						if(rule.end_if_fails){
+							break
+						}
 					}
 				}
-
 			})
+
+		return this
 	}
 
 	setData(data) {

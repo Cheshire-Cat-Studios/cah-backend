@@ -2,7 +2,8 @@ const Command = require('./Command'),
     migrations = require('../database/migrations'),
     seeders = require('../database/seeders'),
     fs = require('fs'),
-    colour = require('../helpers/colour')
+    colour = require('../helpers/colour'),
+    Query = require('../database/query/Query')
 
 
 module.exports = class Migrate extends Command {
@@ -35,11 +36,16 @@ module.exports = class Migrate extends Command {
 
             this.options.seed
             && Object.keys(seeders).forEach(table_name => {
+                let data = []
+
                 for (let i = 0; i < 3; i++) {
-                    DataBaseService.insert(table_name, seeders[table_name]())
+                    data.push(seeders[table_name]())
                 }
 
-                colour.success(table_name + 'table successfully seeded')
+                (new Query).setTable(table_name)
+                    .insert(data)
+
+                colour.success(table_name + ' table successfully seeded')
             })
         }
 

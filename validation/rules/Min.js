@@ -10,6 +10,6 @@ module.exports = class Min extends Rule {
     }
 
     handle(){
-        return (this.data.length || 0) > this.min
+        return (this.data.length || 0) >= this.min
     }
 }

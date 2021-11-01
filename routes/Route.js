@@ -20,16 +20,16 @@ module.exports = class Route {
         return this
     }
 
-    get() {
+    get(path, method) {
         this.is_get = true
-
-        return this
+        this.setPath(path)
+        this.setMethod(method)
     }
 
-    post() {
+    post(path, method) {
         this.is_get = false
-
-        return this
+        this.setPath(path)
+        this.setMethod(method)
     }
 
     setMiddleware(middleware) {
