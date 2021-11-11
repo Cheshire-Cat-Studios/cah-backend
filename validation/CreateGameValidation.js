@@ -10,38 +10,29 @@ const Validation = require('./Validation'),
 	} = require('./rules')
 
 module.exports = class CreateGameValidation extends Validation {
+	aliases = {
+		max_score: 'max score',
+		max_players: 'max players',
+		round_time_limit_mins: 'round time limit',
+		game_time_limit_mins: 'game time limit',
+	}
+
 	getRules() {
 		return {
 			name: [
+				new Required,
 				new Min(3),
-				new Max(10),
+				new Max(20),
 				new Unique('games', 'name'),
 			],
 			password: [
 				new Nullable,
 				new Max(20),
 			],
-			host_id: [
-				new Required,
-				new Exists('users','uuid'),
-			],
-			host_secret: [
-				new Required,
-				new Exists('users','secret'),
-			],
-			is_started: [
-				new Nullable,
-				new In([
-					0,
-					5,
-					10,
-					15,
-					20
-				])
-			],
 			max_score: [
+				new Required,
 				new In([
-					0,
+					// 0,
 					5,
 					10,
 					15,
@@ -49,6 +40,7 @@ module.exports = class CreateGameValidation extends Validation {
 				]),
 			],
 			max_players: [
+				new Required,
 				new In([
 					3,
 					4,
@@ -61,6 +53,7 @@ module.exports = class CreateGameValidation extends Validation {
 				]),
 			],
 			round_time_limit_mins: [
+				new Required,
 				new In([
 					0,
 					1,
@@ -86,6 +79,7 @@ module.exports = class CreateGameValidation extends Validation {
 				])
 			],
 			game_time_limit_mins: [
+				new Required,
 				new In([
 					0,
 					20,

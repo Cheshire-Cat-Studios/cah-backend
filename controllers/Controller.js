@@ -1,27 +1,16 @@
 module.exports = class Controller {
-    //
-    // addValidationGetters(){
-    //     Object.keys(this.validation)
-    //         .forEach( method => {
-    //             Object.defineProperty(
-    //                 this,
-    //                 method,
-    //                 {
-    //                     get() {
-    //                         this.validation[internalKey]
-    //                     },
-    //                 }
-    //             )
-    //         })
-    // }
+    constructor(req, res) {
+        this.req = req
+        this.res = res
+    }
 
-    sendJsend(res, httpCode, status, data) {
-        res.type('json')
-        res.status(httpCode)
-        res.json({
+    sendJsend(httpCode, status, data) {
+        this.res.type('json')
+        this.res.status(httpCode)
+        this.res.json({
             status: status,
             data: data
         })
-        res.end()
+        this.res.end()
     }
 }

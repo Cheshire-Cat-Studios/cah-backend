@@ -1,4 +1,5 @@
-const Query = require('../database/query/Query')
+const Query = require('../database/query/Query'),
+	WhereQuery = require('../database/query/WhereQuery')
 
 module.exports = class Model extends Query {
 	//TODO: build primary key concept
@@ -14,7 +15,7 @@ module.exports = class Model extends Query {
 	belongsTo(table, local_column, foreign_column = 'id') {
 		return (
 			typeof table === 'string'
-				? (new Query()).setTable(table)
+				? (new Model).setTable(table)
 				: new table
 		)
 			.whereEquals(foreign_column, this.row[local_column])
@@ -29,7 +30,7 @@ module.exports = class Model extends Query {
 		const model_datum = super.get()
 
 		return model_datum
-			? model_datum.map(model_data => (new Model).fill(model_data))
+			? model_datum.map(model_data => (new this.constructor()).fill(model_data))
 			: null
 	}
 
@@ -46,7 +47,9 @@ module.exports = class Model extends Query {
 	}
 
 	find(id) {
-		return super.find(id)
+		this.where_clauses = [new WhereQuery('id', id)]
+
+		return this.first()
 	}
 
 	fill(data) {
@@ -60,5 +63,9 @@ module.exports = class Model extends Query {
 			.forEach(column => this.row[column] = data[column])
 
 		super.update(this.row)
+	}
+
+	create(data){
+		return this.find(super.create(data))
 	}
 }

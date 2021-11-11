@@ -5,7 +5,7 @@ module.exports = class Max extends Rule {
     constructor(max) {
         super();
 
-        this.min = max
+        this.max = max
         this.message = `:attribute cannot exceed ${this.max} characters`
     }
 

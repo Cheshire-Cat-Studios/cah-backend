@@ -214,7 +214,7 @@ module.exports = class Query {
 	find(id) {
 		this.where_clauses = [new WhereQuery('id', id)]
 
-		return  this.first()
+		return this.first()
 	}
 
 	handleInsert(columns) {
@@ -249,13 +249,15 @@ module.exports = class Query {
 		this.handleInsert(Object.keys(data[0]))
 		this.handleInsertValues(data)
 
-		const new_id = (new DatabaseService)
+		return (new DatabaseService)
 			.database
 			.prepare(this.query.sql)
-			.run(this.query.bindings)
+			.run(
+				this.query.bindings
+			)
 	}
 
 	create(data) {
-		this.insert([data])
+		return this.insert([data]).lastInsertRowid
 	}
 }

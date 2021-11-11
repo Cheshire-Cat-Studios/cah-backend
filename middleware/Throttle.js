@@ -21,11 +21,9 @@ module.exports = class Throttle extends Middleware {
 		await redisClient.lTrim(redis_key, 0, this.request_limit)
 
 
-		const redis_log = await redisClient.lRange(redis_key, 0, -1),
-			request_history = redis_log.filter(timestamp => timestamp >= (now - this.limit_window_secs))
-
-
-		console.log(request_history, (now - this.limit_window_secs));
+		const redis_log = await redisClient.lRange(redis_key, 0, -1);
+		//converting it to one line breaks everything
+		const request_history = redis_log.filter(timestamp => timestamp >= (now - this.limit_window_secs));
 
 		(request_history.length >= this.request_limit)
 			? sendJsend(res, 400, 'error', 'THROTTLED BIATCH')

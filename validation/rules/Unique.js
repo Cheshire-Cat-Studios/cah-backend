@@ -2,6 +2,7 @@ const Rule = require('./Rule'),
     Query = require('../../database/query/Query')
 
 module.exports = class Unique extends Rule {
+    //TODO: add support for models?
     constructor(table, column = 'id') {
         super();
 

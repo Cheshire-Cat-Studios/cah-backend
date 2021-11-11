@@ -1,4 +1,5 @@
 module.exports = {
-    origin: 'http://localhost:8080',
+    //TODO: env-ify this?
+    origin: 'http://localhost:3000',
     methods: 'GET,POST'
 }

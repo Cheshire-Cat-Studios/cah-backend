@@ -63,12 +63,6 @@ module.exports = class RedisServiceProvider extends ServiceProvider {
             this.app.globals.database.insert('games', datum)
         })
 
-        console.log(
-            this.app.globals.database.selectFrom('users'),
-            this.app.globals.database.selectFrom('games')
-        )
-
-
         // console.log('------')
         // console.log(this.app.globals.database.database.prepare('SELECT * FROM USERS').all())
         // console.log(this.app.globals.database.database.prepare('SELECT * FROM GAMES').all())

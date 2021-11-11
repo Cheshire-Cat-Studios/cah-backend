@@ -2,7 +2,7 @@ const ServiceProvider = require('./ServiceProvider'),
 	// game = require('../routes/game'),
 	middleware = require('../middleware')
 
-
+//TODO: move the route mapping logic into a module so it can be reused for route() helper and route cli logic
 module.exports = class RouteServiceProvider extends ServiceProvider {
 
 	route = new (require('../routes/Route'))
@@ -15,10 +15,10 @@ module.exports = class RouteServiceProvider extends ServiceProvider {
 	buildRoutes() {
 		this.route
 			.group(route => {
-				// route()
-				// 	.setPath('users')
-				// 	.setName('users')
-				// 	.group(require('../routes/user'))
+				route()
+					.setPath('users')
+					.setName('users')
+					.group(require('../routes/user'))
 
 				route()
 					.setPath('games')
@@ -56,28 +56,25 @@ module.exports = class RouteServiceProvider extends ServiceProvider {
 
 	//TODO: consider fucking off express routes, only using express for routing and sockets, node can do both adequately
 	createExpressRoute(route, parent) {
-		[
+
+		const url = `${parent.path}/${route.path}`.replace(/\/+/g, '/')
+		let route_lifecycle = [
 			...(parent.middleware || []),
 			...route.middleware,
-		].forEach(name => {
-			const middleware_closure = middleware[name]
+		]
+			.map(name => (req, res, next) => {
+				const middleware_closure = middleware[name]
 
-			route.is_get
-				? this.app.get(`${parent.path}/${route.path}`.replace(/\/+/g, '/'), (req, res, next) => {
-					typeof name === 'string'
-						? middleware[middleware_closure].handle(req, res, next)
-						: name.handle(req, res, next)
-				})
-				: this.app.post(`${parent.path}/${route.path}`.replace(/\/+/g, '/'), (req, res, next) => {
-					typeof name === 'string'
-						? middleware[middleware_closure].handle(req, res, next)
-						: name.handle(req, res, next)
-				})
-		})
+				typeof name === 'string'
+					? middleware[middleware_closure].handle(req, res, next)
+					: name.handle(req, res, next)
+			})
 
 		//TODO: consider wrapping below similar to above to allow for more complex controllers and middleware
+		route_lifecycle.push(route.method)
+
 		route.is_get
-			? this.app.get(`${parent.path}/${route.path}`.replace(/\/+/g, '/'), route.method)
-			: this.app.post(`${parent.path}/${route.path}`.replace(/\/+/g, '/'), route.method)
+			? this.app.get(url, route_lifecycle)
+			: this.app.post(url, route_lifecycle)
 	}
 }
