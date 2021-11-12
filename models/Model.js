@@ -22,8 +22,14 @@ module.exports = class Model extends Query {
 			.first()
 	}
 
-	hasMany() {
-
+	hasMany(table, local_column, foreign_column = 'id') {
+		return (
+			typeof table === 'string'
+				? (new Model).setTable(table)
+				: new table
+		)
+			.whereEquals(foreign_column, this.row[local_column])
+			.first()
 	}
 
 	get() {

@@ -1,14 +1,19 @@
 const Model = require('./Model'),
-	Game = require('./Game')
+	BelongsTo = require('./relationships/BelongsTo')
 
 module.exports = class User extends Model {
 	table_name = 'users'
 
 	game() {
-		return this.belongsTo(Game, 'current_game')
+		return new BelongsTo(require('./Game'), 'current_game', 'id', this.row.current_game)
 	}
 
-	// gameModel() {
-	// 	return this.belongsTo(, 'current_game')
-	// }
+	joinGame(game){
+		this.update({
+			current_game: game.row.id,
+			score: null,
+			taken_turn: null,
+			is_czar: null,
+		})
+	}
 }

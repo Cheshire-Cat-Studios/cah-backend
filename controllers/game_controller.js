@@ -7,6 +7,7 @@ const sendJsend = require('../helpers/sendJsend'),
 module.exports = {
 
 	index(req, res) {
+		//TODO: add filter logic here, should be a doddle with the orm
 		sendJsend(
 			res,
 			200,
@@ -20,44 +21,75 @@ module.exports = {
 	},
 
 	join(req, res) {
+		let game = null
 
-		const user = (new Query).setTable('users')
-			.whereEquals('uuid', req.body.user.id)
-			.whereEquals('secret', req.body.user.secret)
-			.first()
+		if(req.user_model.current_game){
+			sendJsend(
+				res,
+				400,
+				'error',
+				{}
+			)
 
-		!user
-		&& sendJsend(
-			res,
-			422,
-			'error',
-			{
-				'errors': [{field: 'user', msg: 'user is invalid'}]
-			})
-
-
-		const game = (new Query)
-			.setTable('games')
-			.whereEquals('uuid', req.body.game.uuid)
-			.whereGroup(query => {
-				query()
-					.whereEquals('password', req.body.game_uuid)
-					.orWhereEquals('password', null)
-			})
-			.first()
-
-		//TODO: db transaction
-		if (game) {
-			!game.config.password || game.config.password === req.body.game_password
-				? (
-					game.addUser(user)
-						? sendJsend(res, 200, 'success', {})
-						: sendJsend(res, 200, 'error', {'errors': [{field: 'game', msg: 'game is full'}]})
-				)
-				: sendJsend(res, 422, 'error', {'errors': [{field: 'password', msg: 'password is invalid'}]})
-		} else {
-			sendJsend(res, 400, 'error', {'errors': [{field: 'game', msg: 'game is invalid'}]})
+			return
 		}
+
+		req.params.game_uuid
+		&& (
+			game = new Game()
+				.whereEquals('uuid', req.params.game_uuid)
+				.first()
+		)
+
+		if (!req.params.game_uuid || !game) {
+			sendJsend(res, 404, 'error', {})
+
+			return
+		}
+
+		if (
+			game.password
+			&& game.password !== req.body.password
+		) {
+			sendJsend(
+				res,
+				400,
+				'error',
+				{
+					password: 'That password is incorrect'
+				}
+			)
+
+			return
+		}
+
+		if (
+			game.players()
+				.handle()
+				.count()
+			>= game.row.max_players
+		) {
+			sendJsend(
+				res,
+				400,
+				'error',
+				{
+					max_players: 'That game is now full, please choose another'
+				}
+			)
+
+			return
+		}
+
+		req.user_model
+			.joinGame(game)
+
+		sendJsend(
+			res,
+			200,
+			'success',
+			{}
+		)
 	},
 
 	create(req, res) {
@@ -87,9 +119,7 @@ module.exports = {
 			})
 
 		req.user_model
-			.update({
-				current_game: game.row.id
-			})
+			.joinGame(game)
 
 		sendJsend(
 			res,

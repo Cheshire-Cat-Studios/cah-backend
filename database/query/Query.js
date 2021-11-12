@@ -188,6 +188,21 @@ module.exports = class Query {
 			.all(this.query.bindings)
 	}
 
+	count(count_fields = '*') {
+		const count_column = `COUNT (${count_fields})`
+
+		this.selects = [count_column]
+
+		this.handleSelect()
+
+		const data = (new DatabaseService)
+			.database
+			.prepare(this.query.sql)
+			.get(this.query.bindings)
+
+		return data[count_column]
+	}
+
 	first() {
 		this.handleSelect()
 

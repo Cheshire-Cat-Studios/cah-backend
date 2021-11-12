@@ -13,7 +13,12 @@ module.exports = route => {
 		.get('/', game_controller.index)
 
 
-	// route().post('/join/:gameId', game_controller.join)
+	route()
+		.setMiddleware([
+			new Auth,
+			new Throttle,
+		])
+		.post('/join/:game_uuid', game_controller.join)
 
 	route()
 		.setMiddleware([
