@@ -1,10 +1,10 @@
 const sendJsend = require('../helpers/sendJsend'),
-	DatabaseService = require('../services/DatabaseService'),
 	Query = require('../database/query/Query'),
 	Game = require('../models/Game'),
-	createUniqueId = require('../helpers/createUniqueId')
+	createUniqueId = require('../helpers/createUniqueId'),
+	EventEmitter =  require('../modules/event-handler')
 
-module.exports = {
+	module.exports = {
 
 	index(req, res) {
 		//TODO: add filter logic here, should be a doddle with the orm
@@ -120,6 +120,9 @@ module.exports = {
 
 		req.user_model
 			.joinGame(game)
+
+		//TODO: Should this even be an event, makes more sense to do it synchronously?
+		 EventEmitter.emit('game_created', game.row)
 
 		sendJsend(
 			res,

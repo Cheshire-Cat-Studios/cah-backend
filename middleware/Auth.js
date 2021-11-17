@@ -6,7 +6,6 @@ const Middleware = require('./Middleware'),
 
 module.exports = class Auth extends Middleware {
 	handle(req, res, next) {
-
 		const token = req.headers['authorization'].split(' ')
 
 		if (token[0] === 'Bearer') {

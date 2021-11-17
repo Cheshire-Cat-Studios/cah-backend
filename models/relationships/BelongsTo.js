@@ -3,7 +3,6 @@ const Relationship = require('./Relationship'),
 
 module.exports = class BelongsTo extends Relationship {
 	constructor(table, local_column, foreign_column = 'id', local_data) {
-		console.log(table, local_column, foreign_column, local_data)
 		super(table)
 
 		this.local_column = local_column

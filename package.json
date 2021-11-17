@@ -14,7 +14,9 @@
     "dotenv": "^10.0.0",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
+    "json5": "^2.2.0",
     "jsonwebtoken": "^8.5.1",
+    "lodash.shuffle": "^4.2.0",
     "minimist": "^1.2.5",
     "moment": "^2.29.1",
     "morgan": "~1.9.1",
@@ -27,8 +29,12 @@
     "faker": "^5.5.3"
   },
   "nodemonConfig": {
-    "ignore": ["node_modules/*"],
-    "watch": ["*.js"],
+    "ignore": [
+      "node_modules/*"
+    ],
+    "watch": [
+      "*.js"
+    ],
     "delay": 1000
   }
 }
