@@ -8,7 +8,7 @@ module.exports = route => {
 	route()
 		.setMiddleware([
 			new Auth,
-			new Throttle,
+			new Throttle(100, 60),
 		])
 		.get('/', game_controller.index)
 

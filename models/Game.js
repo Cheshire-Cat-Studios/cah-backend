@@ -11,8 +11,6 @@ module.exports = class Game extends Model {
 	}
 
 	players() {
-		console.log('-------------')
-
 		return new HasMany(require('./User'), 'id', 'current_game', this.row.id)
 	}
 

@@ -17,14 +17,14 @@ module.exports = class Throttle extends Middleware {
 
 		await redisClient.lPush(redis_key, `${now}`)
 		await redisClient.lTrim(redis_key, 0, this.request_limit)
-		
-		const redis_log = await redisClient.lRange(redis_key, 0, -1);
+
+		const redis_log = await redisClient.lRange(redis_key, 0, -1)
 		//converting it to one line breaks everything
 		const request_history = redis_log.filter(timestamp => timestamp >= (now - this.limit_window_secs));
 
-		//TODO: add expiry for the list after the window limit, dont need to permanently store ip logs if theyre outside the window
+		//TODO: add expiry for the list after the window limit, dont need to permanently store ip logs if they're outside the window
 		(request_history.length >= this.request_limit)
-			? sendJsend(res, 400, 'error', 'THROTTLED BIATCH')
+			? sendJsend(res, 400, 'error', {message: 'Rate limit exceeded'})
 			: next()
 	}
 }

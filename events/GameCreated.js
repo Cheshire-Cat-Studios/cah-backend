@@ -24,7 +24,9 @@ module.exports = class GameCreated extends Event {
 			'is_czar_phase',
 			'false',
 			'current_czar',
-			''
+			'',
+			'max_score',
+			`${game_data.max_score}`
 		])
 
 		await redis_client.lPush(`game.${game_data.id}.deck`,shuffle(game_deck))

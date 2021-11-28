@@ -13,9 +13,17 @@ const sendJsend = require('../helpers/sendJsend'),
 			200,
 			'success',
 			{
-				games: (new Query)
-					.setTable('games')
+				games: new Game()
 					.get()
+					.map(game => ({
+						uuid: game.row.uuid,
+						name: game.row.name,
+						game_time_limit_mins: game.row.game_time_limit_mins,
+						round_time_limit_mins: game.row.round_time_limit_mins,
+						max_players: game.row.max_players,
+						max_score: game.row.max_score,
+						private: !!game.row.password,
+					}))
 			}
 		)
 	},
@@ -48,8 +56,8 @@ const sendJsend = require('../helpers/sendJsend'),
 		}
 
 		if (
-			game.password
-			&& game.password !== req.body.password
+			game.row.password
+			&& game.row.password !== req.body.password
 		) {
 			sendJsend(
 				res,
@@ -108,6 +116,7 @@ const sendJsend = require('../helpers/sendJsend'),
 			return
 		}
 
+		//TODO: password encryption
 		const game = new Game()
 			.create({
 				id: null,
