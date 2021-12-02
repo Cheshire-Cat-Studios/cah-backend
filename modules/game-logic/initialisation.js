@@ -1,9 +1,12 @@
 const redis_client = require('../redis'),
 	user_deck = require('../../config/decks/whiteCards'),
 	JSON5 = require('json5'),
-	shuffle = require('lodash.shuffle')
+	shuffle = require('lodash.shuffle'),
+	Game = require('../../models/Game')
 
-module.exports = async (io,socket, redis_keys) => {
+module.exports = async (io, socket, redis_keys) => {
+	await redis_client.set(redis_keys.player.is_active, 'true')
+
 	if (!await redis_client.hExists(redis_keys.game.players, socket.user.uuid)) {
 		await redis_client.hSet(
 			redis_keys.game.players,
@@ -14,6 +17,13 @@ module.exports = async (io,socket, redis_keys) => {
 			.to('game.' + socket.user.current_game)
 			.emit('player-joined', socket.user.name)
 	}
+
+	const host_id = new Game()
+		.select('host_id')
+		.whereEquals('id', socket.user.current_game)
+		.first()
+		.row
+		.host_id
 
 	!await redis_client.hGet(redis_keys.game.state, 'current_czar')
 	&& await redis_client.hLen(redis_keys.game.players) === 1
@@ -57,8 +67,9 @@ module.exports = async (io,socket, redis_keys) => {
 			is_czar_phase: JSON.parse(await redis_client.hGet(redis_keys.game.state, 'is_czar_phase')),
 			current_card: (await redis_client.lRange(redis_keys.game.deck, 0, 0))[0],
 			is_current_czar: socket.user.uuid === await redis_client.hGet(redis_keys.game.state, 'current_czar'),
+			is_started: JSON.parse(await redis_client.hGet(redis_keys.game.state, 'is_started')),
+			is_host: host_id === socket.user.id,
 		}
-
 
 	if (is_czar_phase) {
 		let cards_in_play = await redis_client.hGetAll(redis_keys.game.cards_in_play)

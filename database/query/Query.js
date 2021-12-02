@@ -176,7 +176,6 @@ module.exports = class Query {
 			.database
 			.prepare(this.query.sql)
 			.run(this.query.bindings)
-
 	}
 
 	get() {

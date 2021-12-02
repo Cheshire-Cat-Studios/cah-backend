@@ -8,6 +8,7 @@ const redis_client = require('../redis'),
 module.exports = async (io, socket, redis_keys, uuid) => {
 	if (
 		typeof (uuid) !== 'string'
+		|| !JSON.parse(await redis_client.hGet(redis_keys.game.state, 'is_started'))
 		|| !JSON.parse(await redis_client.hGet(redis_keys.game.state, 'is_czar_phase'))
 		|| (await redis_client.hGet(redis_keys.game.state, 'current_czar')) !== socket.user.uuid
 	) {

@@ -10,7 +10,8 @@ module.exports = async (io, socket, redis_keys, data) => {
 
 	// if user is current czar, is currently the czar phase, already chosen cards, data isn't an array, data contains non ints, data isn't a unique set. return and ignore event
 	if (
-		current_czar_uuid === socket.user.uuid
+		!JSON.parse(await redis_client.hGet(redis_keys.game.state, 'is_started'))
+		|| current_czar_uuid === socket.user.uuid
 		|| JSON.parse(await redis_client.hGet(redis_keys.game.state, 'is_czar_phase'))
 		|| await redis_client.hExists(redis_keys.game.cards_in_play, socket.user.uuid)
 		|| !Array.isArray(data)
