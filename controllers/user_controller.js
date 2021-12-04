@@ -7,21 +7,6 @@ const sendJsend = require('../helpers/sendJsend'),
 
 //TODO: move get method into custom auth middleware
 module.exports = {
-	// get(req, res) {
-	// 	const user = (new Query)
-	// 		.setTable('users')
-	// 		.whereEquals('uuid', req.params.userId)
-	// 		.whereEquals('secret', req.params.secret)
-	// 		.first()
-	//
-	// 	user
-	// 		? sendJsend(res, 200, 'success', {
-	// 			userId: user.id,
-	// 			secret: user.secret,
-	// 			gameId: null
-	// 		})
-	// 		: sendJsend(res, 400, 'error', {})
-	// },
 	create(req, res) {
 		try {
 			const user = new User()
@@ -29,18 +14,21 @@ module.exports = {
 					id: null,
 					uuid: createUniqueId('user'),
 					name: req.body.name,
-					secret: faker.random.alpha(25),
 				})
 
 			const token = sign(
 				{uuid: user.row.uuid},
-				process.env.JWT_ACCESS_TOKEN_SECRET
+				process.env.JWT_ACCESS_TOKEN_SECRET,
+				{
+					expiresIn: parseInt(process.env.JWT_ACCESS_TOKEN_LIFE)
+				}
 			)
 
 			sendJsend(res, 200, 'success', {
 				token,
 			})
 		} catch (e) {
+			console.log(e)
 			sendJsend(res, 422, 'error', {
 				errors: [
 					{
@@ -52,12 +40,21 @@ module.exports = {
 		}
 	},
 	verify(req, res) {
+		const token = sign(
+			{uuid: req.user_model.row.uuid},
+			process.env.JWT_ACCESS_TOKEN_SECRET,
+			{
+				expiresIn: parseInt(process.env.JWT_ACCESS_TOKEN_LIFE)
+			}
+		)
+
 		sendJsend(
 			res,
 			200,
 			'success',
 			{
-				in_game: !!req.user_model.row.current_game
+				in_game: !!req.user_model.row.current_game,
+				token: token
 			}
 		)
 	}
