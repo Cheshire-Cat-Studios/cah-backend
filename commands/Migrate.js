@@ -28,11 +28,17 @@ module.exports = class Migrate extends Command {
 
             const DataBaseService = new (require('../services/DatabaseService'))
 
-            Object.keys(migrations)
-                .forEach(table_name => {
-                    DataBaseService.createTable(table_name, migrations[table_name])
-                    colour.success(table_name + 'table successfully created')
-                })
+            migrations.forEach(fn => {
+                const migration = fn()
+
+                DataBaseService
+                    .database
+                    .prepare(migration.parse())
+                    .run()
+
+                colour.success(migration.table_name + ' table successfully created')
+
+            })
 
             this.options.seed
             && Object.keys(seeders).forEach(table_name => {

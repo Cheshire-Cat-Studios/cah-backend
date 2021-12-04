@@ -1,5 +1,4 @@
-module.exports = {
-    //TODO: convert into chainable method migration class
-    users: require('./users'),
-    games: require('./games'),
-}
+module.exports = [
+	require('./createGamesTable'),
+	require('./createUsersTable'),
+]
