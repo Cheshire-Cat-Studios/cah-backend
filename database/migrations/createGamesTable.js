@@ -16,8 +16,6 @@ module.exports = () => {
 
 			column().integer('host_id')
 
-			column().boolean('is_started')
-
 			column().boolean('max_score')
 
 			column().boolean('max_players')

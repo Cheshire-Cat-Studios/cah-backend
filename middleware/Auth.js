@@ -16,7 +16,6 @@ module.exports = class Auth extends Middleware {
 						.whereEquals('uuid', uuid)
 						.first()
 
-				console.log(uuid)
 				if (user) {
 					//todo: theres got to be a better way to do this?
 					req.user_model = user
@@ -26,7 +25,6 @@ module.exports = class Auth extends Middleware {
 				}
 
 			} catch (e) {
-				console.log(e)
 				if (e.name === 'TokenExpiredError') {
 					const uuid = verify(
 							token[1],

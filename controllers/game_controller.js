@@ -120,8 +120,6 @@ const sendJsend = require('../helpers/sendJsend'),
 		const game = new Game()
 			.create({
 				id: null,
-				is_started: 0,
-				is_czar_phase: 0,
 				host_id: req.user_model.row.id,
 				uuid: createUniqueId('game'),
 				...req.validated_data

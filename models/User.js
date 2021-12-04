@@ -11,9 +11,6 @@ module.exports = class User extends Model {
 	joinGame(game){
 		this.update({
 			current_game: game.row.id,
-			score: null,
-			taken_turn: null,
-			is_czar: null,
 		})
 	}
 }
