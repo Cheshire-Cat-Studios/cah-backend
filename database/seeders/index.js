@@ -1,4 +1,4 @@
-module.exports = {
-    users: require('./user'),
-    games: require('./game'),
+module.exports = () => {
+	require('../seeders/game')()
+	require('../seeders/user')()
 }

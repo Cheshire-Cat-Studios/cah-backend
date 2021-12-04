@@ -41,18 +41,7 @@ module.exports = class Migrate extends Command {
             })
 
             this.options.seed
-            && Object.keys(seeders).forEach(table_name => {
-                let data = []
-
-                for (let i = 0; i < 3; i++) {
-                    data.push(seeders[table_name]())
-                }
-
-                (new Query).setTable(table_name)
-                    .insert(data)
-
-                colour.success(table_name + ' table successfully seeded')
-            })
+            && require('../database/seeders/index')()
         }
 
     }

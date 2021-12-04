@@ -53,6 +53,6 @@ module.exports = class Column {
 	}
 
 	parse(){
-		return `${this.name} ${this.type} ${this.is_primary_key ? 'PRIMARY KEY' : ''} ${!this.is_primary_key && !this.is_nullable ? 'NOT NULL' : ''} ${!this.is_primary_key && !this.is_unique ? 'NOT NULL' : ''}`
+		return `${this.name} ${this.type} ${this.is_primary_key ? 'PRIMARY KEY' : ''} ${!this.is_primary_key && !this.is_nullable ? 'NOT NULL' : ''} ${!this.is_primary_key && this.is_unique ? 'UNIQUE' : ''}`
 	}
 }
