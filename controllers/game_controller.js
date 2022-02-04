@@ -6,15 +6,14 @@ const sendJsend = require('../helpers/sendJsend'),
 
 	module.exports = {
 
-	index(req, res) {
+	async index(req, res) {
 		//TODO: add filter logic here, should be a doddle with the orm
 		sendJsend(
 			res,
 			200,
 			'success',
 			{
-				games: new Game()
-					.get()
+				games: (await new Game().get())
 					.map(game => ({
 						uuid: game.row.uuid,
 						name: game.row.name,
@@ -28,7 +27,7 @@ const sendJsend = require('../helpers/sendJsend'),
 		)
 	},
 
-	join(req, res) {
+	async join(req, res) {
 		let game = null
 
 		if(req.user_model.current_game){
@@ -44,7 +43,7 @@ const sendJsend = require('../helpers/sendJsend'),
 
 		req.params.game_uuid
 		&& (
-			game = new Game()
+			game = await new Game()
 				.whereEquals('uuid', req.params.game_uuid)
 				.first()
 		)
@@ -100,7 +99,7 @@ const sendJsend = require('../helpers/sendJsend'),
 		)
 	},
 
-	create(req, res) {
+	async create(req, res) {
 		if (req.user_model.row.current_game) {
 			sendJsend(
 				res,
@@ -117,9 +116,8 @@ const sendJsend = require('../helpers/sendJsend'),
 		}
 
 		//TODO: password encryption
-		const game = new Game()
+		const game = await new Game()
 			.create({
-				id: null,
 				host_id: req.user_model.row.id,
 				uuid: createUniqueId('game'),
 				...req.validated_data

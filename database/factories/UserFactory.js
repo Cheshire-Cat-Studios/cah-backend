@@ -10,7 +10,7 @@ module.exports = class GameFactory extends Factory {
 
 	schema() {
 		return {
-			id: null,
+			// id: null,
 			uuid: createUniqueId('user'),
 			name: this.faker.name.findName(),
 			current_game: null,

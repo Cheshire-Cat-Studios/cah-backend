@@ -1,5 +1,4 @@
 const ServiceProvider = require('./ServiceProvider'),
-	// game = require('../routes/game'),
 	middleware = require('../middleware')
 
 //TODO: move the route mapping logic into a module so it can be reused for route() helper and route cli logic
@@ -24,7 +23,6 @@ module.exports = class RouteServiceProvider extends ServiceProvider {
 					.setPath('games')
 					.setName('games')
 					.group(require('../routes/game'))
-
 			})
 	}
 
@@ -54,7 +52,7 @@ module.exports = class RouteServiceProvider extends ServiceProvider {
 			}, this)
 	}
 
-	//TODO: consider fucking off express routes, only using express for routing and sockets, node can do both adequately
+	//TODO: consider sacking off express routes, only using express for routing and sockets, node can do both adequately
 	createExpressRoute(route, parent) {
 
 		const url = `${parent.path}/${route.path}`.replace(/\/+/g, '/')

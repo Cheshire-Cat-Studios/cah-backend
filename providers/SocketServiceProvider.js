@@ -13,7 +13,9 @@ const ServiceProvider = require('./ServiceProvider'),
 	czarChosen = require('../modules/game-logic/czar-chosen'),
 	disconnect = require('../modules/game-logic/disconnect'),
 	Game = require('../models/Game'),
-	User = require('../models/User')
+	User = require('../models/User'),
+	endGame = require('../modules/game-logic/utility/end-game'),
+	startGame = require('../modules/game-logic/start-game')
 
 
 // User = require('../models/User')
@@ -62,7 +64,7 @@ module.exports = class AppServiceProvider extends ServiceProvider {
 
 				socket.on(
 					'czar-chosen',
-					async uuid => {
+					uuid => {
 						czarChosen(io, socket, redis_keys, uuid)
 					}
 				)
@@ -70,22 +72,7 @@ module.exports = class AppServiceProvider extends ServiceProvider {
 				socket.on(
 					'start-game',
 					async () => {
-						if (
-							socket.user.id !== new Game()
-								.whereEquals('id', socket.user.current_game)
-								.select('host_id')
-								.first()
-								?.row
-								?.host_id
-						) {
-							return
-						}
-
-						await redis_client.hSet(redis_keys.game.state, 'is_started', 'true')
-
-
-						io.to('game.' + socket.user.current_game)
-							.emit('game-started')
+						startGame(io,socket,redis_keys)
 					}
 				)
 

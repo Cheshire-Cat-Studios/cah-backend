@@ -1,8 +1,8 @@
 //TODO: rethink structure, perhaps a modules folder or stateful folder is needed? going the module route makes a lot more sense for node.js
 const redis = require('redis'),
 	redis_client = redis.createClient({
-		port: 6379,
-		host: 'localhost'
+		port: process.env.REDIS_PORT,
+		url: process.env.REDIS_HOST,
 	})
 
 let is_connected = false;

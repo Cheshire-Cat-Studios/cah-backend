@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  node:
+    build:
+      context: .
+      dockerfile: ./.docker/node.dockerfile
+    ports:
+      - 127.0.0.1:${PORT}:${PORT}
+    volumes:
+      - .:/usr/src/app/
+      - /usr/src/app/node_modules/
+    networks:
+      - redis
+      - mysql
+    depends_on:
+      - mysql
+      - redis
+  mysql:
+    image: mariadb:10.5
+    ports:
+      - ${MYSQL_PORT}:${MYSQL_PORT}
+    environment:
+      MYSQL_TCP_PORT: ${MYSQL_PORT}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./.docker/data/mysql:/var/lib/mysql
+    networks:
+      - mysql
+  redis:
+    image: redis
+    networks:
+      - redis
+networks:
+  mysql:
+  redis:
+    driver: bridge

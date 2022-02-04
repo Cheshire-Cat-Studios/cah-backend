@@ -7,9 +7,9 @@ const Middleware = require('./Middleware'),
 
 module.exports = class Auth extends Middleware {
 	async handle(req, res, next) {
-		const token = req.headers['authorization'].split(' ')
+		const token = req.headers?.['authorization']?.split(' ')
 
-		if (token[0] === 'Bearer') {
+		if (token?.[0] === 'Bearer') {
 			try {
 				const uuid = verify(token[1], process.env.JWT_ACCESS_TOKEN_SECRET).uuid,
 					user = new User()

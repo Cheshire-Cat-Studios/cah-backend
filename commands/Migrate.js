@@ -1,48 +1,35 @@
 const Command = require('./Command'),
     migrations = require('../database/migrations'),
-    seeders = require('../database/seeders'),
-    fs = require('fs'),
+    // fs = require('fs'),
     colour = require('../helpers/colour'),
-    Query = require('../database/query/Query')
+    mysql = require('../modules/mysql')
 
 
 module.exports = class Migrate extends Command {
     name = 'migration'
     description = 'will create and populate the database'
 
-    handle() {
-        //TODO: exceptions in logic for in memory db's and randomly deleting any fucking files based on the env
+    async handle() {
+        if (this.options.fresh) {
+            //TODO: refactor migrations with up and down actions
 
-        if (
-            this.options.fresh
-            && fs.existsSync(process.env.SQLITE_FILE)
-        ) {
-            fs.unlinkSync(process.env.SQLITE_FILE)
+            for (const fn of migrations) {
+                await mysql.query(`DROP TABLE IF EXISTS ${fn().table_name}`)
+            }
 
             colour.success('Database wiped')
 
-            fs.writeFileSync(process.env.SQLITE_FILE, '')
-            fs.chmodSync(process.env.SQLITE_FILE, 0o765)
-
-            colour.success('Database rebuilt')
-
-            const DataBaseService = new (require('../services/DatabaseService'))
-
-            migrations.forEach(fn => {
+            for (const fn of migrations) {
                 const migration = fn()
 
-                DataBaseService
-                    .database
-                    .prepare(migration.parse())
-                    .run()
+                await mysql.query(migration.parse())
 
-                colour.success(migration.table_name + ' table successfully created')
+                await colour.success(migration.table_name + ' table successfully created')
 
-            })
+            }
 
-            this.options.seed
+            await this.options.seed
             && require('../database/seeders/index')()
         }
-
     }
 }

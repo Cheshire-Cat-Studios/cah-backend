@@ -7,11 +7,11 @@ const sendJsend = require('../helpers/sendJsend'),
 
 //TODO: move get method into custom auth middleware
 module.exports = {
-	create(req, res) {
+	async create(req, res) {
 		try {
-			const user = new User()
+			const user = await new User()
 				.create({
-					id: null,
+					// id: null,
 					uuid: createUniqueId('user'),
 					name: req.body.name,
 				})

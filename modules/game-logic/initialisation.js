@@ -25,9 +25,9 @@ module.exports = async (io, socket, redis_keys) => {
 		.row
 		.host_id
 
-	!await redis_client.hGet(redis_keys.game.state, 'current_czar')
-	&& await redis_client.hLen(redis_keys.game.players) === 1
-	&& await redis_client.hSet(redis_keys.game.state, 'current_czar', socket.user.uuid)
+	// !await redis_client.hGet(redis_keys.game.state, 'current_czar')
+	// && await redis_client.hLen(redis_keys.game.players) === 1
+	// && await redis_client.hSet(redis_keys.game.state, 'current_czar', socket.user.uuid)
 
 	!await redis_client.exists(redis_keys.player.deck)
 	&& await redis_client.lPush(redis_keys.player.deck, shuffle(user_deck))

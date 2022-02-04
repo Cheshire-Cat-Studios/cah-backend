@@ -10,12 +10,12 @@ module.exports = class GameFactory extends Factory{
 
     schema(){
         return {
-            id: null,
+            // id: null,
             uuid: createUniqueId('game'),
             name: this.faker.random.words(2),
             password: this.faker.random.alpha(25),
             host_id: this.faker.datatype.number(1, 2),
-            is_started: + this.faker.datatype.boolean(),
+            // is_started: + this.faker.datatype.boolean(),
             max_score: this.faker.datatype.number(10, 20),
             max_players: this.faker.datatype.number(3, 10),
             round_time_limit_mins: this.faker.datatype.number(5, 20),

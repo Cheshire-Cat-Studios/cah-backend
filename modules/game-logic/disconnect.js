@@ -14,7 +14,8 @@ module.exports = async (io, socket, redis_keys) => {
 
 		await redis_client.hSet(redis_keys.game.state, 'current_czar', 'false')
 
-		const players = new Game().find(socket.user.current_game)
+		const game = new Game().find(socket.user.current_game),
+			players = game
 				.players()
 				.handle()
 				.select('uuid')
@@ -52,7 +53,6 @@ module.exports = async (io, socket, redis_keys) => {
 
 	socket.leave('game.' + socket.user.current_game)
 
-
 	const user_sockets = (await io.in('game.' + socket.user.current_game).fetchSockets())
 			.reduce((result, item) => {
 				result[item.user.uuid] = item
@@ -62,7 +62,9 @@ module.exports = async (io, socket, redis_keys) => {
 		is_czar_phase = JSON.parse(await redis_client.hGet(redis_keys.game.state, 'is_czar_phase')),
 		cards_in_play = await redis_client.hGetAll(redis_keys.game.cards_in_play),
 		player_list = await redis_client.hGetAll(redis_keys.game.players),
-		scoreboard = Object.keys(player_list).map(uuid => JSON5.parse(player_list[uuid]))
+		scoreboard = Object.keys(player_list).map(uuid => JSON5.parse(player_list[uuid])),
+		is_started = JSON.parse(await redis_client.hGet(redis_keys.game.state, 'is_started'))
+
 
 	let cards_in_play_mapped = {}
 
@@ -70,37 +72,62 @@ module.exports = async (io, socket, redis_keys) => {
 		cards_in_play_mapped[uuid] = JSON.parse(cards_in_play[uuid])
 	})
 
-	for (const uuid in user_sockets) {
-		if (uuid === socket.user.uuid) {
-			continue
+	if (is_started) {
+		for (const uuid in user_sockets) {
+			if (uuid === socket.user.uuid) {
+				continue
+			}
+
+			let emit_data = {
+				player_who_left: socket.user.name,
+				left_player_was_czar: czar_is_leaving,
+				is_czar: uuid === current_czar_uuid,
+				is_czar_phase: is_czar_phase,
+				hand: await redis_client.lRange(`players.${uuid}.hand`, 0, -1),
+				scoreboard,
+			}
+
+			if (is_czar_phase) {
+				emit_data.cards_in_play = cards_in_play_mapped
+			} else {
+				emit_data.own_cards_in_play = cards_in_play_mapped[uuid]
+
+				emit_data.cards_in_play_count = Object.keys(cards_in_play_mapped).length
+
+				emit_data.own_cards_in_play
+				&& (emit_data.cards_in_play_count--)
+			}
+
+			// own_cards_in_play
+			user_sockets[uuid].emit(
+				'player-left',
+				emit_data
+			)
 		}
-
-		let emit_data = {
-			player_who_left: socket.user.name,
-			left_player_was_czar: czar_is_leaving,
-			is_czar: uuid === current_czar_uuid,
-			is_czar_phase: is_czar_phase,
-			hand: await redis_client.lRange(`players.${uuid}.hand`, 0, -1),
-			scoreboard,
-		}
-
-		if (is_czar_phase) {
-			emit_data.cards_in_play = cards_in_play_mapped
-		} else {
-			emit_data.own_cards_in_play = cards_in_play_mapped[uuid]
-
-			emit_data.cards_in_play_count = Object.keys(cards_in_play_mapped).length
-
-			emit_data.own_cards_in_play
-			&& (emit_data.cards_in_play_count--)
-		}
-
-		// own_cards_in_play
-		user_sockets[uuid].emit(
-			'player-left',
-			emit_data
-		)
 	}
+
+	const game = new Game().find(socket.user.current_game)
+
+	if (!game.players().handle().count()) {
+		await redis_client.del(redis_keys.game.state)
+		await redis_client.del(redis_keys.game.deck)
+		await redis_client.del(redis_keys.game.players)
+		await redis_client.del(redis_keys.game.cards_in_play)
+	}
+
+	if (game.row.host_id === socket.user.id) {
+		const new_host_id = game.players()
+			.handle()
+			.orderBy('RANDOM()')
+			.first()
+			.row
+			.id
+
+		game.update({
+			host_id: new_host_id
+		})
+	}
+
 
 	socket.leave('game.' + socket.user.current_game)
 }

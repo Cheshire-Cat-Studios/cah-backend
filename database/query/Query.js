@@ -2,7 +2,8 @@
 const applyTraits = require('../../helpers/applyTraits'),
 	JoinQuery = require('./JoinQuery'),
 	WhereQuery = require('./WhereQuery'),
-	DatabaseService = require('../../services/DatabaseService')
+	mysql = require('../../modules/mysql')
+// DatabaseService = require('../../services/DatabaseService')
 
 module.exports = class Query {
 	constructor() {
@@ -100,7 +101,8 @@ module.exports = class Query {
 
 	handleSelect() {
 		this.query = {
-			sql: `SELECT ${this.selects.join()} FROM ${this.table_name} `,
+			sql: `SELECT ${this.selects.join()}
+                  FROM ${this.table_name} `,
 			bindings: []
 		}
 
@@ -118,6 +120,9 @@ module.exports = class Query {
 			})
 
 		this.handleWheres()
+
+		this.order_by
+		&& (this.query.sql += ` ORDER BY ${this.order_by} `)
 
 		if (this.limit) {
 			this.query.sql += ` LIMIT ${this.limit} `
@@ -143,11 +148,12 @@ module.exports = class Query {
 		}
 	}
 
-	update(data) {
+	async update(data) {
 		const data_keys = Object.keys(data)
 
 		this.query = {
-			sql: `UPDATE ${this.table_name} SET `,
+			sql: `UPDATE ${this.table_name}
+                  SET `,
 			bindings: []
 		}
 
@@ -156,35 +162,39 @@ module.exports = class Query {
 			this.query.bindings.push(data[column])
 		})
 
-		this.handleWheres();
+		this.handleWheres()
 
-		(new DatabaseService)
-			.database
-			.prepare(this.query.sql)
-			.run(this.query.bindings)
+		await mysql.query(this.query.sql, this.query.bindings)
+		// (new DatabaseService)
+		// 	.database
+		// 	.prepare(this.query.sql)
+		// 	.run(this.query.bindings)
 	}
 
 	delete() {
 		this.query = {
-			sql: `DELETE FROM ${this.table_name} `,
+			sql: `DELETE
+                  FROM ${this.table_name} `,
 			bindings: []
 		}
 
-		this.handleWheres();
+		this.handleWheres()
 
-		(new DatabaseService)
-			.database
-			.prepare(this.query.sql)
-			.run(this.query.bindings)
+		// (new DatabaseService)
+		// 	.database
+		// 	.prepare(this.query.sql)
+		// 	.run(this.query.bindings)
 	}
 
-	get() {
+	async get() {
 		this.handleSelect()
 
-		return (new DatabaseService)
-			.database
-			.prepare(this.query.sql)
-			.all(this.query.bindings)
+		//TODO:: map below as it returns an array of RowDataPacket's ?
+		const results = await mysql.query(this.query.sql, this.query.bindings)
+
+		return results.length
+			? results
+			: null
 	}
 
 	count(count_fields = '*') {
@@ -194,23 +204,24 @@ module.exports = class Query {
 
 		this.handleSelect()
 
-		const data = (new DatabaseService)
-			.database
-			.prepare(this.query.sql)
-			.get(this.query.bindings)
-
-		return data[count_column]
+		// const data = (new DatabaseService)
+		// 	.database
+		// 	.prepare(this.query.sql)
+		// 	.get(this.query.bindings)
+		//
+		// return data[count_column]
 	}
 
-	first() {
+	async first() {
+		this.limit = 1
+
 		this.handleSelect()
 
-		const data = (new DatabaseService)
-			.database
-			.prepare(this.query.sql)
-			.get(this.query.bindings)
+		const results = await mysql.query(this.query.sql, this.query.bindings)
 
-		return data
+		return results.length
+			? results[0]
+			: null
 	}
 
 	exists() {
@@ -219,16 +230,16 @@ module.exports = class Query {
 
 		this.handleSelect()
 
-		return !!(new DatabaseService)
-			.database
-			.prepare(this.query.sql)
-			.get(this.query.bindings)
+		// return !!(new DatabaseService)
+		// 	.database
+		// 	.prepare(this.query.sql)
+		// 	.get(this.query.bindings)
 	}
 
-	find(id) {
+	async find(id) {
 		this.where_clauses = [new WhereQuery('id', id)]
 
-		return this.first()
+		return await this.first()
 	}
 
 	handleInsert(columns) {
@@ -259,19 +270,14 @@ module.exports = class Query {
 		})
 	}
 
-	insert(data) {
+	async insert(data) {
 		this.handleInsert(Object.keys(data[0]))
 		this.handleInsertValues(data)
 
-		return (new DatabaseService)
-			.database
-			.prepare(this.query.sql)
-			.run(
-				this.query.bindings
-			)
+		return await mysql.query(this.query.sql, this.query.bindings)
 	}
 
-	create(data) {
-		return this.insert([data]).lastInsertRowid
+	async create(data) {
+		return (await this.insert([data])).insertId
 	}
 }

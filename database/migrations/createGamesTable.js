@@ -4,8 +4,7 @@ module.exports = () => {
 	return new Table()
 		.setName('games')
 		.create(column => {
-			column().integer('id')
-				.setPrimaryKey(true)
+			column().id()
 
 			column().string('uuid', 100)
 				.setUnique(true)

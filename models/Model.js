@@ -32,8 +32,8 @@ module.exports = class Model extends Query {
 			.first()
 	}
 
-	get() {
-		const model_datum = super.get()
+	async get() {
+		const model_datum = await super.get()
 
 		return model_datum
 			? model_datum.map(model_data => (new this.constructor()).fill(model_data))
@@ -44,18 +44,18 @@ module.exports = class Model extends Query {
 		this.update(this.row)
 	}
 
-	first() {
-		const model_data = super.first()
+	async first() {
+		const model_data = await super.first()
 
 		return model_data
 			? this.fill(model_data)
 			: null
 	}
 
-	find(id) {
+	async find(id) {
 		this.where_clauses = [new WhereQuery('id', id)]
 
-		return this.first()
+		return await this.first()
 	}
 
 	fill(data) {
@@ -64,14 +64,14 @@ module.exports = class Model extends Query {
 		return this
 	}
 
-	update(data) {
+	async update(data) {
 		Object.keys(data)
 			.forEach(column => this.row[column] = data[column])
 
-		super.update(this.row)
+		await super.update(this.row)
 	}
 
-	create(data){
-		return this.find(super.create(data))
+	async create(data){
+		return await this.find(await super.create(data))
 	}
 }

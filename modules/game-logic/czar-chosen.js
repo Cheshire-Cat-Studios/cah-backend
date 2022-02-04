@@ -3,7 +3,8 @@ const redis_client = require('../redis'),
 	game_deck = require('../../config/decks/BlackCards'),
 	JSON5 = require('json5'),
 	shuffle = require('lodash.shuffle'),
-	Game = require('../../models/Game')
+	Game = require('../../models/Game'),
+	endGame = require('./utility/end-game')
 
 module.exports = async (io, socket, redis_keys, uuid) => {
 	if (
@@ -29,32 +30,8 @@ module.exports = async (io, socket, redis_keys, uuid) => {
 	console.log(await redis_client.hGet(redis_keys.game.players, uuid))
 
 	if (player_data.score >= parseInt(await redis_client.hGet(redis_keys.game.state, 'max_score'))) {
-		await redis_client.del(redis_keys.game.state)
-		await redis_client.del(redis_keys.game.deck)
-		await redis_client.del(redis_keys.game.players)
-		await redis_client.del(redis_keys.game.cards_in_play)
 
-		const game = new Game().find(socket.user.current_game)
-
-		const players = game.players()
-			.handle()
-			.select('uuid')
-			.get()
-			.map(player => player.row.uuid)
-
-		game.players()
-			.handle()
-			.update({
-				'current_game': null,
-			})
-
-
-		for (const uuid of players) {
-			await redis_client.del(`players.${uuid}.deck`)
-			await redis_client.del(`players.${uuid}.hand`)
-		}
-
-		game.delete()
+		await endGame(io, socket, redis_keys)
 
 		io.to('game.' + socket.user.current_game)
 			.emit('game-won', player_data)

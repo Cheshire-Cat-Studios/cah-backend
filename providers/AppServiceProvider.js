@@ -6,7 +6,13 @@ const
     // createError = require('http-errors'),
     cors_config = require('../config/cors.js')
 
-module.exports = class AppServiceProvider extends ServiceProvider {
+//TEMP DOCKER TESTING
+const sendJsend = require('../helpers/sendJsend'),
+    redis_client = require('../modules/redis'),
+    mysql = require('../modules/mysql')
+
+
+    module.exports = class AppServiceProvider extends ServiceProvider {
     handle() {
         this.app
             .use(logger('dev'))
