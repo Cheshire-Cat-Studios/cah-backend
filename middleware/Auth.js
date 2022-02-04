@@ -12,7 +12,7 @@ module.exports = class Auth extends Middleware {
 		if (token?.[0] === 'Bearer') {
 			try {
 				const uuid = verify(token[1], process.env.JWT_ACCESS_TOKEN_SECRET).uuid,
-					user = new User()
+					user = await new User()
 						.whereEquals('uuid', uuid)
 						.first()
 
