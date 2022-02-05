@@ -7,7 +7,7 @@ module.exports = class Query extends Command {
     description = 'command for quickly viewing table data'
     options_description = 'table'
 
-    handle() {
+    async handle() {
         try {
             if (!this.options.table) {
                 throw new Error('--table is a required parameter!')
@@ -45,8 +45,8 @@ module.exports = class Query extends Command {
 
             console.table(
                 this.options.find
-                    ? [QueryBuilder.find(this.options.find)]
-                    : QueryBuilder.get()
+                    ? [await QueryBuilder.find(this.options.find)]
+                    : await QueryBuilder.get()
             )
 
         } catch (e) {
