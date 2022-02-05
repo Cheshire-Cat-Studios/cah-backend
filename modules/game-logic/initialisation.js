@@ -18,10 +18,11 @@ module.exports = async (io, socket, redis_keys) => {
 			.emit('player-joined', socket.user.name)
 	}
 
-	const host_id = new Game()
-		.select('host_id')
-		.whereEquals('id', socket.user.current_game)
-		.first()
+	const host_id = (await new Game()
+			.select('host_id')
+			.whereEquals('id', socket.user.current_game)
+			.first()
+	)
 		.row
 		.host_id
 

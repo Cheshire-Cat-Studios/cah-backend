@@ -21,10 +21,16 @@ module.exports = {
 				//TODO: when game is over etc etc, easily can invalidate the connection by deleting socket.user and disconnecting the socket
 				!socket.user
 				&& (
-					socket.user = new User()
-						.whereEquals('uuid', uuid)
-						.first()
+					socket.user =  (await new User()
+							.whereEquals('uuid', uuid)
+							.first()
+					)
 						.row
+				)
+
+				console.log(
+					uuid,
+
 				)
 
 				//if user has a game and the game has its state stored in redis, allow the user to connect

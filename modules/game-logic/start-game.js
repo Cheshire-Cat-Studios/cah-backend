@@ -5,7 +5,7 @@ const redis_client = require('../redis'),
 	endGame = require('./utility/end-game')
 
 module.exports = async (io, socket, redis_keys) => {
-	const game = new Game()
+	const game = await new Game()
 		.whereEquals('id', socket.user.current_game)
 		.first()
 

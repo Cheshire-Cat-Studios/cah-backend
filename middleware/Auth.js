@@ -32,12 +32,12 @@ module.exports = class Auth extends Middleware {
 							{ignoreExpiration: true}
 						)
 							.uuid,
-						user = new User()
+						user = await new User()
 							.whereEquals('uuid', uuid)
 							.first(),
-						active = await redis_client.get(`players.${user.row.uuid}.is_active`)
+						active = user && JSON.parse(await redis_client.get(`players.${user.row.uuid}.is_active`))
 
-					if(active && JSON.parse(active)){
+					if(active){
 						req.user_model = user
 
 						next()

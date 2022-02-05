@@ -7,7 +7,7 @@ module.exports = async (io, socket, redis_keys) => {
 	await redis_client.del(redis_keys.game.players)
 	await redis_client.del(redis_keys.game.cards_in_play)
 
-	const game = new Game().find(socket.user.current_game)
+	const game = await new Game().find(socket.user.current_game)
 
 	const players = game.players()
 		.handle()

@@ -14,7 +14,7 @@ module.exports = async (io, socket, redis_keys) => {
 
 		await redis_client.hSet(redis_keys.game.state, 'current_czar', 'false')
 
-		const game = new Game().find(socket.user.current_game),
+		const game = await new Game().find(socket.user.current_game),
 			players = game
 				.players()
 				.handle()
@@ -106,7 +106,7 @@ module.exports = async (io, socket, redis_keys) => {
 		}
 	}
 
-	const game = new Game().find(socket.user.current_game)
+	const game = await new Game().find(socket.user.current_game)
 
 	if (!game.players().handle().count()) {
 		await redis_client.del(redis_keys.game.state)

@@ -13,7 +13,7 @@ const sendJsend = require('../helpers/sendJsend'),
 			200,
 			'success',
 			{
-				games: (await new Game().get())
+				games: ((await new Game().get()) || [])
 					.map(game => ({
 						uuid: game.row.uuid,
 						name: game.row.name,
