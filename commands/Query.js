@@ -20,7 +20,6 @@ module.exports = class Query extends Command {
                         query.whereRaw(where)
                     }
                 )
-
                 .when(
                     this.options.limit,
                     (query, limit) => {
