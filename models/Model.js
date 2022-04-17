@@ -67,10 +67,29 @@ module.exports = class Model extends Query {
 	}
 
 	async update(data) {
+		if(!this.row?.id){
+			return
+		}
+
+		this.where_clauses = [new WhereQuery('id', this.row.id)]
+
 		Object.keys(data)
 			.forEach(column => this.row[column] = data[column])
 
 		await super.update(this.row)
+	}
+
+	async delete() {
+		console.log(this.row)
+		console.log('hit')
+		if(!this.row?.id){
+			return
+		}
+		console.log('PASSED')
+
+
+		this.where_clauses = [new WhereQuery('id', this.row.id)]
+		await super.delete()
 	}
 
 	async create(data) {

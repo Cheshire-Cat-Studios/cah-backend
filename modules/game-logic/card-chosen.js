@@ -37,7 +37,7 @@ module.exports = async (io, socket, redis_keys, data) => {
 	await redis_client.lRem(redis_keys.player.hand, card_count, deleted_placeholder)
 	await redis_client.hSet(redis_keys.game.cards_in_play, socket.user.uuid, JSON.stringify(cards))
 
-	//TODO: rethink below might have issues if people quit
+	//TODO: rethink below might have issues if people quit, maybe check if everyone else has selected when players quit, force czar phase if so
 	if (await redis_client.hLen(redis_keys.game.cards_in_play) === (await redis_client.hLen(redis_keys.game.players)) - 1) {
 		await redis_client.hSet(redis_keys.game.state, 'is_czar_phase', JSON.stringify(true))
 

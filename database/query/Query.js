@@ -171,7 +171,7 @@ module.exports = class Query {
 		// 	.run(this.query.bindings)
 	}
 
-	delete() {
+	async delete() {
 		this.query = {
 			sql: `DELETE
                   FROM ${this.table_name} `,
@@ -180,10 +180,7 @@ module.exports = class Query {
 
 		this.handleWheres()
 
-		// (new DatabaseService)
-		// 	.database
-		// 	.prepare(this.query.sql)
-		// 	.run(this.query.bindings)
+		await mysql.query(this.query.sql, this.query.bindings)
 	}
 
 	async get() {

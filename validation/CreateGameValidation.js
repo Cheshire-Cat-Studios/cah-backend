@@ -32,7 +32,7 @@ module.exports = class CreateGameValidation extends Validation {
 			max_score: [
 				new Required,
 				new In([
-					// 0,
+					2,
 					5,
 					10,
 					15,

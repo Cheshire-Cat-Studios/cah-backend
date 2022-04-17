@@ -8,13 +8,14 @@ const ServiceProvider = require('./ServiceProvider'),
 	game_deck = require('../config/decks/blackCards'),
 	shuffle = require('lodash.shuffle'),
 	JSON5 = require('json5'),
+	Game = require('../models/Game'),
+	User = require('../models/User'),
+	endGame = require('../modules/game-logic/utility/end-game'),
+
 	initialisation = require('../modules/game-logic/initialisation'),
 	cardChosen = require('../modules/game-logic/card-chosen'),
 	czarChosen = require('../modules/game-logic/czar-chosen'),
 	disconnect = require('../modules/game-logic/disconnect'),
-	Game = require('../models/Game'),
-	User = require('../models/User'),
-	endGame = require('../modules/game-logic/utility/end-game'),
 	startGame = require('../modules/game-logic/start-game')
 
 
