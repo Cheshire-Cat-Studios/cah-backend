@@ -12,24 +12,26 @@ module.exports = class Model extends Query {
 	}
 
 	//TODO: Maybe have each relation extend model or query?, attach etc methods will need to go somewhere
-	belongsTo(table, local_column, foreign_column = 'id') {
-		return (
-			typeof table === 'string'
-				? (new Model).setTable(table)
-				: new table
+	async belongsTo(table, local_column, foreign_column = 'id') {
+		return await (
+			(
+				typeof table === 'string'
+					? (new Model).setTable(table)
+					: new table
+			)
+				.whereEquals(foreign_column, this.row[local_column])
+				.first()
 		)
-			.whereEquals(foreign_column, this.row[local_column])
-			.first()
 	}
 
 	hasMany(table, local_column, foreign_column = 'id') {
-		return (
+		return ((
 			typeof table === 'string'
 				? (new Model).setTable(table)
 				: new table
 		)
 			.whereEquals(foreign_column, this.row[local_column])
-			.first()
+			.first())
 	}
 
 	async get() {
@@ -59,7 +61,7 @@ module.exports = class Model extends Query {
 	}
 
 	fill(data) {
-		this.row = data;
+		this.row = data
 
 		return this
 	}
@@ -71,7 +73,7 @@ module.exports = class Model extends Query {
 		await super.update(this.row)
 	}
 
-	async create(data){
+	async create(data) {
 		return await this.find(await super.create(data))
 	}
 }

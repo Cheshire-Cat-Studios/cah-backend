@@ -15,10 +15,10 @@ module.exports = async (io, socket, redis_keys) => {
 		return
 	}
 
-	const czar = game.players()
+	const czar = (await game.players()
 		.handle()
-		.orderBy('RANDOM()')
-		.first()
+		.orderBy('RAND()')
+		.first())
 		.row
 		.uuid
 

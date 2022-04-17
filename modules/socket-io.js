@@ -16,7 +16,11 @@ module.exports = {
 		this.io.use(async (socket, next) => {
 			console.log('middleware hit')
 			try {
-				const uuid = verify(socket.handshake?.query?.token, process.env.JWT_ACCESS_TOKEN_SECRET).uuid
+				const uuid = verify(
+					socket.handshake?.query?.token,
+					process.env.JWT_ACCESS_TOKEN_SECRET
+				)
+					.uuid
 
 				//TODO: when game is over etc etc, easily can invalidate the connection by deleting socket.user and disconnecting the socket
 				!socket.user

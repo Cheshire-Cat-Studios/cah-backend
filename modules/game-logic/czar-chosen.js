@@ -41,11 +41,12 @@ module.exports = async (io, socket, redis_keys, uuid) => {
 
 
 		//TODO: change players relation to many to many, it will enforce ordering by join time asc, currently its user creation time asc ( or add an order field/query)
-		const players = await new Game().find(socket.user.current_game)
+		const players = (await new Game().find(socket.user.current_game)
 				.players()
 				.handle()
 				.select('uuid')
 				.get()
+			)
 				.map(user => user.row.uuid),
 			czar_index = players.indexOf(socket.user.uuid),
 			new_czar_index = czar_index === players.length - 1 ? 0 : czar_index + 1,
