@@ -38,7 +38,9 @@ module.exports = class Model extends Query {
 		const model_datum = await super.get()
 
 		return model_datum
-			? model_datum.map(model_data => (new this.constructor()).fill(model_data))
+			? model_datum.map(
+				model_data => (new this.constructor()).fill(model_data)
+			)
 			: null
 	}
 
@@ -67,7 +69,7 @@ module.exports = class Model extends Query {
 	}
 
 	async update(data) {
-		if(!this.row?.id){
+		if (!this.row?.id) {
 			return
 		}
 
@@ -79,14 +81,14 @@ module.exports = class Model extends Query {
 		await super.update(this.row)
 	}
 
+	async count(select){
+		return await super.count(select)
+	}
+
 	async delete() {
-		console.log(this.row)
-		console.log('hit')
-		if(!this.row?.id){
+		if (!this.row?.id) {
 			return
 		}
-		console.log('PASSED')
-
 
 		this.where_clauses = [new WhereQuery('id', this.row.id)]
 		await super.delete()

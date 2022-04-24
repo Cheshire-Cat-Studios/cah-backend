@@ -2,6 +2,8 @@ const redis_client = require('../../redis'),
     Game = require('../../../models/Game')
 
 module.exports = async (io, socket, redis_keys) => {
+    console.log('GAME ENDED')
+
     await redis_client.del(redis_keys.game.state)
     await redis_client.del(redis_keys.game.deck)
     await redis_client.del(redis_keys.game.players)

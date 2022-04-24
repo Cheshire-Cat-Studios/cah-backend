@@ -17,7 +17,7 @@ module.exports = route => {
 	route()
 		.setMiddleware([
 			new Auth,
-			new Throttle,
+			new Throttle(200, 10),
 		])
 		.get('verify',user_controller.verify)
 }

@@ -3,7 +3,7 @@ const redis_client = require('../redis'),
 
 module.exports = async (io, socket, redis_keys, data) => {
 	const card_count = ((await redis_client.lRange(redis_keys.game.deck, 0, 0))[0].match(/_/g) || [1]).length,
-		deleted_placeholder = '(*&^%$RFGHJU)afea',
+		deleted_placeholder = '(*&^%$RFGHJU)afea',//TODO: this surely can be done better?
 		current_czar_uuid = await redis_client.hGet(redis_keys.game.state, 'current_czar')
 
 	let cards = []

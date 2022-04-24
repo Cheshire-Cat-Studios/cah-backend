@@ -79,6 +79,7 @@ module.exports = async (io, socket, redis_keys) => {
 			.forEach(uuid => {
 				cards_in_play[uuid] = JSON.parse(cards_in_play[uuid])
 			})
+
 		game_data.cards_in_play = cards_in_play
 	} else {
 		const player_cards_in_play = await redis_client.hGet(redis_keys.game.cards_in_play, socket.user.uuid),

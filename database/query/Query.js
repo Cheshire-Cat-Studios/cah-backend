@@ -194,19 +194,18 @@ module.exports = class Query {
 			: null
 	}
 
-	count(count_fields = '*') {
+	async count(count_fields = '*') {
 		const count_column = `COUNT (${count_fields})`
 
 		this.selects = [count_column]
 
 		this.handleSelect()
 
-		// const data = (new DatabaseService)
-		// 	.database
-		// 	.prepare(this.query.sql)
-		// 	.get(this.query.bindings)
-		//
-		// return data[count_column]
+		const results = await mysql.query(this.query.sql, this.query.bindings)
+
+		return results.length
+			? results[0][count_column]
+			: 0
 	}
 
 	async first() {

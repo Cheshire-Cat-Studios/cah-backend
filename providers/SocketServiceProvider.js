@@ -89,7 +89,8 @@ module.exports = class AppServiceProvider extends ServiceProvider {
 									return
 								}
 
-								disconnect(io, socket, redis_keys)
+								//TODO: re-impliment
+								// disconnect(io, socket, redis_keys)
 							},
 							2000//TODO: change to config or env val
 						)
