@@ -1,6 +1,6 @@
 const redis_client = require('../redis'),
     user_deck = require('../../config/decks/whiteCards'),
-    game_deck = require('../../config/decks/BlackCards'),
+    game_deck = require('../../config/decks/blackCards'),
     JSON5 = require('json5'),
     shuffle = require('lodash.shuffle'),
     Game = require('../../models/Game'),
