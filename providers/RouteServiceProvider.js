@@ -1,5 +1,4 @@
-const ServiceProvider = require('./ServiceProvider'),
-	middleware = require('../middleware')
+const ServiceProvider = require('./ServiceProvider')
 
 //TODO: move the route mapping logic into a module so it can be reused for route() helper and route cli logic
 module.exports = class RouteServiceProvider extends ServiceProvider {
