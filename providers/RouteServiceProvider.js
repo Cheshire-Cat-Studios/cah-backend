@@ -59,12 +59,8 @@ module.exports = class RouteServiceProvider extends ServiceProvider {
 			...(parent.middleware || []),
 			...route.middleware,
 		]
-			.map(name => (req, res, next) => {
-				const middleware_closure = middleware[name]
-
-				typeof name === 'string'
-					? middleware[middleware_closure].handle(req, res, next)
-					: name.handle(req, res, next)
+			.map(middleware => (req, res, next) => {
+				middleware.handle(req, res, next)
 			})
 
 		//TODO: consider wrapping below similar to above to allow for more complex controllers and middleware
