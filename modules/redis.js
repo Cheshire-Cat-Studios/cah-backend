@@ -2,7 +2,10 @@
 const redis = require('redis'),
 	redis_client = redis.createClient({
 		port: process.env.REDIS_PORT,
-		url: process.env.REDIS_HOST,
+		host: process.env.REDIS_HOST,
+		username: process.env.REDIS_USERNAME,
+		password: process.env.REDIS_PASSWORD,
+		// tls: process.env.REDIS_TLS == 'true' ? true : false,
 	})
 
 let is_connected = false;
