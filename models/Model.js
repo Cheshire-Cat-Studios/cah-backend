@@ -69,11 +69,10 @@ module.exports = class Model extends Query {
 	}
 
 	async update(data) {
-		if (!this.row?.id) {
-			return
+		//TODO: add update all protection? - config/env val
+		if (this.row?.id) {
+			this.where_clauses = [new WhereQuery('id', this.row.id)]
 		}
-
-		this.where_clauses = [new WhereQuery('id', this.row.id)]
 
 		Object.keys(data)
 			.forEach(column => this.row[column] = data[column])

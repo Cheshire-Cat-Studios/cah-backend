@@ -1,7 +1,5 @@
 # Read me
-
 ## Installation
-
 This projcet has been docker-ised, in order to start a local docker instance of this project run ``docker-compose up``
 On initial start up and for testing purposes you will want to initialise/reset the database and redis data you can do this using the below commands 
 - to reset/initialise the database run ``docker exec jester_node_1 migrate --fresh``

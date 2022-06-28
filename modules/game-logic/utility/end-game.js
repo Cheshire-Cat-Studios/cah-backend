@@ -21,12 +21,11 @@ module.exports = async (io, socket, redis_keys) => {
     const players = players_unmapped
         .map(player => player.row.uuid)
 
-    game.players()
+    await game.players()
         .handle()
         .update({
             'current_game': null,
         })
-
 
     for (const uuid of players) {
         await redis_client.del(`players.${uuid}.deck`)

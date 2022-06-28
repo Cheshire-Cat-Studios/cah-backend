@@ -1,10 +1,11 @@
-//TODO: rethink structure, perhaps a modules folder or stateful folder is needed? going the module route makes a lot more sense for node.js
+//TODO: url is insecure, consider how i can use host with dev details
 const redis = require('redis'),
 	redis_client = redis.createClient({
-		port: process.env.REDIS_PORT,
-		host: process.env.REDIS_HOST,
-		username: process.env.REDIS_USERNAME,
-		password: process.env.REDIS_PASSWORD,
+		url: process.env.REDIS_CRED_STR,
+		// port: process.env.REDIS_PORT,
+		// host: process.env.REDIS_HOST,
+		// username: process.env.REDIS_USERNAME,
+		// password: process.env.REDIS_PASSWORD,
 		// tls: process.env.REDIS_TLS == 'true' ? true : false,
 	})
 
