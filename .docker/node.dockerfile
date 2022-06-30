@@ -14,4 +14,4 @@ COPY ./ /usr/src/app
 CMD ["npm", "run", "watch"]
 #CMD [ "node", "app" ]
 
-EXPOSE 4005
+#EXPOSE 4005
