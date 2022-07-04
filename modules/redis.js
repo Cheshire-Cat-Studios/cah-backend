@@ -1,19 +1,26 @@
-//TODO: url is insecure, consider how i can use host with dev details
 const redis = require('redis'),
+	fs = require('fs'),
+	tls = !!process.env.REDIS_TLS_FILENAME,
 	redis_client = redis.createClient({
-		url: process.env.REDIS_CRED_STR,
-		// port: process.env.REDIS_PORT,
-		// host: process.env.REDIS_HOST,
-		// username: process.env.REDIS_USERNAME,
-		// password: process.env.REDIS_PASSWORD,
-		// tls: process.env.REDIS_TLS == 'true' ? true : false,
+		//DOCKER
+		socket: {
+			port: process.env.REDIS_PORT,
+			host: process.env.REDIS_HOST,
+			tls,
+			cert: tls
+				? fs.readFileSync(`./certs/${process.env.REDIS_TLS_FILENAME}`, 'ascii')
+				: undefined
+		},
+		username: process.env.REDIS_USERNAME,
+		password: process.env.REDIS_PASSWORD,
 	})
+
 
 let is_connected = false;
 
 
 (async () => {
-	if(!is_connected){
+	if (!is_connected) {
 		await redis_client.connect()
 	}
 
