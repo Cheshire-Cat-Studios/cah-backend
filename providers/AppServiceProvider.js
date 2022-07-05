@@ -30,7 +30,7 @@ const sendJsend = require('../helpers/sendJsend'),
             .server = this.app.listen(
                 `${process.env.PORT}`,
                 () => {
-                    console.log(`Server started on port ${process.env.PORT}`)
+                    console.log(`Server started on ${process.env.HOST || '127.0.0.1'}:${process.env.PORT}`)
                 }
             )
     }

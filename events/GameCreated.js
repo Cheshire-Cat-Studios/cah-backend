@@ -10,14 +10,11 @@ const Event = require('./Event'),
 
 module.exports = class GameCreated extends Event {
 	constructor() {
-		console.log(111111111)
 		super('game_created', true)
 	}
 
 	//TODO: only id is used, probably best to only pass to the event exactly whats used?
 	async handle(game_data) {
-		console.log(game_data.id)
-
 		//TODO: consider storing players data to another hash key set?
 		await redis_client.sendCommand([
 			'HMSET',

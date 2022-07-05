@@ -14,7 +14,6 @@ module.exports = {
 	},
 	applyMiddleware() {
 		this.io.use(async (socket, next) => {
-			console.log('middleware hit')
 			try {
 				const uuid = verify(
 					socket.handshake?.query?.token,

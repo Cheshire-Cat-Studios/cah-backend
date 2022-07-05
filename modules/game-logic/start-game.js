@@ -25,7 +25,6 @@ module.exports = async (io, socket, redis_keys) => {
 	await redis_client.hSet(redis_keys.game.state, 'current_czar', czar)
 	await redis_client.hSet(redis_keys.game.state, 'is_started', 'true');
 
-
 	(await io.in('game.' + socket.user.current_game).fetchSockets())
 		.forEach(user_socket => {
 			user_socket.emit(

@@ -30,15 +30,16 @@ module.exports = class AppServiceProvider extends ServiceProvider {
 	}
 
 	handle() {
-		//TODO: modularise server?
 		const io = socketIoModule
 			.initialise(this.app.globals.server)
 			.applyMiddleware()
 			.io
 
+		//Move listeners logic into a module?
 		io.on(
 			'connection',
 			async socket => {
+				//Abstract this into a socket mapper class?
 				const game_redis_keys = {
 						state: `game.${socket.user.current_game}.state`,
 						deck: `game.${socket.user.current_game}.deck`,
@@ -74,7 +75,7 @@ module.exports = class AppServiceProvider extends ServiceProvider {
 				socket.on(
 					'start-game',
 					async () => {
-						startGame(io,socket,redis_keys)
+						startGame(io, socket, redis_keys)
 					}
 				)
 
@@ -90,6 +91,7 @@ module.exports = class AppServiceProvider extends ServiceProvider {
 									return
 								}
 
+								// console.log(123)
 								//TODO: re-impliment
 								// disconnect(io, socket, redis_keys)
 							},
@@ -101,6 +103,14 @@ module.exports = class AppServiceProvider extends ServiceProvider {
 				socket.on(
 					'leave',
 					() => {
+						disconnect(io, socket, redis_keys)
+					}
+				)
+
+				socket.on(
+					'error',
+					e => {
+						console.error(e)
 						disconnect(io, socket, redis_keys)
 					}
 				)
