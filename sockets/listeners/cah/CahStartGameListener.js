@@ -1,6 +1,6 @@
-const CahListener = require('./CahListener')
-const Game = require('../../../models/Game')
-const redis_client = require('../../../modules/redis')
+const
+	CahListener = require('./CahListener'),
+	Game = require('../../../models/Game')
 
 module.exports = class CahStartGameListener extends CahListener {
 	async handle() {
@@ -23,8 +23,8 @@ module.exports = class CahStartGameListener extends CahListener {
 			.row
 			.uuid
 
-		redis_client.hSet(this.getGameRedisKey('state'), 'current_czar', czar)
-		redis_client.hSet(this.getGameRedisKey('state'), 'is_started', 'true');
+		this.redis.hSet(this.getGameRedisKey('state'), 'current_czar', czar)
+		this.redis.hSet(this.getGameRedisKey('state'), 'is_started', 'true');
 
 		(await this.io.in('game.' + this.socket.user.current_game).fetchSockets())
 			.forEach(user_socket => {

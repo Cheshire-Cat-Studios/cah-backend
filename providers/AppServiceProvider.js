@@ -8,8 +8,7 @@ const
 
 //TEMP DOCKER TESTING
 const sendJsend = require('../helpers/sendJsend'),
-    redis_client = require('../modules/redis'),
-    mysql = require('../modules/mysql')
+    redis_client = require('../modules/redis')
 
 
     module.exports = class AppServiceProvider extends ServiceProvider {

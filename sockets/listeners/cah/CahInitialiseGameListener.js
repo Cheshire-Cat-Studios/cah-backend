@@ -1,16 +1,16 @@
-const CahListener = require('./CahListener')
-const Game = require('../../../models/Game')
-const redis_client = require('../../../modules/redis')
-const shuffle = require('lodash.shuffle')
-const user_deck = require('../../../config/decks/whiteCards.json')
-const JSON5 = require('json5')
+const
+	CahListener = require('./CahListener'),
+	Game = require('../../../models/Game'),
+	shuffle = require('lodash.shuffle'),
+	user_deck = require('../../../config/decks/whiteCards.json'),
+	JSON5 = require('json5')
 
 module.exports = class CahInitialiseGameListener extends CahListener {
 	async handle() {
-		await redis_client.set(this.getPlayerRedisKey('is_active'), 'true')
+		await this.redis.set(this.getPlayerRedisKey('is_active'), 'true')
 
-		if (!await redis_client.hExists(this.getGameRedisKey('players'), this.socket.user.uuid)) {
-			await redis_client.hSet(
+		if (!await this.redis.hExists(this.getGameRedisKey('players'), this.socket.user.uuid)) {
+			await this.redis.hSet(
 				this.getGameRedisKey('players'),
 				this.socket.user.uuid,
 				`{score:0,name:'${this.socket.user.name}'}`
@@ -28,26 +28,25 @@ module.exports = class CahInitialiseGameListener extends CahListener {
 			.row
 			.host_id
 
-		// !await redis_client.hGet(this.getGameRedisKey('state'), 'current_czar')
-		// && await redis_client.hLen(this.getGameRedisKey('players')) === 1
-		// && await redis_client.hSet(this.getGameRedisKey('state'), 'current_czar', this.socket.user.uuid)
+		// !await this.redis.hGet(this.getGameRedisKey('state'), 'current_czar')
+		// && await this.redis.hLen(this.getGameRedisKey('players')) === 1
+		// && await this.redis.hSet(this.getGameRedisKey('state'), 'current_czar', this.socket.user.uuid)
+		!await this.redis.exists(this.getPlayerRedisKey('deck'))
+		&& await this.redis.lPush(this.getPlayerRedisKey('deck'), shuffle(user_deck))
 
-		!await redis_client.exists(this.getPlayerRedisKey('deck'))
-		&& await redis_client.lPush(this.getPlayerRedisKey('deck'), shuffle(user_deck))
-
-		!await redis_client.exists(this.getPlayerRedisKey('hands'))
-		&& await redis_client.lPush(
-			this.getPlayerRedisKey('hands'),
+		!await this.redis.exists(this.getPlayerRedisKey('hand'))
+		&& await this.redis.lPush(
+			this.getPlayerRedisKey('hand'),
 			//LPOP node-redis method doesnt allow for length being specified
-			await redis_client.sendCommand([
+			await this.redis.sendCommand([
 				'LPOP',
 				this.getPlayerRedisKey('deck'),
 				'10',
 			]),
 		)
 
-		const current_czar = await redis_client.hGet(this.getGameRedisKey('state'), 'current_czar'),
-			redis_players = await redis_client.hGetAll(this.getGameRedisKey('players')),
+		const current_czar = await this.redis.hGet(this.getGameRedisKey('state'), 'current_czar'),
+			redis_players = await this.redis.hGetAll(this.getGameRedisKey('players')),
 			parsed_players = Object.keys(redis_players)
 				.map(uuid => {
 					const data = JSON5.parse(redis_players[uuid])
@@ -64,18 +63,18 @@ module.exports = class CahInitialiseGameListener extends CahListener {
 		//TODO: move join to middleware?
 		this.socket.join('game.' + this.socket.user.current_game)
 
-		const is_czar_phase = JSON.parse(await redis_client.hGet(this.getGameRedisKey('state'), 'is_czar_phase')),
+		const is_czar_phase = JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_czar_phase')),
 			game_data = {
 				players: parsed_players,
-				is_czar_phase: JSON.parse(await redis_client.hGet(this.getGameRedisKey('state'), 'is_czar_phase')),
-				current_card: (await redis_client.lRange(this.getGameRedisKey('state'), 0, 0))[0],
-				is_current_czar: this.socket.user.uuid === await redis_client.hGet(this.getGameRedisKey('state'), 'current_czar'),
-				is_started: JSON.parse(await redis_client.hGet(this.getGameRedisKey('state'), 'is_started')),
+				is_czar_phase: JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_czar_phase')),
+				current_card: (await this.redis.lRange(this.getGameRedisKey('deck'), 0, 0))[0],
+				is_current_czar: this.socket.user.uuid === await this.redis.hGet(this.getGameRedisKey('state'), 'current_czar'),
+				is_started: JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_started')),
 				is_host: host_id === this.socket.user.id,
 			}
 
 		if (is_czar_phase) {
-			let cards_in_play = await redis_client.hGetAll(this.getGameRedisKey('cards_in_play'))
+			let cards_in_play = await this.redis.hGetAll(this.getGameRedisKey('cards_in_play'))
 
 			Object.keys(cards_in_play)
 				.forEach(uuid => {
@@ -84,8 +83,8 @@ module.exports = class CahInitialiseGameListener extends CahListener {
 
 			game_data.cards_in_play = cards_in_play
 		} else {
-			const player_cards_in_play = await redis_client.hGet(this.getGameRedisKey('cards_in_play'), this.socket.user.uuid),
-				in_play_count = await redis_client.hLen(this.getGameRedisKey('cards_in_play'), this.socket.user.uuid)
+			const player_cards_in_play = await this.redis.hGet(this.getGameRedisKey('cards_in_play'), this.socket.user.uuid),
+				in_play_count = await this.redis.hLen(this.getGameRedisKey('cards_in_play'), this.socket.user.uuid)
 
 			game_data.own_cards_in_play = JSON.parse(player_cards_in_play)
 			game_data.cards_in_play_count = player_cards_in_play ? (in_play_count - 1) : in_play_count
@@ -96,7 +95,7 @@ module.exports = class CahInitialiseGameListener extends CahListener {
 			'game-state',
 			{
 				game: game_data,
-				hand: await redis_client.lRange(this.getPlayerRedisKey('hands'), 0, -1),
+				hand: await this.redis.lRange(this.getPlayerRedisKey('hand'), 0, -1),
 			}
 		)
 	}

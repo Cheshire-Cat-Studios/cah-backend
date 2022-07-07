@@ -1,24 +1,23 @@
 const
 	CahListener = require('./CahListener'),
-	redis_client = require('../../../modules/redis'),
 	JSON5 = require('json5')
 
 module.exports = class CahLeaveListener extends CahListener {
 	async handle(data) {
 		const card_count = (
-				(await redis_client.lRange(this.getGameRedisKey('deck'), 0, 0))[0].match(/_/g) || [1]
+				(await this.redis.lRange(this.getGameRedisKey('deck'), 0, 0))[0].match(/_/g) || [1]
 			).length,
 			deleted_placeholder = '(*&^%$RFGHJU)afea',//TODO: this surely can be done better?
-			current_czar_uuid = await redis_client.hGet(this.getGameRedisKey('state'), 'current_czar')
+			current_czar_uuid = await this.redis.hGet(this.getGameRedisKey('state'), 'current_czar')
 
 		let cards = []
 
 		// if user is current czar, is currently the czar phase, already chosen cards, data isn't an array, data contains non ints, data isn't a unique set. return and ignore event
 		if (
-			!JSON.parse(await redis_client.hGet(this.getGameRedisKey('state'), 'is_started'))
+			!JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_started'))
 			|| current_czar_uuid === this.socket.user.uuid
-			|| JSON.parse(await redis_client.hGet(this.getGameRedisKey('state'), 'is_czar_phase'))
-			|| await redis_client.hExists(this.getGameRedisKey('cards_in_play'), this.socket.user.uuid)
+			|| JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_czar_phase'))
+			|| await this.redis.hExists(this.getGameRedisKey('cards_in_play'), this.socket.user.uuid)
 			|| !Array.isArray(data)
 			|| data.filter(datum => typeof (datum) !== 'number').length
 			|| new Set(data).size !== data.length
@@ -28,7 +27,7 @@ module.exports = class CahLeaveListener extends CahListener {
 		}
 
 		for (const index of data) {
-			cards.push(await redis_client.lIndex(this.getPlayerRedisKey('hand'), `${index}`))
+			cards.push(await this.redis.lIndex(this.getPlayerRedisKey('hand'), `${index}`))
 		}
 
 		if (cards.filter(card => !card).length) {
@@ -36,17 +35,17 @@ module.exports = class CahLeaveListener extends CahListener {
 		}
 
 		for (const index of data) {
-			await redis_client.lSet(this.getPlayerRedisKey('hand'), `${index}`, deleted_placeholder)
+			await this.redis.lSet(this.getPlayerRedisKey('hand'), `${index}`, deleted_placeholder)
 		}
 
-		await redis_client.lRem(this.getPlayerRedisKey('hand'), card_count, deleted_placeholder)
-		await redis_client.hSet(this.getGameRedisKey('cards_in_play'), this.socket.user.uuid, JSON.stringify(cards))
+		await this.redis.lRem(this.getPlayerRedisKey('hand'), card_count, deleted_placeholder)
+		await this.redis.hSet(this.getGameRedisKey('cards_in_play'), this.socket.user.uuid, JSON.stringify(cards))
 
 		//TODO: rethink below might have issues if people quit, maybe check if everyone else has selected when players quit, force czar phase if so
-		if (await redis_client.hLen(this.getGameRedisKey('cards_in_play')) === (await redis_client.hLen(this.getGameRedisKey('players'))) - 1) {
-			await redis_client.hSet(this.getGameRedisKey('state'), 'is_czar_phase', JSON.stringify(true))
+		if (await this.redis.hLen(this.getGameRedisKey('cards_in_play')) === (await this.redis.hLen(this.getGameRedisKey('players'))) - 1) {
+			await this.redis.hSet(this.getGameRedisKey('state'), 'is_czar_phase', JSON.stringify(true))
 
-			let cards_in_play = await redis_client.hGetAll(this.getGameRedisKey('cards_in_play'))
+			let cards_in_play = await this.redis.hGetAll(this.getGameRedisKey('cards_in_play'))
 
 			Object.keys(cards_in_play)
 				.forEach(uuid => {
@@ -58,7 +57,7 @@ module.exports = class CahLeaveListener extends CahListener {
 					'czar-phase-start',
 					{
 						cards_in_play: cards_in_play,
-						czar_name: JSON5.parse(await redis_client.hGet(this.getGameRedisKey('players'), current_czar_uuid)).name
+						czar_name: JSON5.parse(await this.redis.hGet(this.getGameRedisKey('players'), current_czar_uuid)).name
 					}
 				)
 		} else {

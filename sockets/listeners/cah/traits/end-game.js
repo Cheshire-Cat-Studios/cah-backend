@@ -1,16 +1,14 @@
-const redis_client = require('../../redis'),
-	Game = require('../../../models/Game')
+const redis_client = require('../../../../modules/redis'),
+	Game = require('../../../../models/Game')
 
 module.exports = () => ({
-	endGame: async () => {
-		console.log('GAME ENDED')
+	async endGame(){
+		this.redis.del(this.getGameRedisKey('state'))
+		this.redis.del(this.getGameRedisKey('deck'))
+		this.redis.del(this.getGameRedisKey('players'))
+		this.redis.del(this.getGameRedisKey('cards_in_play'))
 
-		redis_client.del(this.getGameRedisKey('state'))
-		redis_client.del(this.getGameRedisKey('deck'))
-		redis_client.del(this.getGameRedisKey('players'))
-		redis_client.del(this.getGameRedisKey('cards_in_play'))
-
-		const game = await new Game().find(socket.user.current_game)
+		const game = await new Game().find(this.socket.user.current_game)
 
 		game.delete()
 
@@ -29,9 +27,9 @@ module.exports = () => ({
 			.map(player => player.row.uuid)
 
 		for (const uuid of players) {
-			redis_client.del(this.getPlayerRedisKey('deck', uuid))
-			redis_client.del(this.getPlayerRedisKey('hand', uuid))
-			redis_client.del(this.getPlayerRedisKey('is_active', uuid))
+			this.redis.del(this.getPlayerRedisKey('deck', uuid))
+			this.redis.del(this.getPlayerRedisKey('hand', uuid))
+			this.redis.del(this.getPlayerRedisKey('is_active', uuid))
 		}
 	}
 })

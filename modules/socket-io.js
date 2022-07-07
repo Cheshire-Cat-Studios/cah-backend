@@ -31,19 +31,13 @@ module.exports = {
 						.row
 				)
 
-				console.log(
-					uuid,
-
-				)
-
 				//if user has a game and the game has its state stored in redis, allow the user to connect
-
 				socket.user.current_game
 				&& await redis_client.exists(`game.${socket.user.current_game}.state`)
 					? next()
 					: socket.disconnect()
 			} catch (e) {
-				console.log('disconnected')
+				console.log('socket middleware failed')
 
 				socket.disconnect()
 			}

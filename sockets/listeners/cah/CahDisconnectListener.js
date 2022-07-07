@@ -1,10 +1,10 @@
-const CahListener = require('./CahListener')
-const Game = require('../../../models/Game')
-const User = require('../../../models/User')
-const redis_client = require('../../../modules/redis')
-const randomiseArray = require('../../../helpers/randomiseArray')
-const colour = require('../../../helpers/colour')
-const JSON5 = require('json5')
+const
+	CahListener = require('./CahListener'),
+	Game = require('../../../models/Game'),
+	User = require('../../../models/User'),
+	randomiseArray = require('../../../helpers/randomiseArray'),
+	colour = require('../../../helpers/colour'),
+	JSON5 = require('json5')
 
 module.exports = class CahDisconnectListener extends CahListener {
 	async handle() {
@@ -28,102 +28,94 @@ module.exports = class CahDisconnectListener extends CahListener {
 			current_game: null
 		})
 
-		const players = await game.players()
-				.handle()
-				.where('id', '<>', user.row.id)
-				.get(),
-			name_of_left = user.row.name,
-			players_in_play = await redis_client.hLen(this.getGameRedisKey('cards_in_play'))
+		//Delete all player related redis data
+		this.redis.del(this.getPlayerRedisKey('is_active'))
+		this.redis.del(this.getPlayerRedisKey('deck'))
+		this.redis.del(this.getPlayerRedisKey('hand'))
+		await this.redis.hDel(this.getGameRedisKey('cards_in_play'), user.row.uuid)
 
-		let is_czar_phase = JSON.parse(await redis_client.hGet(this.getGameRedisKey('state'), 'is_czar_phase')),
-			new_czar
+		//Remove leaving player from scoreboard
+		this.redis.hDel(this.getGameRedisKey('players'), user.row.uuid)
 
-//Delete all player related redis data
-		await redis_client.del(this.getPlayerRedisKey('is_active'))
-		await redis_client.del(this.getPlayerRedisKey('deck'))
-		await redis_client.del(this.getPlayerRedisKey('hand'))
-		await redis_client.hDel(this.getGameRedisKey('cards_in_play'), user.row.uuid)
-
-		// this.getGameRedisKey
-//Remove leaving player from scoreboard
-		await redis_client.hDel(this.getGameRedisKey('players'), user.row.uuid)
-
-//Leave game room and disconnect socket
+		//Leave game room and disconnect socket
 		this.socket.leave('game.' + game.row.id)
 		this.socket.disconnect()
 
-//If the game now has no players, delete it and exit
-		if (
-			!players?.length
-		) {
+		const
+			players = await game.players()
+				.handle()
+				.where('id', '<>', user.row.id)
+				.get(),
+			name_of_left = user.row.name
 
-			await redis_client.del(this.getGameRedisKey('state'))
-			await redis_client.del(this.getGameRedisKey('deck'))
-			await redis_client.del(this.getGameRedisKey('players'))
-			await redis_client.del(this.getGameRedisKey('cards_in_play'))
+		//If the game now has no players, delete it and exit
+		if (!players?.length) {
+			this.redis.del(this.getGameRedisKey('state'))
+			this.redis.del(this.getGameRedisKey('deck'))
+			this.redis.del(this.getGameRedisKey('players'))
+			this.redis.del(this.getGameRedisKey('cards_in_play'))
 
-			await game.delete()
+			game.delete()
 
 			return
 		}
 
+		const players_in_play = await this.redis.hLen(this.getGameRedisKey('cards_in_play'))
 
-//If the game hasn't started there will be no game data to run logic against
-//TODO: empty game check before this!
-		if (!JSON.parse(await redis_client.hGet(this.getGameRedisKey('state'), 'is_started'))) {
+		let is_czar_phase = JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_czar_phase')),
+			new_czar
+
+
+		//If the game hasn't started there will be no game data to run logic against
+		//TODO: empty game check before this!
+		if (!JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_started'))) {
 			return
 		}
 
-		const czar_is_leaving = (await redis_client.hGet(this.getGameRedisKey('state'), 'current_czar')) === user.row.uuid
+		const czar_is_leaving = (await this.redis.hGet(this.getGameRedisKey('state'), 'current_czar')) === user.row.uuid
 
 		if (czar_is_leaving) {
 			new_czar = randomiseArray(players)
 
 			//cycle czar
-			await redis_client.hSet(this.getGameRedisKey('state'), 'current_czar', new_czar.row.uuid)
+			await this.redis.hSet(this.getGameRedisKey('state'), 'current_czar', new_czar.row.uuid)
 
 			// Return any cards the new czar had in play to their hand
-			const new_czar_cards_in_play = await redis_client.hGet(this.getGameRedisKey('cards_in_play'), new_czar.row.uuid)
-			await redis_client.hDel(this.getGameRedisKey('cards_in_play'), new_czar.row.uuid)
+			const new_czar_cards_in_play = await this.redis.hGet(this.getGameRedisKey('cards_in_play'), new_czar.row.uuid)
+			await this.redis.hDel(this.getGameRedisKey('cards_in_play'), new_czar.row.uuid)
 
 			// If the new czar has them in play return them to their hand
 			new_czar_cards_in_play
-			&& await redis_client.rPush(
+			&& await this.redis.rPush(
 				this.getPlayerRedisKey('hand', new_czar.row.uuid),
 				JSON.parse(new_czar_cards_in_play)
 			)
 		}
 
-//TODO: duplicate logic, abstract out
-// console.log(
-// 	!is_czar_phase,
-// 	players.length,
-// 	players_in_play
-// )
-
-//If theres no one left in play set the czar phase to false
+		//If theres no one left in play set the czar phase to false
 		if (
 			is_czar_phase
-			&& players_in_play === 1
+			&& players_in_play <= 1
 		) {
 			colour.warning('SETTING CZSAR PHASE TO FALSE')
-			await redis_client.hSet(this.getGameRedisKey('state'), 'is_czar_phase', JSON.stringify(false))
+			await this.redis.hSet(this.getGameRedisKey('state'), 'is_czar_phase', JSON.stringify(false))
 
 			is_czar_phase = false
 		}
 
-//If it isnt the czar phase and everyone left has chosen, start it
+		//If it isnt the czar phase and everyone left has chosen, start it
 		if (
 			!is_czar_phase
+			&& players_in_play
 			&& (players.length - 1) === players_in_play
 		) {
-			await redis_client.hSet(this.getGameRedisKey('state'), 'is_czar_phase', JSON.stringify(true))
+			await this.redis.hSet(this.getGameRedisKey('state'), 'is_czar_phase', JSON.stringify(true))
 
+			console.log('HIT START CZAR PAHSE')
 			is_czar_phase = true
 		}
 
-
-//If leaving user is the host change the host to a random player
+		//If leaving user is the host change the host to a random player
 		if (game.row.host_id === user.row.id) {
 			const new_host = randomiseArray(players)
 
@@ -134,12 +126,12 @@ module.exports = class CahDisconnectListener extends CahListener {
 			})
 		}
 
-//Get all generic data that will be emited to all players and the actively connected players
+		//Get all generic data that will be emited to all players and the actively connected players
 		const
-			redis_players = await redis_client.hGetAll(this.getGameRedisKey('players')),
+			redis_players = await this.redis.hGetAll(this.getGameRedisKey('players')),
 			current_czar = czar_is_leaving
 				? new_czar?.row?.uuid
-				: await redis_client.hGet(this.getGameRedisKey('state'), 'current_czar'),
+				: await this.redis.hGet(this.getGameRedisKey('state'), 'current_czar'),
 			// Get scoreboard data and reduce/map for FE consumption
 			scoreboard = Object.keys(redis_players)
 				.map(uuid => {
@@ -163,7 +155,7 @@ module.exports = class CahDisconnectListener extends CahListener {
 					},
 					{}
 				),
-			cards_in_play = await redis_client.hGetAll(this.getGameRedisKey('cards_in_play')),
+			cards_in_play = await this.redis.hGetAll(this.getGameRedisKey('cards_in_play')),
 			generic_emit_data = {
 				scoreboard,
 				is_czar_phase,
@@ -171,13 +163,13 @@ module.exports = class CahDisconnectListener extends CahListener {
 				cards_in_play,
 			}
 
-//Loop through connected sockets and emit that the user has left and the new state of the game
+		//Loop through connected sockets and emit that the user has left and the new state of the game
 		for (const player of players) {
-			user_sockets[player.row.uuid].emit(
+			user_sockets[player.row.uuid]?.emit(
 				'player-left',
 				{
 					...generic_emit_data,
-					hand: await redis_client.lRange(this.getPlayerRedisKey('hand', player.row.uuid), 0, -1),
+					hand: await this.redis.lRange(this.getPlayerRedisKey('hand', player.row.uuid), 0, -1),
 					is_czar: current_czar === player.row.uuid,
 					is_host: player.row.is_host,
 					name_of_left: name_of_left,

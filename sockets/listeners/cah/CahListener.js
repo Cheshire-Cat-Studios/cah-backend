@@ -2,15 +2,16 @@ module.exports = class CahListener {
 	socket = null
 	io = null
 	keys = require('../../../config/redis/keys')
+	redis = require('../../../modules/redis')
 
 	setSocket(socket) {
-		this.socket = this.socket
+		this.socket = socket
 
 		return this
 	}
 
 	setIo(io) {
-		this.io = this.io
+		this.io = io
 
 		return this
 	}
