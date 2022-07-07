@@ -3,7 +3,6 @@ const applyTraits = require('../../helpers/applyTraits'),
 	JoinQuery = require('./JoinQuery'),
 	WhereQuery = require('./WhereQuery'),
 	mysql = require('../../modules/mysql')
-// DatabaseService = require('../../services/DatabaseService')
 
 module.exports = class Query {
 	constructor() {
@@ -165,10 +164,6 @@ module.exports = class Query {
 		this.handleWheres()
 
 		await mysql.query(this.query.sql, this.query.bindings)
-		// (new DatabaseService)
-		// 	.database
-		// 	.prepare(this.query.sql)
-		// 	.run(this.query.bindings)
 	}
 
 	async delete() {
@@ -225,11 +220,6 @@ module.exports = class Query {
 		this.select('id')
 
 		this.handleSelect()
-
-		// return !!(new DatabaseService)
-		// 	.database
-		// 	.prepare(this.query.sql)
-		// 	.get(this.query.bindings)
 	}
 
 	async find(id) {
