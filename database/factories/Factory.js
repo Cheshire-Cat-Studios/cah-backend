@@ -1,8 +1,15 @@
 module.exports = class Factory {
 	constructor() {
 		this.model = null
-		this.faker = require('faker')
+		this.faker = require('@faker-js/faker').faker
 		this.count = 1
+		this.row = {}
+	}
+
+	setRow(row){
+		this.row = row
+
+		return this
 	}
 
 	setCount(count) {
@@ -15,12 +22,15 @@ module.exports = class Factory {
 		return {}
 	}
 
-	store() {
-		this.model
+	async store() {
+		return await this.model
 			.insert(
 				Array(this.count)
 					.fill()
-					.map(() => this.schema())
+					.map(() => ({
+						...this.schema(),
+						...this.row
+					}))
 			)
 	}
 }

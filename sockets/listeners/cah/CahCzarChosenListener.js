@@ -46,8 +46,7 @@ module.exports = class CahLeaveListener extends CahListener {
 
 		if (player_data.score >= parseInt(await this.redis.hGet(this.getGameRedisKey('state'), 'max_score'))) {
 
-			//TODO:: ffs
-			this.endGame()
+			// this.endGame()
 
 			this.io.to('game.' + this.socket.user.current_game)
 				.emit('game-won', player_data)

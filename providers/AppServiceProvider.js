@@ -22,15 +22,13 @@ const sendJsend = require('../helpers/sendJsend'),
         this.app
             .use(express.json())
 
-        this.app.globals = {}
-
-        this.app
-            .globals
-            .server = this.app.listen(
-                `${process.env.PORT}`,
-                () => {
-                    console.log(`Server started on ${process.env.HOST || '127.0.0.1'}:${process.env.PORT}`)
-                }
-            )
+        // this.app
+        //     .globals
+        //     .server = this.app.listen(
+        //         `${process.env.PORT}`,
+        //         () => {
+        //             console.log(`Server started on ${process.env.HOST || '127.0.0.1'}:${process.env.PORT}`)
+        //         }
+        //     )
     }
 }

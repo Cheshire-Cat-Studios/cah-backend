@@ -1,5 +1,4 @@
 const Model = require('./Model'),
-	// User =,
 	BelongsTo = require('./relationships/BelongsTo'),
 	HasMany = require('./relationships/HasMany')
 

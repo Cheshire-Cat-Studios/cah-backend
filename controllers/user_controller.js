@@ -43,9 +43,10 @@ module.exports = {
 		const token = sign(
 			{uuid: req.user_model.row.uuid},
 			process.env.JWT_ACCESS_TOKEN_SECRET,
-			{
-				expiresIn: parseInt(process.env.JWT_ACCESS_TOKEN_LIFE)
-			}
+			// {
+			// 	expiresIn: 10000000000000000
+				// expiresIn: parseInt(process.env.JWT_ACCESS_TOKEN_LIFE)
+			// }
 		)
 
 		sendJsend(

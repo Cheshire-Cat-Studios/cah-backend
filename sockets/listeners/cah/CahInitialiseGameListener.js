@@ -28,9 +28,6 @@ module.exports = class CahInitialiseGameListener extends CahListener {
 			.row
 			.host_id
 
-		// !await this.redis.hGet(this.getGameRedisKey('state'), 'current_czar')
-		// && await this.redis.hLen(this.getGameRedisKey('players')) === 1
-		// && await this.redis.hSet(this.getGameRedisKey('state'), 'current_czar', this.socket.user.uuid)
 		!await this.redis.exists(this.getPlayerRedisKey('deck'))
 		&& await this.redis.lPush(this.getPlayerRedisKey('deck'), shuffle(user_deck))
 

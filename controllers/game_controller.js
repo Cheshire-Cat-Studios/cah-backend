@@ -1,11 +1,15 @@
-const sendJsend = require('../helpers/sendJsend'),
+const
+	sendJsend = require('../helpers/sendJsend'),
 	Query = require('../database/query/Query'),
 	Game = require('../models/Game'),
 	createUniqueId = require('../helpers/createUniqueId'),
-	EventEmitter =  require('../modules/event-handler')
+	EventEmitter = require('../modules/event-handler'),
+	redis_client = require('../modules/redis'),
+	shuffle = require('lodash.shuffle'),
+	game_deck = require('../config/decks/blackCards.json'),
+	eventHandler = require('../modules/event-handler')
 
-	module.exports = {
-
+module.exports = {
 	async index(req, res) {
 		//TODO: add filter logic here, should be a doddle with the orm
 		sendJsend(
@@ -30,7 +34,8 @@ const sendJsend = require('../helpers/sendJsend'),
 	async join(req, res) {
 		let game = null
 
-		if(req.user_model.current_game){
+		//TODO: create validation/middleware for the below logic
+		if (req.user_model.current_game) {
 			sendJsend(
 				res,
 				400,
@@ -126,8 +131,30 @@ const sendJsend = require('../helpers/sendJsend'),
 		req.user_model
 			.joinGame(game)
 
+		await redis_client.sendCommand([
+				'HMSET',
+				`game.${game.row.id}.state`,
+				'is_started',
+				'false',
+				'is_czar_phase',
+				'false',
+				'current_czar',
+				'',
+				'max_score',
+				`${game.row.max_score}`
+			])
+		console.log(redis_client.HGETALL(`game.${game.row.id}.state`))
+
+		await redis_client.lPush(`game.${game.row.id}.deck`, shuffle(game_deck))
+
 		//TODO: Should this even be an event, makes more sense to do it synchronously?
-		 EventEmitter.emit('game_created', game.row)
+		//  EventEmitter.emit('game_created', game.row)
+
+		eventHandler
+			.emit(
+				'game-created',
+				game.row.id
+			)
 
 		sendJsend(
 			res,

@@ -1,17 +1,14 @@
-const ServiceProvider = require('./ServiceProvider'),
-	EventEmitter = require('../modules/event-handler'),
+const eventHandler = require("../modules/event-handler");
 	events = require('../events')
 
-module.exports = class EventServiceProvider extends ServiceProvider {
+module.exports = class EventServiceProvider {
 	handle() {
-		//TODO: maybe have a global listener that has the class passed in lara style?
-		events.forEach(event => {
-			event = new event
+		for (const event_class of events) {
+			const event = new event_class;
 
-			EventEmitter.on(
+			eventHandler.on(
 				event.event_name,
 				(...params) => {
-
 					event.async
 						? setImmediate(() => {
 							event.handle(...params)
@@ -19,6 +16,6 @@ module.exports = class EventServiceProvider extends ServiceProvider {
 						: event.handle(...params)
 				}
 			)
-		})
+		}
 	}
 }
