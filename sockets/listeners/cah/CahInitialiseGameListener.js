@@ -15,6 +15,7 @@ module.exports = class CahInitialiseGameListener extends CahListener {
 				this.socket.user.uuid,
 				`{score:0,name:'${this.socket.user.name}'}`
 			)
+
 			this.socket.broadcast
 				.to('game.' + this.socket.user.current_game)
 				.emit('player-joined', this.socket.user.name)

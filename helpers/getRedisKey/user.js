@@ -1,7 +1,7 @@
 const keys = require('../../config/redis/keys')
 
 module.exports = (key, uuid) =>
-	keys.user
+	keys.player
 		[key]
 		?.replace(
 			'#',

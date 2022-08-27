@@ -6,12 +6,17 @@ module.exports = class CahLeaveListener extends CahListener {
 	async handle(data) {
 		const card_count = (
 				(await this.redis.lRange(this.getGameRedisKey('deck'), 0, 0))[0].match(/_/g) || [1]
-			).length,
-			deleted_placeholder = '(*&^%$RFGHJU)afea',//TODO: this surely can be done better?
+			)
+				.length,
+			deleted_placeholder = '(*&^%$RFGHJU)afea',//TODO: move into env value
 			current_czar_uuid = await this.redis.hGet(this.getGameRedisKey('state'), 'current_czar')
 
 		let cards = []
 
+		/* TODO: create validation class for this, move this into an object for validation
+		 * for more complex validation (2 variable comparison , x !== y etc), set the value as a closure containing the
+		 * rule evaluation
+		 */
 		// if user is current czar, is currently the czar phase, already chosen cards, data isn't an array, data contains non ints, data isn't a unique set. return and ignore event
 		if (
 			!JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_started'))
@@ -52,7 +57,7 @@ module.exports = class CahLeaveListener extends CahListener {
 					cards_in_play[uuid] = JSON.parse(cards_in_play[uuid])
 				})
 
-			this.io.to('game.' + this.socket.user.current_game)
+			this.io.in('game.' + this.socket.user.current_game)
 				.emit(
 					'czar-phase-start',
 					{

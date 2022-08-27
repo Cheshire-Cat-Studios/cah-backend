@@ -36,10 +36,13 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^7.3.0",
+    "@lensesio/cypress-websocket-testing": "^1.0.1",
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
+    "cypress": "^10.6.0",
     "faker": "^5.5.3",
     "jest": "^28.1.2",
+    "rxjs": "^6.5.0",
     "superagent": "^8.0.0",
     "supertest": "^6.2.4"
   },

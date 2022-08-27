@@ -143,7 +143,6 @@ module.exports = {
 				'max_score',
 				`${game.row.max_score}`
 			])
-		console.log(redis_client.HGETALL(`game.${game.row.id}.state`))
 
 		await redis_client.lPush(`game.${game.row.id}.deck`, shuffle(game_deck))
 

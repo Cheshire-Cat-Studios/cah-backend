@@ -6,36 +6,40 @@ const
 	gameStateDatabase = require('./game-state/database'),
 	gameStateRedis = require('./game-state/redis/game'),
 	redis_client = require('../../../modules/redis'),
-	runQueue = require('../../../queue/run-queue')
+	runQueue = require('../../../queue/run-queue'),
+	createSocketMock = require('../../mocks/socket')
 
 module.exports = async (
-	{
-		password = '',
-		max_score = 5,
-		max_players = 2
-	} = {
-		password: '',
-		max_score: 5,
-		max_players: 2
-	},
-	player_count = 2
+	player_count = 2,
+	is_started = false,
+	is_czar_phase = false,
+	players_with_cards_in_play_count = 0
 ) => {
-	await prepareDatabase()
-	await prepareRedis()
+	// await prepareDatabase()
+	// await prepareRedis()
 
 	const {game, users} = await gameStateDatabase(
-		{
-			password,
-			max_score,
-			max_players
-		},
-		player_count
+		player_count,
 	)
 
-	await gameStateRedis(game)
+	await gameStateRedis(
+		game,
+		users,
+		is_started,
+		is_czar_phase,
+		players_with_cards_in_play_count
+	)
+
+	let mocked_user_sockets = {}
+
+	for (const user of users) {
+		mocked_user_sockets[user.row.uuid] = createSocketMock(user)
+	}
+
 
 	return {
 		game,
-		users
+		users,
+		mocked_user_sockets
 	}
 }

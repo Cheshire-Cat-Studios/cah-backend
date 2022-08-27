@@ -5,16 +5,10 @@ const
 	UserFactory = require('../../../../database/factories/UserFactory')
 
 module.exports = async (
-	{
-		password = '',
-		max_score = 5,
-		max_players = 2
-	} = {
-		password: '',
-		max_score: 5,
-		max_players: 3
-	},
-	player_count = 3
+	player_count = 3,
+	password = '',
+	max_score = 5,
+	max_players = player_count
 ) => {
 	await (new GameFactory)
 		.setCount(1)
@@ -25,7 +19,9 @@ module.exports = async (
 		})
 		.store()
 
-	const game = await (new Game).first()
+	const game = await (new Game)
+		.orderBy('id')
+		.first()
 
 	await (new UserFactory)
 		.setCount(player_count)
@@ -34,11 +30,14 @@ module.exports = async (
 		})
 		.store()
 
-	const users = await (new User).get()
+	const users = await (new User)
+		.whereEquals('current_game', game.row.id)
+		.get()
 
-	//TODO: random number helper
+
+	//TODO: use randomise array helper
 	await game.update({
-		host_id: users[Math.floor(Math.random()*users.length)].row.id
+		host_id: users[Math.floor(Math.random() * users.length)].row.id
 	})
 
 	return {

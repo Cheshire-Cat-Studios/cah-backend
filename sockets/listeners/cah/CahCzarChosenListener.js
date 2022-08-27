@@ -48,7 +48,8 @@ module.exports = class CahLeaveListener extends CahListener {
 
 			// this.endGame()
 
-			this.io.to('game.' + this.socket.user.current_game)
+			this.io
+				.in('game.' + this.socket.user.current_game)
 				.emit('game-won', player_data)
 		} else {
 			!((await this.redis.lLen(this.getGameRedisKey('deck'))) - 1)
