@@ -76,7 +76,7 @@ module.exports = {
 		}
 
 		if (
-			game.players()
+			await game.players()
 				.handle()
 				.count()
 			>= game.row.max_players
@@ -93,7 +93,7 @@ module.exports = {
 			return
 		}
 
-		req.user_model
+		await req.user_model
 			.joinGame(game)
 
 		sendJsend(
@@ -128,7 +128,8 @@ module.exports = {
 				...req.validated_data
 			})
 
-		req.user_model
+
+		await req.user_model
 			.joinGame(game)
 
 		await redis_client.sendCommand([

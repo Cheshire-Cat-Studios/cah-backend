@@ -1,5 +1,4 @@
-const Rule = require('./Rule'),
-    Query = require('../../database/query/Query')
+const Rule = require('./Rule')
 
 module.exports = class Max extends Rule {
     constructor(max) {

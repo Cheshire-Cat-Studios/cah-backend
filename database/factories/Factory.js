@@ -22,6 +22,14 @@ module.exports = class Factory {
 		return {}
 	}
 
+	async create() {
+		return await this.model
+			.create({
+				...this.schema(),
+				...this.row
+			})
+	}
+
 	async store() {
 		return await this.model
 			.insert(

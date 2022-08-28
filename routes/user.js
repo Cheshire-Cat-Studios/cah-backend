@@ -7,7 +7,7 @@ const user_controller = require('../controllers/user_controller'),
 module.exports = route => {
 	route()
 		.setMiddleware([
-			new Throttle,
+			// new Throttle,
 			new Validation(
 				new CreateUserValidation
 			),

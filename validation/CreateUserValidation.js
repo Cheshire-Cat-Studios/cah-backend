@@ -1,7 +1,12 @@
-const Validation = require('./Validation'),
-	Required = require('./rules/Required'),
-	Min = require('./rules/Min'),
-	Unique = require('./rules/Unique')
+const
+	Validation = require('./Validation'),
+	{
+		Required,
+		Min,
+		Max,
+		Unique,
+	}
+		= require('./rules')
 
 module.exports = class CreateUserValidation extends Validation {
 	getRules() {
@@ -9,6 +14,7 @@ module.exports = class CreateUserValidation extends Validation {
 			name: [
 				new Required(),
 				new Min(4),
+				new Max(25),
 				new Unique('users', 'name'),
 			]
 		}

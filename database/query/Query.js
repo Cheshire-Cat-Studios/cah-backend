@@ -215,11 +215,13 @@ module.exports = class Query {
 			: null
 	}
 
-	exists() {
+	async exists() {
 		//TODO: build db raw functionality so this method can select a raw value to save time/memory
 		this.select('id')
 
 		this.handleSelect()
+
+		return await this.first()
 	}
 
 	async find(id) {

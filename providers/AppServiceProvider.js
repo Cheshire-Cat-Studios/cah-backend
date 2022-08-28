@@ -7,8 +7,8 @@ const
 
 module.exports = class AppServiceProvider extends ServiceProvider {
 	handle() {
-		this.app
-			.use(logger('dev'))
+		// this.app
+		// 	.use(logger('dev'))
 
 		this.app
 			.use(cors(cors_config))
