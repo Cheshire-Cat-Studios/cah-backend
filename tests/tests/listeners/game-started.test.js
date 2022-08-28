@@ -80,7 +80,7 @@ describe('Game started event listener', () => {
 			.toBe(true)
 	})
 
-	test('Every player has correct is_czar data', async () => {
+	test('-- Every player has correct is_czar data', async () => {
 		await fireListener(
 			'start-game',
 			mocked_user_sockets[host.uuid]

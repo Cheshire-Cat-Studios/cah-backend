@@ -5,7 +5,8 @@ const
 module.exports = class CahLeaveListener extends CahListener {
 	async handle(data) {
 		const card_count = (
-				(await this.redis.lRange(this.getGameRedisKey('deck'), 0, 0))[0].match(/_/g) || [1]
+				(await this.redis.lRange(this.getGameRedisKey('deck'), 0, 0))[0].match(/_/g)
+				|| [1]
 			)
 				.length,
 			deleted_placeholder = '(*&^%$RFGHJU)afea',//TODO: move into env value

@@ -97,8 +97,6 @@ module.exports = async (
 					deleted_placeholder
 				)
 
-				await drawToHand(user, cards_required_count)
-
 				//Set cards chosen to redis
 				await redis_client.hSet(
 					getGameKey('cards_in_play', game.row.id),

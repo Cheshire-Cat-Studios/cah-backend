@@ -6,8 +6,8 @@ const
 
 module.exports = async (
 	player_count = 3,
+	max_score = 10,
 	password = '',
-	max_score = 5,
 	max_players = player_count
 ) => {
 	await (new GameFactory)

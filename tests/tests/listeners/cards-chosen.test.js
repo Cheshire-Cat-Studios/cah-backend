@@ -235,7 +235,7 @@ describe('Cards chosen event listener', () => {
 			.toStrictEqual(expected_cards)
 	})
 
-	test('All players have the correct cards in play count', async () => {
+	test('-- All players have the correct cards in play count', async () => {
 		const chosen_cards = await redis_client.hGetAll(getGameKey('cards_in_play', game.row.id))
 
 		for (const uuid in game_data.player_data) {
@@ -283,12 +283,8 @@ describe('Cards chosen event listener', () => {
 			.toBe(true)
 	})
 
-	test('All players cards in play data match redis', async() => {
+	test('-- All players cards in play data match redis', async() => {
 		const chosen_cards = await redis_client.hGetAll(getGameKey('cards_in_play', game.row.id))
-
-		// console.log(
-		// 	await redis_client.hGet(getGameKey('state', game.row.id), 'current_czar')
-		// )
 
 		for (const uuid in game_data.player_data) {
 			const player_data = game_data.player_data[uuid]

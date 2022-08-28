@@ -48,7 +48,7 @@ module.exports = {
 				})
 		},
 		'round-end'(uuid, {scoreboard, winner, hand, is_czar, card}){
-			this.player_data[uuid].players = scoreboard
+			this.player_data[uuid].scoreboard = scoreboard
 			this.player_data[uuid].cards_in_play = {}
 			this.player_data[uuid].is_czar = is_czar
 			this.player_data[uuid].hand = hand

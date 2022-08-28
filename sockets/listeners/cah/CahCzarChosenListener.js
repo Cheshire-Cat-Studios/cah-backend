@@ -26,13 +26,14 @@ module.exports = class CahLeaveListener extends CahListener {
 			typeof (uuid) !== 'string'
 			|| !JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_started'))
 			|| !JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_czar_phase'))
+			|| !await this.redis.hExists(this.getGameRedisKey('cards_in_play'), uuid)
+			|| uuid === await this.redis.hGet(this.getGameRedisKey('state'), 'current_czar')
 			|| (await this.redis.hGet(this.getGameRedisKey('state'), 'current_czar')) !== this.socket.user.uuid
 		) {
 			return
 		}
 
 		const player_data = JSON5.parse(await this.redis.hGet(this.getGameRedisKey('players'), uuid))
-		// console.log(player_data)
 
 		if (!player_data) {
 			return
@@ -42,11 +43,10 @@ module.exports = class CahLeaveListener extends CahListener {
 
 		player_data.score++
 
-		// console.log(await this.redis.hGet(this.getGameRedisKey('players'), uuid))
 
 		if (player_data.score >= parseInt(await this.redis.hGet(this.getGameRedisKey('state'), 'max_score'))) {
 
-			// this.endGame()
+			await this.endGame()
 
 			this.io
 				.in('game.' + this.socket.user.current_game)
@@ -90,6 +90,7 @@ module.exports = class CahLeaveListener extends CahListener {
 						uuid === new_czar_uuid
 						&& (data.is_czar = true)
 
+						//TODO: this will always set the old czar as self for everyone!!!!!
 						uuid === this.socket.user.uuid
 						&& (data.is_self = true)
 
