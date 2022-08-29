@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node server",
     "watch": "nodemon server",
-    "watch -no-run": "nodemon"
+    "watch -no-run": "nodemon",
+    "test": "jest --runInBand --detectOpenHandles --testPathPattern=tests/tests"
   },
   "jest": {
     "testRunner": "jest-jasmine2",
@@ -21,7 +22,6 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jest-jasmine2": "^28.1.3",
-    "json5": "^2.2.0",
     "jsonwebtoken": "^8.5.1",
     "lodash.shuffle": "^4.2.0",
     "minimist": "^1.2.5",

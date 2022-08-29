@@ -1,6 +1,4 @@
-const
-	CahListener = require('./CahListener'),
-	JSON5 = require('json5')
+const CahListener = require('./CahListener')
 
 module.exports = class CahLeaveListener extends CahListener {
 	async handle(data) {
@@ -47,7 +45,7 @@ module.exports = class CahLeaveListener extends CahListener {
 		await this.redis.lRem(this.getPlayerRedisKey('hand'), card_count, deleted_placeholder)
 		await this.redis.hSet(this.getGameRedisKey('cards_in_play'), this.socket.user.uuid, JSON.stringify(cards))
 
-		//TODO: rethink below might have issues if people quit, maybe check if everyone else has selected when players quit, force czar phase if so
+		//TODO: rethink below might have issues if people quit, maybe check if everyone else has selected when players quit, force czar phase if so -- THIS SHOULD BE FIXED WITH THE QUEUE --
 		if (await this.redis.hLen(this.getGameRedisKey('cards_in_play')) === (await this.redis.hLen(this.getGameRedisKey('players'))) - 1) {
 			await this.redis.hSet(this.getGameRedisKey('state'), 'is_czar_phase', JSON.stringify(true))
 
@@ -63,7 +61,11 @@ module.exports = class CahLeaveListener extends CahListener {
 					'czar-phase-start',
 					{
 						cards_in_play: cards_in_play,
-						czar_name: JSON5.parse(await this.redis.hGet(this.getGameRedisKey('players'), current_czar_uuid)).name
+						czar_name: JSON.parse(
+							await this.redis.hGet(
+								this.getGameRedisKey('players'), current_czar_uuid)
+						)
+							.name
 					}
 				)
 		} else {

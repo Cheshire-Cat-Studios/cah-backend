@@ -1,6 +1,5 @@
 const
 	CahListener = require('./CahListener'),
-	JSON5 = require('json5'),
 	shuffle = require('lodash.shuffle'),
 	game_deck = require('../../../config/decks/blackCards.json'),
 	Game = require('../../../models/Game'),
@@ -33,7 +32,7 @@ module.exports = class CahLeaveListener extends CahListener {
 			return
 		}
 
-		const player_data = JSON5.parse(await this.redis.hGet(this.getGameRedisKey('players'), uuid))
+		const player_data = JSON.parse(await this.redis.hGet(this.getGameRedisKey('players'), uuid))
 
 		if (!player_data) {
 			return
@@ -79,13 +78,13 @@ module.exports = class CahLeaveListener extends CahListener {
 					}, {})
 
 			await this.redis.lTrim(this.getGameRedisKey('deck'), 1, -1)
-			await this.redis.hSet(this.getGameRedisKey('players'), uuid, JSON5.stringify(player_data))
+			await this.redis.hSet(this.getGameRedisKey('players'), uuid, JSON.stringify(player_data))
 
 			const new_card = (await this.redis.lRange(this.getGameRedisKey('deck'), 0, 0))[0],
 				redis_players = await this.redis.hGetAll(this.getGameRedisKey('players')),
 				parsed_players = Object.keys(redis_players)
 					.map(uuid => {
-						const data = JSON5.parse(redis_players[uuid])
+						const data = JSON.parse(redis_players[uuid])
 
 						uuid === new_czar_uuid
 						&& (data.is_czar = true)

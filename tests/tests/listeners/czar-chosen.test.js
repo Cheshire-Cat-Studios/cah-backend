@@ -7,8 +7,7 @@ const redis_client = require('../../../modules/redis'),
 	prepareDatabase = require('../../assets/prep/database'),
 	prepareRedis = require('../../assets/prep/redis'),
 	getGameKey = require('../../../helpers/getRedisKey/game'),
-	randomiseArray = require('../../../helpers/randomiseArray'),
-	JSON5 = require('json5')
+	randomiseArray = require('../../../helpers/randomiseArray')
 
 let mocked_user_sockets = {},
 	host,
@@ -30,7 +29,7 @@ async function gameIsUnchanged() {
 	)
 
 	for (const uuid in scoreboard) {
-		scoreboard[uuid] = JSON5.parse(scoreboard[uuid])
+		scoreboard[uuid] = JSON.parse(scoreboard[uuid])
 	}
 
 	expect(scoreboard)
@@ -106,7 +105,7 @@ describe('Cards chosen event listener', () => {
 		)
 
 		for (const uuid in original_scoreboard) {
-			original_scoreboard[uuid] = JSON5.parse(original_scoreboard[uuid])
+			original_scoreboard[uuid] = JSON.parse(original_scoreboard[uuid])
 		}
 
 		original_black_card = await redis_client.lRange(
@@ -202,7 +201,7 @@ describe('Cards chosen event listener', () => {
 
 		//Test redis scoreboard
 		for (const uuid in scoreboard) {
-			scoreboard[uuid] = JSON5.parse(scoreboard[uuid])
+			scoreboard[uuid] = JSON.parse(scoreboard[uuid])
 
 			expect(
 				scoreboard[uuid].score

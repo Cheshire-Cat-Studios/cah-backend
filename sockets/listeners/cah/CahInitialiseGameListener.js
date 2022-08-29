@@ -2,8 +2,7 @@ const
 	CahListener = require('./CahListener'),
 	Game = require('../../../models/Game'),
 	shuffle = require('lodash.shuffle'),
-	user_deck = require('../../../config/decks/whiteCards.json'),
-	JSON5 = require('json5')
+	user_deck = require('../../../config/decks/whiteCards.json')
 
 module.exports = class CahInitialiseGameListener extends CahListener {
 	async handle() {
@@ -13,7 +12,10 @@ module.exports = class CahInitialiseGameListener extends CahListener {
 			await this.redis.hSet(
 				this.getGameRedisKey('players'),
 				this.socket.user.uuid,
-				`{score:0,name:'${this.socket.user.name}'}`
+				JSON.stringify({
+					score:0,
+					name: this.socket.user.name
+				})
 			)
 
 			this.socket.broadcast
@@ -47,7 +49,7 @@ module.exports = class CahInitialiseGameListener extends CahListener {
 			redis_players = await this.redis.hGetAll(this.getGameRedisKey('players')),
 			parsed_players = Object.keys(redis_players)
 				.map(uuid => {
-					const data = JSON5.parse(redis_players[uuid])
+					const data = JSON.parse(redis_players[uuid])
 
 					uuid === current_czar
 					&& (data.is_czar = true)

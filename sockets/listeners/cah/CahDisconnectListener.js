@@ -2,9 +2,7 @@ const
 	CahListener = require('./CahListener'),
 	Game = require('../../../models/Game'),
 	User = require('../../../models/User'),
-	randomiseArray = require('../../../helpers/randomiseArray'),
-	colour = require('../../../helpers/colour'),
-	JSON5 = require('json5')
+	randomiseArray = require('../../../helpers/randomiseArray')
 
 module.exports = class CahDisconnectListener extends CahListener {
 	async handle() {
@@ -135,7 +133,7 @@ module.exports = class CahDisconnectListener extends CahListener {
 			// Get scoreboard data and reduce/map for FE consumption
 			scoreboard = Object.keys(redis_players)
 				.map(uuid => {
-					const data = JSON5.parse(redis_players[uuid])
+					const data = JSON.parse(redis_players[uuid])
 
 					data.is_czar = uuid === current_czar
 
