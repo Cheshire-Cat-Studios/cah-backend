@@ -42,7 +42,7 @@ module.exports = class Router {
 
 	//TODO: consider sacking off express routes, only using express for routing and sockets, node can do both adequately
 	createExpressRoute(route, parent) {
-		const url = `${parent.path}/${route.path}`.replace(/\/+/g, '/')
+		const url = `${parent.path || ''}/${route.path}`.replace(/\/+/g, '/')
 
 		let route_lifecycle = [
 			...(parent.middleware || []),

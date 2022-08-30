@@ -7,7 +7,6 @@ const request = require('supertest'),
 	Game = require('../../../../../models/Game'),
 	{verify, sign} = require('jsonwebtoken'),
 	UserFactory = require('../../../../../database/factories/UserFactory')
-	x = require('../../../../../events/GameCreated')
 
 jest.mock(
 	'../../../../../events/GameCreated',

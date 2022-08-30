@@ -1,17 +1,13 @@
 const redis_client = require('../../../modules/redis'),
 	prepareGame = require('../../assets/prep/prepare-game'),
-	createSocketMock = require('../../mocks/socket'),
 	game_data = require('../../mocks/game-data')
 		.reset()
 		.init(),
-	CahInitialiseGameListener = require('../../../sockets/listeners/cah/CahInitialiseGameListener'),
 	getGameKey = require('../../../helpers/getRedisKey/game'),
 	fireListener = require('../../mocks/fire-listener'),
 	randomiseArray = require('../../../helpers/randomiseArray'),
 	prepareDatabase = require('../../assets/prep/database'),
-	prepareRedis = require('../../assets/prep/redis'),
-	Game = require('../../../models/Game'),
-	User = require('../../../models/User')
+	prepareRedis = require('../../assets/prep/redis')
 
 let mocked_user_sockets = {},
 	host,
