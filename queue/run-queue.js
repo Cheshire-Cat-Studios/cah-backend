@@ -1,12 +1,15 @@
 const redis_client = require('../modules/redis'),
 	CahDisconnectListener = require('../sockets/listeners/cah/CahDisconnectListener'),
+	CahLeaveListener = require('../sockets/listeners/cah/CahLeaveListener'),
 	CahStartGameListener = require('../sockets/listeners/cah/CahStartGameListener'),
 	CahCzarChosenListener = require('../sockets/listeners/cah/CahCzarChosenListener'),
 	CahCardsChosenListener = require('../sockets/listeners/cah/CahCardsChosenListener'),
 	CahInitialiseGameListener = require('../sockets/listeners/cah/CahInitialiseGameListener'),
+	//TODO: abstract into config
 	mappings = {
 		'initialise': CahInitialiseGameListener,
-		'leave': CahDisconnectListener,
+		'leave': CahLeaveListener,
+		'disconnect': CahDisconnectListener,
 		'error': CahDisconnectListener,
 		'start-game': CahStartGameListener,
 		'czar-chosen': CahCzarChosenListener,

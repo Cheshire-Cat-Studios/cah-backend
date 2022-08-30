@@ -50,7 +50,16 @@ const createMockedSocket = user => ({
 			data
 		)
 	},
-
+	leave(){
+		//TODO: does this need logic?
+	},
+	disconnect(){
+		game_data.takeAction(
+			this.user.uuid,
+			'leave'
+		)
+		//TODO: does this need logic?
+	},
 	in() {
 		return {
 			emit(event, data) {

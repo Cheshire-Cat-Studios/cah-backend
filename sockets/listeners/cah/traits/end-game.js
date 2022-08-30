@@ -10,14 +10,14 @@ module.exports = () => ({
 
 		const game = await new Game().find(this.socket.user.current_game)
 
-		game.delete()
+		await game.delete()
 
 		const players_unmapped = await game.players()
 			.handle()
 			.select('uuid')
 			.get()
 
-		game.players()
+		await game.players()
 			.handle()
 			.update({
 				'current_game': null,

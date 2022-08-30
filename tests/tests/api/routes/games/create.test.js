@@ -14,9 +14,9 @@ jest.mock(
 	() => {
 		return class GameCreated {
 			event_name = 'game-created'
-			async = true
+			async = false
 
-			async handle(){
+			handle(){
 			}
 		}
 

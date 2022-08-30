@@ -1,7 +1,4 @@
 const Event = require('./Event'),
-	redis_client = require('../modules/redis'),
-	shuffle = require('lodash.shuffle'),
-	game_deck = require('../config/decks/blackCards'),
 	runQueue = require('../queue/run-queue')
 
 module.exports = class GameCreated extends Event {

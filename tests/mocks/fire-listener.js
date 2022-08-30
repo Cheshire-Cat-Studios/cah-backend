@@ -4,9 +4,10 @@ const
 	CahStartGameListener = require('../../sockets/listeners/cah/CahStartGameListener'),
 	CahCzarChosenListener = require('../../sockets/listeners/cah/CahCzarChosenListener'),
 	CahCardsChosenListener = require('../../sockets/listeners/cah/CahCardsChosenListener'),
+	CahLeaveListener = require('../../sockets/listeners/cah/CahLeaveListener'),
 	mappings = {
 		'initialise': CahInitialiseGameListener,
-		'leave': CahDisconnectListener,
+		'leave': CahLeaveListener,
 		'error': CahDisconnectListener,
 		'start-game': CahStartGameListener,
 		'czar-chosen': CahCzarChosenListener,

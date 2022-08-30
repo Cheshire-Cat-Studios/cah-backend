@@ -15,8 +15,8 @@ const
 		.applyMiddleware()
 		.io
 
-// console.log('server mounted')
 
+//TODO: abstract the below into a sockets service provider, add a reference to the new provider here or create server config
 io.on(
 	'connection',
 	async socket => {
@@ -29,16 +29,10 @@ io.on(
 		await (new EventHandler)
 			.setSocket(socket)
 			.handle()
-
-		// (new CahSocketsBuilder())
-		// 	.setIo(io)
-		// 	.setSocket(socket)
-		// 	.handle()
 	}
 )
 
 module.exports = {
 	server,
 	io,
-	// clientSocket
 }

@@ -1,11 +1,13 @@
 const
 	pushToQueue = require('../queue/push-to-queue'),
+	//TODO: abstract into config
 	mappings = [
-		// 'leave',
+		'leave',
 		'error',
 		'start-game',
 		'czar-chosen',
-		'cards-chosen'
+		'cards-chosen',
+		'disconnect'
 	]
 
 module.exports = class EventHandler {

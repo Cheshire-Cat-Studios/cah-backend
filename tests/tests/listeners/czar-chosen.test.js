@@ -308,9 +308,6 @@ describe('Cards chosen event listener', () => {
 		}
 	})
 
-	//All TEST ABOVE THIS LINE ARE COMPLETE ----------------------------------------------------------------------
-	// DONT FORGET TO TEST CLIENT DATA
-
 	test('If winner hits score limit, game ends', async () => {
 		//TODO: abstract into a method? --------
 		await prepareDatabase()

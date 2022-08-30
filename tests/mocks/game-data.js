@@ -65,6 +65,9 @@ module.exports = {
 			this.player_data[uuid].is_czar = data.is_czar
 			this.player_data[uuid].is_czar_phase = data.is_czar_phase
 			this.player_data[uuid].players = data.scoreboard
+		},
+		'leave'(uuid){
+			delete this.player_data[uuid]
 		}
 	},
 	init(){
