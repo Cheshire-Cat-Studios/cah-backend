@@ -22,6 +22,7 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jest-jasmine2": "^28.1.3",
+    "jester": "file:../jester",
     "jsonwebtoken": "^8.5.1",
     "lodash.shuffle": "^4.2.0",
     "minimist": "^1.2.5",

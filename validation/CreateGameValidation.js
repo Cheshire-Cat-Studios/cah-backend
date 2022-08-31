@@ -1,15 +1,18 @@
-const Validation = require('./Validation'),
+const
+	{Validation} = require('jester'),
 	{
 		In,
 		Max,
-		Exists,
-		Unique,
 		Required,
 		Nullable,
 		Min,
+	} = require('jester').rules,
+	{
+		Exists,
+		Unique,
 	} = require('./rules')
 
-module.exports = class CreateGameValidation extends Validation {
+	module.exports = class CreateGameValidation extends Validation {
 	aliases = {
 		max_score: 'max score',
 		max_players: 'max players',

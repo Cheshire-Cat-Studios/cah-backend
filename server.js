@@ -1,5 +1,5 @@
 const
-	app = require('./app'),
+	{app} = require('jester'),
 	socketIoModule = require('./modules/socket-io'),
 	EventHandler = require('./sockets/EventHandler'),
 	pushToQueue = require('./queue/push-to-queue'),
