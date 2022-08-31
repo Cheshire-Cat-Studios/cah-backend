@@ -1,8 +1,9 @@
-const game_controller = require('../controllers/game_controller'),
+const
 	Throttle = require('../middleware/Throttle'),
 	Auth = require('../middleware/Auth'),
 	Validation = require('../middleware/Validation'),
-	CreateGameValidation = require('../validation/CreateGameValidation')
+	CreateGameValidation = require('../validation/CreateGameValidation'),
+	GameController = require('../controllers/GameController')
 
 module.exports = route => {
 	route()
@@ -10,7 +11,7 @@ module.exports = route => {
 			new Auth,
 			new Throttle(100, 60),
 		])
-		.get('/', game_controller.index)
+		.get('/', [GameController, 'index'])
 
 
 	route()
@@ -18,12 +19,12 @@ module.exports = route => {
 			new Auth,
 			new Throttle,
 		])
-		.post('/join/:game_uuid', game_controller.join)
+		.post('/join/:game_uuid', [GameController, 'join'])
 
 	route()
 		.setMiddleware([
 			new Auth,
 			new Validation(new CreateGameValidation),
 		])
-		.post('/', game_controller.create)
+		.post('/', [GameController, 'create'])
 }

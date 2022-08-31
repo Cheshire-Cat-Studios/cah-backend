@@ -1,5 +1,5 @@
 const Factory = require('./Factory'),
-	User = require('../../models/user'),
+	User = require('../../models/User'),
 	createUniqueId = require('../../helpers/createUniqueId')
 
 module.exports = class GameFactory extends Factory {
@@ -10,9 +10,8 @@ module.exports = class GameFactory extends Factory {
 
 	schema() {
 		return {
-			// id: null,
 			uuid: createUniqueId('user'),
-			name: this.faker.name.findName(),
+			name: this.faker.name.firstName(),
 			current_game: null,
 		}
 	}

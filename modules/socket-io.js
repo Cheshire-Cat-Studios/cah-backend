@@ -38,12 +38,10 @@ module.exports = {
 					: socket.disconnect()
 			} catch (e) {
 				console.log('socket middleware failed')
-
 				socket.disconnect()
 			}
 		})
 
 		return this
 	},
-
 }

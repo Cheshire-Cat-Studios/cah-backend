@@ -1,6 +1,5 @@
 const
 	CahListener = require('./CahListener'),
-	JSON5 = require('json5'),
 	shuffle = require('lodash.shuffle'),
 	game_deck = require('../../../config/decks/blackCards.json'),
 	Game = require('../../../models/Game'),
@@ -26,13 +25,14 @@ module.exports = class CahLeaveListener extends CahListener {
 			typeof (uuid) !== 'string'
 			|| !JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_started'))
 			|| !JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_czar_phase'))
+			|| !await this.redis.hExists(this.getGameRedisKey('cards_in_play'), uuid)
+			|| uuid === await this.redis.hGet(this.getGameRedisKey('state'), 'current_czar')
 			|| (await this.redis.hGet(this.getGameRedisKey('state'), 'current_czar')) !== this.socket.user.uuid
 		) {
 			return
 		}
 
-		const player_data = JSON5.parse(await this.redis.hGet(this.getGameRedisKey('players'), uuid))
-		// console.log(player_data)
+		const player_data = JSON.parse(await this.redis.hGet(this.getGameRedisKey('players'), uuid))
 
 		if (!player_data) {
 			return
@@ -42,14 +42,13 @@ module.exports = class CahLeaveListener extends CahListener {
 
 		player_data.score++
 
-		// console.log(await this.redis.hGet(this.getGameRedisKey('players'), uuid))
 
 		if (player_data.score >= parseInt(await this.redis.hGet(this.getGameRedisKey('state'), 'max_score'))) {
 
-			//TODO:: ffs
-			this.endGame()
+			await this.endGame()
 
-			this.io.to('game.' + this.socket.user.current_game)
+			this.io
+				.in('game.' + this.socket.user.current_game)
 				.emit('game-won', player_data)
 		} else {
 			!((await this.redis.lLen(this.getGameRedisKey('deck'))) - 1)
@@ -79,17 +78,18 @@ module.exports = class CahLeaveListener extends CahListener {
 					}, {})
 
 			await this.redis.lTrim(this.getGameRedisKey('deck'), 1, -1)
-			await this.redis.hSet(this.getGameRedisKey('players'), uuid, JSON5.stringify(player_data))
+			await this.redis.hSet(this.getGameRedisKey('players'), uuid, JSON.stringify(player_data))
 
 			const new_card = (await this.redis.lRange(this.getGameRedisKey('deck'), 0, 0))[0],
 				redis_players = await this.redis.hGetAll(this.getGameRedisKey('players')),
 				parsed_players = Object.keys(redis_players)
 					.map(uuid => {
-						const data = JSON5.parse(redis_players[uuid])
+						const data = JSON.parse(redis_players[uuid])
 
 						uuid === new_czar_uuid
 						&& (data.is_czar = true)
 
+						//TODO: this will always set the old czar as self for everyone!!!!!
 						uuid === this.socket.user.uuid
 						&& (data.is_self = true)
 

@@ -1,14 +1,12 @@
 const
 	ServiceProvider = require('./ServiceProvider'),
 	socketIoModule = require('../modules/socket-io'),
-	CahSocketsBuilder = require('../sockets/builders/cah/CahSocketsBuilder')
+	CahSocketsBuilder = require('../../sockets/builders/cah/CahSocketsBuilder')
 
 
-module.exports = class AppServiceProvider extends ServiceProvider {
+module.exports = class SocketServiceProvider extends ServiceProvider {
 	constructor(app) {
 		super(app)
-
-		this.io = null
 	}
 
 	handle() {

@@ -12,7 +12,7 @@ module.exports = class GameFactory extends Factory{
         return {
             // id: null,
             uuid: createUniqueId('game'),
-            name: this.faker.random.words(2),
+            name: `${this.faker.word.adjective()} ${this.faker.word.noun()}`,
             password: this.faker.random.alpha(25),
             host_id: this.faker.datatype.number(1, 2),
             // is_started: + this.faker.datatype.boolean(),

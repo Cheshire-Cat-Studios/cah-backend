@@ -3,9 +3,16 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node app",
-    "watch": "nodemon app",
-    "watch -no-run": "nodemon"
+    "start": "node server",
+    "watch": "nodemon server",
+    "watch -no-run": "nodemon",
+    "test": "jest --runInBand --detectOpenHandles --testPathPattern=tests/tests"
+  },
+  "jest": {
+    "testRunner": "jest-jasmine2",
+    "setupFiles": [
+      "./tests/setup.js"
+    ]
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -14,7 +21,7 @@
     "dotenv": "^10.0.0",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
-    "json5": "^2.2.0",
+    "jest-jasmine2": "^28.1.3",
     "jsonwebtoken": "^8.5.1",
     "lodash.shuffle": "^4.2.0",
     "minimist": "^1.2.5",
@@ -23,10 +30,21 @@
     "mysql": "^2.18.1",
     "nodemon": "^2.0.14",
     "redis": "^4.0.0-rc.3",
-    "socket.io": "^4.2.0"
+    "socket.io": "^4.2.0",
+    "socket.io-client": "^4.5.1",
+    "socketio-wildcard": "^2.0.0"
   },
   "devDependencies": {
-    "faker": "^5.5.3"
+    "@faker-js/faker": "^7.3.0",
+    "@lensesio/cypress-websocket-testing": "^1.0.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "cypress": "^10.6.0",
+    "faker": "^5.5.3",
+    "jest": "^28.1.2",
+    "rxjs": "^6.5.0",
+    "superagent": "^8.0.0",
+    "supertest": "^6.2.4"
   },
   "nodemonConfig": {
     "ignore": [

@@ -11,9 +11,9 @@ module.exports = class Unique extends Rule {
         this.message = ':attribute must be unique'
     }
 
-    handle(){
-        return !(new Query).setTable(this.table)
+    async handle(){
+        return ! await (new Query).setTable(this.table)
             .whereEquals(this.column, this.data)
-            .exists()
+            .count()
     }
 }

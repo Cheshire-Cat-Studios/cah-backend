@@ -18,6 +18,7 @@ module.exports = class CahStartGameListener extends CahListener {
 			await game.players()
 				.handle()
 				.orderBy('RAND()')
+				.select('uuid')
 				.first()
 		)
 			.row
@@ -26,7 +27,11 @@ module.exports = class CahStartGameListener extends CahListener {
 		this.redis.hSet(this.getGameRedisKey('state'), 'current_czar', czar)
 		this.redis.hSet(this.getGameRedisKey('state'), 'is_started', 'true');
 
-		(await this.io.in('game.' + this.socket.user.current_game).fetchSockets())
+		(
+			await this.io
+				.in('game.' + this.socket.user.current_game)
+				.fetchSockets()
+		)
 			.forEach(user_socket => {
 				user_socket.emit(
 					'game-started',
