@@ -8,8 +8,9 @@ On initial start up and for testing purposes you will want to initialise/reset t
 - to run both (bash)  ``(docker exec jester_redis_1 redis-cli flushall) -and (docker exec jester_node_1 node jester migrate --fresh)``
 
 ##Testing
-This project makes use of jest (using the jasmine test runner) and eventually will incorporate cypress test as well.
-- To run all tests ``jest --runInBand --detectOpenHandles --testPathPattern=tests/tests`` whilst you have a *dev* connection to mysql/redis configured
+This project makes use of jest (using the jasmine test runner) and eventually will incorporate cypress test as well. Most tests will require a connection to either mysql or redis to be configured.
+The tests which use mysql and redis will also clear all stored data as part of the test preparation so **DO NOT RUN TESTS WITH PROD MYSQL/REDIS DETAILS** 
+- To run all tests ``jest --runInBand --detectOpenHandles --testPathPattern=tests/tests``
 - To run a specific test (replace the file path with the test you wish to run) ``jest --runInBand --detectOpenHandles tests/tests/listeners/leave.test.js``
 
 ## Running commands

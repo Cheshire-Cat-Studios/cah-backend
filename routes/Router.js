@@ -52,8 +52,13 @@ module.exports = class Router {
 				middleware.handle(req, res, next)
 			})
 
-		//TODO: consider wrapping below similar to above to allow for more complex controllers and middleware
-		route_lifecycle.push(route.method)
+		route_lifecycle.push(
+			(req,res) => {
+				typeof route.method === 'function'
+					? route.method(req,res)
+					: (new route.method[0](req,res))[route.method[1]]()
+			}
+		)
 
 		route.is_get
 			? this.app.get(url, route_lifecycle)

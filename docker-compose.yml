@@ -12,9 +12,19 @@ services:
     networks:
       - redis
       - mysql
-#    depends_on:
-#      - mysql
-#      - redis
+  jest:
+    build:
+      context: .
+      dockerfile: ./.docker/jest.dockerfile
+    volumes:
+      - .:/usr/src/app/
+      - /usr/src/app/node_modules/
+    networks:
+      - redis
+      - mysql
+    depends_on:
+      - mysql
+      - redis
   mysql:
     image: mariadb:10.5
     ports:
