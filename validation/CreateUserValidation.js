@@ -1,11 +1,14 @@
 const
-	{Validation} = require('jester'),
 	{
-		Required,
-		Min,
-		Max,
-		Unique,
-	} = require('./rules')
+		Validation,
+		rules:
+			{
+				Required,
+				Min,
+				Max,
+			}
+	} = require('jester'),
+	Unique = require('../validation/rules/Unique')
 
 module.exports = class CreateUserValidation extends Validation {
 	getRules() {

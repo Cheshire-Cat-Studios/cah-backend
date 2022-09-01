@@ -1,4 +1,4 @@
-const Rule = require('./Rule'),
+const {Rule} = require('jester').rules,
     Query = require('../../database/query/Query')
 
 module.exports = class Exists extends Rule {
