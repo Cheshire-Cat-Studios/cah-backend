@@ -2,7 +2,6 @@ const
 	User = require('../models/User'),
 	createUniqueId = require('../helpers/createUniqueId'),
 	{sign} = require('jsonwebtoken'),
-	sendJsend = require('../helpers/sendJsend'),
 	{Controller} = require('jester')
 
 module.exports = class UserController extends Controller {
@@ -61,7 +60,7 @@ module.exports = class UserController extends Controller {
 			'success',
 			{
 				in_game: !!this.req.user_model.row.current_game,
-				token: token
+				token
 			}
 		)
 	}

@@ -1,7 +1,10 @@
 const
-	Validation = require('../middleware/Validation'),
+	{
+		Validation,
+		Throttle
+	} = require('jester').middleware,
 	Auth = require('../middleware/Auth'),
-	Throttle = require('../middleware/Throttle'),
+	// Throttle = require('../middleware/Throttle'),
 	CreateUserValidation = require('../validation/CreateUserValidation'),
 	UserController = require('../controllers/UserController')
 

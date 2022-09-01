@@ -2,7 +2,7 @@ const {Server} = require('socket.io'),
 	cors = require('../config/cors.js'),
 	{verify} = require('jsonwebtoken'),
 	User = require('../models/User'),
-	redis_client = require('../modules/redis')
+	{redis_client} = require('jester').modules
 
 module.exports = {
 	io: null,

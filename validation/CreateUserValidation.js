@@ -1,12 +1,11 @@
 const
 	{
 		Validation,
-		rules:
-			{
-				Required,
-				Min,
-				Max,
-			}
+		rules: {
+			Required,
+			Min,
+			Max,
+		}
 	} = require('jester'),
 	Unique = require('../validation/rules/Unique')
 

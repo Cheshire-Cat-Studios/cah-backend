@@ -1,4 +1,5 @@
-const redis_client = require('../../../modules/redis'),
+const
+	{redis_client} = require('jester').modules,
 	prepareGame = require('../../assets/prep/prepare-game'),
 	game_data = require('../../mocks/game-data')
 		.reset()
@@ -56,7 +57,12 @@ describe('Game started event listener', () => {
 		)
 
 		expect(
-			!!await redis_client.hGet(getGameKey('is_started', game.row.id))
+			!!JSON.parse(
+				await redis_client.hGet(
+					getGameKey('state', game.row.id),
+					'is_started'
+				)
+			)
 		)
 			.toBe(false)
 	})

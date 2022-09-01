@@ -3,7 +3,7 @@ const
 	createUniqueId = require('../helpers/createUniqueId'),
 	{sign} = require('jsonwebtoken'),
 	Game = require('../models/Game'),
-	redis_client = require('../modules/redis'),
+	{redis_client} = require('jester').modules,
 	shuffle = require('lodash.shuffle'),
 	game_deck = require('../config/decks/blackCards.json'),
 	eventHandler = require('../modules/event-handler'),

@@ -1,7 +1,9 @@
 const
-	Throttle = require('../middleware/Throttle'),
 	Auth = require('../middleware/Auth'),
-	Validation = require('../middleware/Validation'),
+	{
+		Throttle,
+		Validation
+	} = require('jester').middleware,
 	CreateGameValidation = require('../validation/CreateGameValidation'),
 	GameController = require('../controllers/GameController')
 

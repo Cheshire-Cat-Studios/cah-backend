@@ -2,7 +2,7 @@ module.exports = class CahListener {
 	socket = null
 	io = null
 	keys = require('../../../config/redis/keys')
-	redis = require('../../../modules/redis')
+	redis = require('jester').modules.redis_client
 
 	setSocket(socket) {
 		this.socket = socket

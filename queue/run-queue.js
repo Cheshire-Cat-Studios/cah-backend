@@ -17,7 +17,7 @@ const
 	}
 
 module.exports = async (game_id, only_run_once = false, timeout_ms = 100, batch_size = 10) => {
-	const redis_client = require('../modules/redis')
+	const {redis_client} = require('jester').modules
 
 	while (true) {
 		const {io} = require('../server')

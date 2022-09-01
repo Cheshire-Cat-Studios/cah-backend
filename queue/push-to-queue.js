@@ -1,4 +1,4 @@
-const redis_client = require('../modules/redis')
+const {redis_client} = require('jester').modules
 
 module.exports = async (socket_id, game_id, event_key, event_data = []) => {
 	console.log(5555)

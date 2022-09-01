@@ -1,6 +1,6 @@
 const request = require('supertest'),
 	app = require('jester').app(),
-	redis_client = require('../../../../../modules/redis'),
+	{redis_client} = require('jester').modules,
 	prepareDatabase = require('../../../../assets/prep/database'),
 	prepareRedis = require('../../../../assets/prep/redis'),
 	User = require('../../../../../models/User'),

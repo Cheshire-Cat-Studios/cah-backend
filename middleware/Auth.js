@@ -1,13 +1,14 @@
-const Middleware = require('./Middleware'),
+const
+	{Middleware} = require('jester'),
 	{verify, sign} = require('jsonwebtoken'),
 	User = require('../models/User'),
 	sendJsend = require('../helpers/sendJsend'),
-	redis_client = require('../modules/redis')
+	{redis_client} = require('jester').modules
 
 
 module.exports = class Auth extends Middleware {
-	async handle(req, res, next) {
-		const token = req.headers?.['authorization']?.split(' ')
+	async handle() {
+		const token = this.req.headers?.['authorization']?.split(' ')
 
 		if (token?.[0] === 'Bearer') {
 			try {
@@ -18,9 +19,9 @@ module.exports = class Auth extends Middleware {
 
 				if (user) {
 					//todo: theres got to be a better way to do this?
-					req.user_model = user
+					this.req.user_model = user
 
-					next()
+					this.next()
 					return
 				}
 
@@ -38,9 +39,9 @@ module.exports = class Auth extends Middleware {
 						active = user && JSON.parse(await redis_client.get(`players.${user.row.uuid}.is_active`))
 
 					if(active){
-						req.user_model = user
+						this.req.user_model = user
 
-						next()
+						this.next()
 						return
 					}
 
@@ -48,6 +49,6 @@ module.exports = class Auth extends Middleware {
 			}
 		}
 
-		sendJsend(res, 403, 'error', {message: 'Unauthorised access'})
+		this.sendJsend(403, 'error', {message: 'Unauthorised access'})
 	}
 }

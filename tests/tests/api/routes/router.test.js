@@ -137,4 +137,11 @@ describe('Router/Routes', () => {
 			.toBe(404)
 	})
 
+	afterAll(async done => {
+		await require('jester').modules
+			.redis_client
+			.disconnect()
+
+		done()
+	})
 })

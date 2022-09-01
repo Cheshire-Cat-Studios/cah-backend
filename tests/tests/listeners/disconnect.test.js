@@ -1,4 +1,5 @@
-const redis_client = require('../../../modules/redis'),
+const
+	{redis_client} = require('jester').modules,
 	prepareGame = require('../../assets/prep/prepare-game'),
 	CahInitialiseGameListener = require('../../../sockets/listeners/cah/CahInitialiseGameListener'),
 	CahDisconnectListener = require('../../../sockets/listeners/cah/CahDisconnectListener'),

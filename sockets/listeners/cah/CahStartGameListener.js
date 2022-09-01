@@ -8,6 +8,7 @@ module.exports = class CahStartGameListener extends CahListener {
 			.whereEquals('id', this.socket.user.current_game)
 			.first()
 
+
 		if (
 			this.socket.user.id !== game?.row?.host_id
 		) {

@@ -1,4 +1,5 @@
-const redis_client = require('../../../../modules/redis'),
+const
+	{redis_client} = require('jester').modules,
 	Game = require('../../../../models/Game')
 
 module.exports = () => ({

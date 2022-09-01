@@ -1,12 +1,8 @@
 require('dotenv').config()
 
 const
-	prepareDatabase = require('./database'),
-	prepareRedis = require('./redis'),
 	gameStateDatabase = require('./game-state/database'),
 	gameStateRedis = require('./game-state/redis/game'),
-	redis_client = require('../../../modules/redis'),
-	runQueue = require('../../../queue/run-queue'),
 	createSocketMock = require('../../mocks/socket')
 
 module.exports = async (

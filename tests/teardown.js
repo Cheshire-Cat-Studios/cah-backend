@@ -1,4 +1,4 @@
-const redis_client = require('../modules/redis')
+const {redis_client} = require('jester').modules
 
 module.exports = async () => {
 	const {server, io} = require('../server')

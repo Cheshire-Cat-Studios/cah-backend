@@ -1,4 +1,5 @@
-const redis_client = require('../../../modules/redis'),
+const
+	{redis_client} = require('jester').modules,
 	prepareGame = require('../../assets/prep/prepare-game'),
 	createSocketMock = require('../../mocks/socket'),
 	game_data = require('../../mocks/game-data'),
