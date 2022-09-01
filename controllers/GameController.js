@@ -7,7 +7,7 @@ const
 	shuffle = require('lodash.shuffle'),
 	game_deck = require('../config/decks/blackCards.json'),
 	eventHandler = require('../modules/event-handler'),
-	Controller = require('./Controller')
+	{Controller} = require('jester')
 
 module.exports = class GameController extends Controller {
 	async index() {

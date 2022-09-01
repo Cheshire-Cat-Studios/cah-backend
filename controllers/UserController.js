@@ -3,7 +3,7 @@ const
 	createUniqueId = require('../helpers/createUniqueId'),
 	{sign} = require('jsonwebtoken'),
 	sendJsend = require('../helpers/sendJsend'),
-	Controller = require('./Controller')
+	{Controller} = require('jester')
 
 module.exports = class UserController extends Controller {
 	async create() {
