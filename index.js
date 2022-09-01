@@ -4,6 +4,7 @@ const
 	app = require('./app'),
 	Route = require('./routes/Route'),
 	Router = require('./routes/Router'),
+	redis_client = require('./modules/redis'),
 	// Middleware = require('./'),
 	Controller = require('./controllers/Controller'),
 	{
@@ -11,19 +12,33 @@ const
 		RouteServiceProvider,
 		ServiceProvider,
 		EventServiceProvider
-	} = require('./providers')
+	} = require('./providers'),
+	{
+		Middleware,
+		Validation: ValidationMiddleware,
+		Throttle
+		// Auth
+	} = require('./middleware')
 
 module.exports = {
-	rules: rules,
-	Validation,
 	app,
+	Controller,
+	Middleware,
 	Route,
 	Router,
 	ServiceProvider,
-	Controller,
+	Validation,
+	rules: rules,
 	providers: {
 		AppServiceProvider,
 		RouteServiceProvider,
 		EventServiceProvider
 	},
+	middleware: {
+		Validation: ValidationMiddleware,
+		Throttle
+	},
+	modules: {
+		redis_client
+	}
 }

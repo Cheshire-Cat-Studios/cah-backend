@@ -2,13 +2,13 @@ module.exports = class Router {
 	route = null
 	app = null
 
-	setApp(app){
+	setApp(app) {
 		this.app = app
 
 		return this
 	}
 
-	setRoute(route){
+	setRoute(route) {
 		this.route = route
 
 		return this
@@ -49,14 +49,16 @@ module.exports = class Router {
 			...route.middleware,
 		]
 			.map(middleware => (req, res, next) => {
-				middleware.handle(req, res, next)
+				middleware
+					.prepareRequest(req, res, next)
+					.handle()
 			})
 
 		route_lifecycle.push(
-			(req,res) => {
+			(req, res) => {
 				typeof route.method === 'function'
-					? route.method(req,res)
-					: (new route.method[0](req,res))[route.method[1]]()
+					? route.method(req, res)
+					: (new route.method[0](req, res))[route.method[1]]()
 			}
 		)
 
