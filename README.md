@@ -14,4 +14,7 @@ The tests which use mysql and redis will also clear all stored data as part of t
 - To run a specific test (replace the file path with the test you wish to run) ``jest --runInBand --detectOpenHandles tests/tests/listeners/leave.test.js``
 
 ## Running commands
-This project includes its own node.js based cli, if you wish to edit or view the existing commands or add/remove commands see ``./commands/``. All commands can be run using ``docker exec cah-backend_node_1 node cah-backend ${command-name}``  
+This project includes its own node.js based cli, if you wish to edit or view the existing commands or add/remove commands see ``./commands/``. All commands can be run using ``docker exec cah-backend_node_1 node cah-backend ${command-name}``
+
+
+npm install --save ../jester

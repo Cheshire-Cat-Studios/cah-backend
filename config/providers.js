@@ -1,7 +1,9 @@
 const
-    RouteServiceProvider = require('../providers/RouteServiceProvider'),
-    AppServiceProvider = require('../providers/AppServiceProvider'),
-    EventServiceProvider = require('../providers/EventServiceProvider')
+    {
+        RouteServiceProvider,
+        AppServiceProvider,
+        EventServiceProvider
+    } = require('jester').providers
 
 module.exports = [
     AppServiceProvider,

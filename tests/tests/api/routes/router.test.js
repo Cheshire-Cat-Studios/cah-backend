@@ -1,15 +1,14 @@
-const request = require('supertest'),
+const
+	request = require('supertest'),
 	app = require('express')(),
-	Router = require('../../../../routes/Router'),
-	Route = require('../../../../routes/Route'),
+	{Router, Route, Controller} = require('jester'),
 	sendJsend = require('../../../../helpers/sendJsend'),
 	test_get_response = {
 		abc: 123
 	},
 	test_post_response = {
 		123: 'abc'
-	},
-	Controller = require('../../../../controllers/Controller')
+	}
 
 describe('Router/Routes', () => {
 	beforeAll(async done => {
@@ -80,7 +79,7 @@ describe('Router/Routes', () => {
 
 	test('Post request is successful and expected data given in response', async () => {
 		const response = await request(app)
-			.post('/post'),
+				.post('/post'),
 			response1 = await request(app)
 				.post('/controller-post')
 
@@ -100,9 +99,9 @@ describe('Router/Routes', () => {
 
 	test('Get request is successful and expected data given in response', async () => {
 		const response = await request(app)
-			.get('/get'),
-			response1 = await request(app)
-				.get('/controller-get');
+				.get('/get'),
+			response1 = await  request(app)
+				.get('/controller-get')
 
 		expect(response.statusCode)
 			.toBe(200)
@@ -132,7 +131,7 @@ describe('Router/Routes', () => {
 
 	test('Incorrect uri causes a 404', async () => {
 		const response = await request(app)
-				.post('/doesnt-exist')
+			.post('/doesnt-exist')
 
 		expect(response.statusCode)
 			.toBe(404)

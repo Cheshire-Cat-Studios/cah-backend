@@ -1,4 +1,4 @@
-const redis_client = require('../modules/redis'),
+const
 	CahDisconnectListener = require('../sockets/listeners/cah/CahDisconnectListener'),
 	CahLeaveListener = require('../sockets/listeners/cah/CahLeaveListener'),
 	CahStartGameListener = require('../sockets/listeners/cah/CahStartGameListener'),
@@ -17,6 +17,8 @@ const redis_client = require('../modules/redis'),
 	}
 
 module.exports = async (game_id, only_run_once = false, timeout_ms = 100, batch_size = 10) => {
+	const redis_client = require('../modules/redis')
+
 	while (true) {
 		const {io} = require('../server')
 
@@ -46,9 +48,9 @@ module.exports = async (game_id, only_run_once = false, timeout_ms = 100, batch_
 			}
 		}
 
-		if(only_run_once) {
+		if (only_run_once) {
 			break
-		}else{
+		} else {
 			await new Promise(
 				resolve => setTimeout(resolve, timeout_ms)
 			)
