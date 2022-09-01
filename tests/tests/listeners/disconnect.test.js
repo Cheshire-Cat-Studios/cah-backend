@@ -1,14 +1,19 @@
 const
-	{redis_client} = require('jester').modules,
+	{
+		providers: {
+			EventServiceProvider
+		},
+		modules: {
+			event_handler,
+			redis_client
+		}
+	} = require('jester'),
 	prepareGame = require('../../assets/prep/prepare-game'),
 	CahInitialiseGameListener = require('../../../sockets/listeners/cah/CahInitialiseGameListener'),
 	CahDisconnectListener = require('../../../sockets/listeners/cah/CahDisconnectListener'),
 	prepareDatabase = require('../../assets/prep/database'),
 	prepareRedis = require('../../assets/prep/redis'),
-	EventServiceProvider = require('../../../providers/EventServiceProvider'),
-	game_data = require('../../mocks/game-data')
-		.reset()
-		.init()
+	game_data = require('../../mocks/game-data').init().reset()
 
 let users,
 	mocked_user_sockets,
@@ -38,7 +43,6 @@ describe('Disconnect event listener', () => {
 			.handle();
 
 		({users, mocked_user_sockets} = await prepareGame(3))
-
 
 		for (const user of users) {
 			await (new CahInitialiseGameListener)

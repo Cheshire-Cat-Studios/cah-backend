@@ -1,6 +1,8 @@
 const
-	Event = require('./Event'),
-	{redis_client} = require('jester').modules,
+	{
+		Event,
+		modules: redis_client
+	} = require('jester'),
 	pushToQueue = require('../queue/push-to-queue'),
 	getUserKey = require('../helpers/getRedisKey/user'),
 

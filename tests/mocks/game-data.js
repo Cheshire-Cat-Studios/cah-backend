@@ -11,6 +11,9 @@ module.exports = {
 	player_data: {},
 	actions: {
 		'game-state'(uuid, data){
+			!this.player_data[uuid]
+			&& (this.player_data[uuid] = {})
+
 			this.player_data[uuid].scoreboard = data.game.players
 			this.player_data[uuid].black_card = data.game.current_card
 			this.player_data[uuid].hand = data.hand
