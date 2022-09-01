@@ -4,9 +4,8 @@ const
 	app = require('./app'),
 	Route = require('./routes/Route'),
 	Router = require('./routes/Router'),
-	Middleware = require('./'),
+	// Middleware = require('./'),
 	Controller = require('./controllers/Controller'),
-	//TODO: change to a {} require
 	{
 		AppServiceProvider,
 		RouteServiceProvider,
