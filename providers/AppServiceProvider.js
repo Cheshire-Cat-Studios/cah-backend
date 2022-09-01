@@ -3,8 +3,7 @@ const
 	express = require('express'),
 	logger = require('morgan'),
 	cors = require('cors'),
-	path = require('path'),
-	cors_config = require(path.join(process.cwd(), 'config/cors'))
+	path = require('path')
 
 module.exports = class AppServiceProvider extends ServiceProvider {
 	handle() {
@@ -12,7 +11,13 @@ module.exports = class AppServiceProvider extends ServiceProvider {
 		// 	.use(logger('dev'))
 
 		this.app
-			.use(cors(cors_config))
+			.use(
+				cors(
+					require(
+						path.join(process.cwd(), 'config/cors')
+					)
+				)
+			)
 
 		this.app
 			.use(express.json())

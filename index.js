@@ -1,10 +1,14 @@
+
+
 const
 	Validation = require('./Validation/Validation'),
 	rules = require('./Validation/rules'),
 	app = require('./app'),
 	Route = require('./routes/Route'),
 	Router = require('./routes/Router'),
+	Event = require('./events/Event'),
 	redis_client = require('./modules/redis'),
+	event_handler = require('./modules/event-handler')
 	// Middleware = require('./'),
 	Controller = require('./controllers/Controller'),
 	{
@@ -23,6 +27,7 @@ const
 module.exports = {
 	app,
 	Controller,
+	Event,
 	Middleware,
 	Route,
 	Router,
@@ -39,6 +44,8 @@ module.exports = {
 		Throttle
 	},
 	modules: {
-		redis_client
+		redis_client,
+		//TODO: event handler is a class not a module!
+		event_handler
 	}
 }

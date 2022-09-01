@@ -4,6 +4,7 @@ const
 
 module.exports = class EventServiceProvider {
 	handle() {
+
 		for (const event_class of require(path.join(process.cwd(), 'config/events'))) {
 			const event = new event_class
 
