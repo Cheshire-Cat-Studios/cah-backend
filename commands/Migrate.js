@@ -32,8 +32,6 @@ module.exports = class Migrate extends Command {
 
 			this.options.seed
 			&& await require(path.join(process.cwd(), 'database/seeders'))()
-
-			process.exit(0)
 		}
 	}
 }

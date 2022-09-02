@@ -6,5 +6,11 @@ const commands = require('./config/commands'),
 
 //if the command is mapped and exists run it, if not alert the user
 commands[options._[0]]
-	? (new (commands[options._[0]])(options)).handle()
+	? (
+		async () => {
+			await (new (commands[options._[0]])(options)).handle()
+
+			process.exit(0)
+		}
+	)()
 	: colour.error(`command: ${options._[0]} does not exist`)

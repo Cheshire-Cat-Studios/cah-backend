@@ -47,8 +47,6 @@ module.exports = class Query extends Command {
                     ? [await QueryBuilder.find(this.options.find)]
                     : await QueryBuilder.get()
             )
-
-            process.exit(0)
         } catch (e) {
             colour.error(e.toString())
         }
