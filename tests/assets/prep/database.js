@@ -1,4 +1,5 @@
-const Migrate = require('../../../commands/Migrate'),
+const
+	{Migrate} = require('jester').commands,
 	fresh = true,
 	noLog = true
 
