@@ -24,14 +24,12 @@ mappings.forEach(mapping => {
 	)
 })
 
-
 fs.existsSync(
 	path.join(process.cwd(), 'jester')
 )
 && fs.unlinkSync(
 	path.join(process.cwd(), 'jester.js')
 )
-
 
 fs.copyFileSync(
 	path.join(
