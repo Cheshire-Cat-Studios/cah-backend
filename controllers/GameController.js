@@ -6,8 +6,10 @@ const
 	{redis_client} = require('jester').modules,
 	shuffle = require('lodash.shuffle'),
 	game_deck = require('../config/decks/blackCards.json'),
-	{event_handler} = require('jester').modules,
-	{Controller} = require('jester')
+	{
+		Controller,
+		EventHandler
+	} = require('jester')
 
 module.exports = class GameController extends Controller {
 	async index() {
@@ -145,7 +147,7 @@ module.exports = class GameController extends Controller {
 		//TODO: Should this even be an event, makes more sense to do it synchronously?
 		//  EventEmitter.emit('game_created', game.row)
 
-		event_handler
+		EventHandler
 			.emit(
 				'game-created',
 				game.row.id

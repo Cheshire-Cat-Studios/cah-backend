@@ -1,6 +1,6 @@
 const
 	CahListener = require('./CahListener'),
-	{event_handler} = require('jester').modules,
+	{EventHandler} = require('jester'),
 	//TODO: abstract into config
 	timeout = 20000 //20 seconds
 
@@ -11,7 +11,7 @@ module.exports = class CahLeaveListener extends CahListener {
 			'false'
 		)
 
-		event_handler
+		EventHandler
 			.emit(
 				'user-left',
 				this.socket.id,

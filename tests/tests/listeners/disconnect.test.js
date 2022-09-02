@@ -4,7 +4,6 @@ const
 			EventServiceProvider
 		},
 		modules: {
-			event_handler,
 			redis_client
 		}
 	} = require('jester'),
