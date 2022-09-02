@@ -7,7 +7,6 @@ module.exports = class GameCreated extends Event {
 	}
 
 	async handle(game_id) {
-		console.log(123131)
 		await runQueue(game_id)
 	}
 }

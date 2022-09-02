@@ -1,7 +1,7 @@
 const UserFactory = require('../factories/UserFactory')
 
-module.exports = () => {
-	new UserFactory()
+module.exports = async () => {
+	await new UserFactory()
 		.setCount(3)
 		.store()
 }
