@@ -1,5 +1,5 @@
 const
-	eventHandler = require('../modules/event-handler'),
+	EventHandler = require('../events/EventHandler'),
 	path = require('path')
 
 module.exports = class EventServiceProvider {
@@ -8,7 +8,7 @@ module.exports = class EventServiceProvider {
 		for (const event_class of require(path.join(process.cwd(), 'config/events'))) {
 			const event = new event_class
 
-			eventHandler.on(
+			EventHandler.on(
 				event.event_name,
 				(...params) => {
 					event.async

@@ -7,10 +7,11 @@ const
 	Route = require('./routes/Route'),
 	Router = require('./routes/Router'),
 	Event = require('./events/Event'),
+	EventHandler = require('./events/EventHandler')
 	redis_client = require('./modules/redis'),
-	event_handler = require('./modules/event-handler')
 	// Middleware = require('./'),
 	Controller = require('./controllers/Controller'),
+	Command = require('./commands/Command'),
 	{
 		AppServiceProvider,
 		RouteServiceProvider,
@@ -27,6 +28,8 @@ const
 module.exports = {
 	app,
 	Controller,
+	Command,
+	EventHandler,
 	Event,
 	Middleware,
 	Route,
@@ -45,7 +48,5 @@ module.exports = {
 	},
 	modules: {
 		redis_client,
-		//TODO: event handler is a class not a module!
-		event_handler
 	}
 }
