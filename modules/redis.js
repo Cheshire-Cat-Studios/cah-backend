@@ -1,4 +1,5 @@
 //TODO: Currently just referencing the jester package will create redis connection, this need to be reworked into a class or json module
+// ^ good chance to look into js class statics
 const redis = require('redis'),
 	fs = require('fs'),
 	tls = !!process.env.REDIS_TLS_FILENAME,

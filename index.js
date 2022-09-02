@@ -1,5 +1,3 @@
-
-
 const
 	Validation = require('./Validation/Validation'),
 	rules = require('./Validation/rules'),
@@ -7,11 +5,15 @@ const
 	Route = require('./routes/Route'),
 	Router = require('./routes/Router'),
 	Event = require('./events/Event'),
-	EventHandler = require('./events/EventHandler')
+	EventHandler = require('./events/EventHandler'),
 	redis_client = require('./modules/redis'),
-	// Middleware = require('./'),
 	Controller = require('./controllers/Controller'),
-	Command = require('./commands/Command'),
+	{
+		Command,
+		Help,
+		Migrate,
+		Query
+	} = require('./commands'),
 	{
 		AppServiceProvider,
 		RouteServiceProvider,
@@ -36,11 +38,10 @@ module.exports = {
 	Router,
 	ServiceProvider,
 	Validation,
-	rules: rules,
-	providers: {
-		AppServiceProvider,
-		RouteServiceProvider,
-		EventServiceProvider
+	commands: {
+		Help,
+		Migrate,
+		Query
 	},
 	middleware: {
 		Validation: ValidationMiddleware,
@@ -48,5 +49,11 @@ module.exports = {
 	},
 	modules: {
 		redis_client,
-	}
+	},
+	providers: {
+		AppServiceProvider,
+		RouteServiceProvider,
+		EventServiceProvider
+	},
+	rules: rules,
 }
