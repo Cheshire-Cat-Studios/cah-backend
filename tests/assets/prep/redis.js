@@ -1,5 +1,8 @@
-const {redis_client} = require('jester').modules
+const {RedisConnection} = require('jester')
 
 module.exports = async () => {
-	await redis_client.flushAll()
+	await (
+		await RedisConnection.getClient()
+	)
+		.flushAll()
 }

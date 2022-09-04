@@ -1,7 +1,7 @@
 const
 	{
 		Event,
-		modules: redis_client
+		RedisConnection
 	} = require('jester'),
 	pushToQueue = require('../queue/push-to-queue'),
 	getUserKey = require('../helpers/getRedisKey/user'),
@@ -15,6 +15,7 @@ module.exports = class UserLeft extends Event {
 	}
 
 	async handle(socket_id, user_id, game_id) {
+		const redis_client = await RedisConnection.getClient()
 
 		await new Promise(
 			resolve => setTimeout(resolve, timeout)
@@ -25,7 +26,8 @@ module.exports = class UserLeft extends Event {
 		await pushToQueue(
 			socket_id,
 			game_id,
-			'disconnected'
+			user_id,
+			'leave'
 		)
 	}
 }

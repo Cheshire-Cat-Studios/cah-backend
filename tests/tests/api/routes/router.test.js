@@ -100,7 +100,7 @@ describe('Router/Routes', () => {
 	test('Get request is successful and expected data given in response', async () => {
 		const response = await request(app)
 				.get('/get'),
-			response1 = await  request(app)
+			response1 = await request(app)
 				.get('/controller-get')
 
 		expect(response.statusCode)
@@ -138,9 +138,13 @@ describe('Router/Routes', () => {
 	})
 
 	afterAll(async done => {
-		await require('jester').modules
-			.redis_client
+		const {RedisConnection} = require('jester')
+
+		await (
+			await RedisConnection.getClient()
+		)
 			.disconnect()
+
 
 		done()
 	})

@@ -1,17 +1,21 @@
 const
-	{redis_client} = require('jester').modules,
 	prepareGame = require('../../assets/prep/prepare-game'),
 	createSocketMock = require('../../mocks/socket'),
 	game_data = require('../../mocks/game-data'),
 	CahInitialiseGameListener = require('../../../sockets/listeners/cah/CahInitialiseGameListener'),
 	getGameKey = require('../../../helpers/getRedisKey/game'),
 	prepareDatabase = require('../../assets/prep/database'),
-	prepareRedis = require('../../assets/prep/redis')
+	prepareRedis = require('../../assets/prep/redis'),
+	{RedisConnection} = require('jester')
 
-let mocked_user_sockets = {}
+let mocked_user_sockets = {},
+	redis_client
 
 describe('Initilise event listener', () => {
+
 	beforeAll(async done => {
+		redis_client = await RedisConnection.getClient()
+
 		await prepareDatabase()
 		await prepareRedis();
 
@@ -25,6 +29,7 @@ describe('Initilise event listener', () => {
 			await (new CahInitialiseGameListener)
 				.setSocket(mocked_user_sockets[user.row.uuid])
 				.setIo(mocked_user_sockets[user.row.uuid])
+				.setRedis(redis_client)
 				.handle()
 		}
 
@@ -176,7 +181,7 @@ describe('Initilise event listener', () => {
 				hands.indexOf(item) === pos
 		)
 
-		//All hands are unique (possible that they aren't, but very very unlikely!)
+		//All hands are unique (possible that they aren't, but very unlikely!)
 		expect(unique_hands.length)
 			.toBe(
 				users.length

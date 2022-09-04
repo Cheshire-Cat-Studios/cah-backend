@@ -1,6 +1,7 @@
+
 const request = require('supertest'),
 	app = require('jester').app(),
-	{redis_client} = require('jester').modules,
+	{RedisConnection} = require('jester'),
 	prepareDatabase = require('../../../../assets/prep/database'),
 	prepareRedis = require('../../../../assets/prep/redis'),
 	User = require('../../../../../models/User'),
@@ -26,9 +27,12 @@ jest.mock(
 describe('Game -> create route', () => {
 	let successful_response,
 		user,
-		created_game
+		created_game,
+		redis_client
 
 	beforeAll(async done => {
+		redis_client = await RedisConnection.getClient()
+
 		await prepareDatabase()
 		await prepareRedis()
 
@@ -61,7 +65,6 @@ describe('Game -> create route', () => {
 				.post('/games/')
 				.set('Authorization', `Bearer ${token}`)
 				.send(game_data)
-
 
 		expect(response.statusCode)
 			.toBe(200)

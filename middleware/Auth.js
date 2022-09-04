@@ -3,12 +3,13 @@ const
 	{verify, sign} = require('jsonwebtoken'),
 	User = require('../models/User'),
 	sendJsend = require('../helpers/sendJsend'),
-	{redis_client} = require('jester').modules
+	{RedisConnection} = require('jester')
 
 
 module.exports = class Auth extends Middleware {
 	async handle() {
-		const token = this.req.headers?.['authorization']?.split(' ')
+		const redis_client = await RedisConnection.getClient(),
+			token = this.req.headers?.['authorization']?.split(' ')
 
 		if (token?.[0] === 'Bearer') {
 			try {
@@ -38,7 +39,7 @@ module.exports = class Auth extends Middleware {
 							.first(),
 						active = user && JSON.parse(await redis_client.get(`players.${user.row.uuid}.is_active`))
 
-					if(active){
+					if (active) {
 						this.req.user_model = user
 
 						this.next()

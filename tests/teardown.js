@@ -1,9 +1,13 @@
-const {redis_client} = require('jester').modules
+const {RedisConnection} = require('jester')
 
 module.exports = async () => {
 	const {server, io} = require('../server')
 
-	await redis_client.quit()
+	await (
+		await RedisConnection.getClient()
+	)
+		.disconnect()
+
 	await server.close()
 
 	console.log('dead')

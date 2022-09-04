@@ -1,5 +1,5 @@
 const
-	{redis_client} = require('jester').modules,
+	{RedisConnection} = require('jester'),
 	prepareGame = require('../../assets/prep/prepare-game'),
 	game_data = require('../../mocks/game-data')
 		.reset()
@@ -13,10 +13,13 @@ const
 let mocked_user_sockets = {},
 	host,
 	game,
-	users
+	users,
+	redis_client
 
 describe('Game started event listener', () => {
 	beforeAll(async done => {
+		redis_client = await RedisConnection.getClient()
+
 		await prepareDatabase()
 		await prepareRedis()
 

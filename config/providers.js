@@ -1,12 +1,11 @@
-const
-    {
-        RouteServiceProvider,
-        AppServiceProvider,
-        EventServiceProvider
-    } = require('jester').providers
+const {
+	RouteServiceProvider,
+	AppServiceProvider,
+	EventServiceProvider
+} = require('jester').providers
 
 module.exports = [
-    AppServiceProvider,
-    RouteServiceProvider,
-    EventServiceProvider,
+	AppServiceProvider,
+	RouteServiceProvider,
+	EventServiceProvider,
 ]

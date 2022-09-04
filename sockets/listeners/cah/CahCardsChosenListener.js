@@ -1,6 +1,6 @@
 const CahListener = require('./CahListener')
 
-module.exports = class CahLeaveListener extends CahListener {
+module.exports = class CahCardsChosenListener extends CahListener {
 	async handle(data) {
 		const card_count = (
 				(await this.redis.lRange(this.getGameRedisKey('deck'), 0, 0))[0].match(/_/g)

@@ -1,4 +1,4 @@
-const {redis_client} = require('jester').modules,
+const {RedisConnection} = require('jester'),
 	prepareGame = require('../../assets/prep/prepare-game'),
 	createSocketMock = require('../../mocks/socket'),
 	game_data = require('../../mocks/game-data')
@@ -16,10 +16,13 @@ let mocked_user_sockets = {},
 	game,
 	users,
 	chosen_count,
+	redis_client,
 	cards = []
 
 describe('Cards chosen event listener', () => {
 	beforeAll(async done => {
+		redis_client = await RedisConnection.getClient()
+
 		await prepareDatabase()
 		await prepareRedis();
 

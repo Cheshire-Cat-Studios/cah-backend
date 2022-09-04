@@ -4,7 +4,7 @@ const
 	User = require('../../../models/User'),
 	randomiseArray = require('../../../helpers/randomiseArray')
 
-module.exports = class CahDisconnectListener extends CahListener {
+module.exports = class CahLeaveListener extends CahListener {
 	async handle() {
 		const game = await new Game()
 				.find(this.socket.user.current_game),
@@ -36,8 +36,10 @@ module.exports = class CahDisconnectListener extends CahListener {
 		await this.redis.hDel(this.getGameRedisKey('players'), user.row.uuid)
 
 		//Leave game room and disconnect socket
-		this.socket.leave('game.' + game.row.id)
-		this.socket.disconnect()
+		if(this.socket.id){
+			this.socket.leave('game.' + game.row.id)
+			this.socket.disconnect()
+		}
 
 		const
 			players = await game.players()

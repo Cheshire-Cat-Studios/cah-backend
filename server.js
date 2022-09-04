@@ -23,6 +23,7 @@ io.on(
 		await pushToQueue(
 			socket.id,
 			socket.user.current_game,
+			socket.user.id,
 			'initialise'
 		);
 

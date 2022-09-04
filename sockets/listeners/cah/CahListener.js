@@ -2,7 +2,12 @@ module.exports = class CahListener {
 	socket = null
 	io = null
 	keys = require('../../../config/redis/keys')
-	redis = require('jester').modules.redis_client
+
+	setRedis(redis){
+		this.redis = redis
+
+		return this
+	}
 
 	setSocket(socket) {
 		this.socket = socket
@@ -21,7 +26,6 @@ module.exports = class CahListener {
 			.player
 			[key]
 			?.replace('#', player_uuid || this.socket.user.uuid)
-
 	}
 
 	getGameRedisKey(key) {

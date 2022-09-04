@@ -6,7 +6,7 @@ const
 	user_deck = require('../../../config/decks/whiteCards.json'),
 	applyTraits = require('../../../helpers/applyTraits')
 
-module.exports = class CahLeaveListener extends CahListener {
+module.exports = class CahCzarChosenListener extends CahListener {
 	constructor() {
 		super()
 

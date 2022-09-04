@@ -3,7 +3,7 @@ const
 	createUniqueId = require('../helpers/createUniqueId'),
 	{sign} = require('jsonwebtoken'),
 	Game = require('../models/Game'),
-	{redis_client} = require('jester').modules,
+	{RedisConnection} = require('jester'),
 	shuffle = require('lodash.shuffle'),
 	game_deck = require('../config/decks/blackCards.json'),
 	{
@@ -129,6 +129,7 @@ module.exports = class GameController extends Controller {
 		await this.req.user_model
 			.joinGame(game)
 
+		const redis_client = await RedisConnection.getClient()
 		await redis_client.sendCommand([
 			'HMSET',
 			`game.${game.row.id}.state`,

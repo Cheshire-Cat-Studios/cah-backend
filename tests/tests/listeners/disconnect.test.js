@@ -3,9 +3,7 @@ const
 		providers: {
 			EventServiceProvider
 		},
-		modules: {
-			redis_client
-		}
+		RedisConnection
 	} = require('jester'),
 	prepareGame = require('../../assets/prep/prepare-game'),
 	CahInitialiseGameListener = require('../../../sockets/listeners/cah/CahInitialiseGameListener'),
@@ -15,6 +13,7 @@ const
 	game_data = require('../../mocks/game-data').init().reset()
 
 let users,
+	redis_client,
 	mocked_user_sockets,
 	event_queued = false
 
@@ -35,6 +34,8 @@ jest.mock(
 
 describe('Disconnect event listener', () => {
 	beforeAll(async done => {
+		redis_client = await RedisConnection.getClient()
+
 		await prepareDatabase()
 		await prepareRedis();
 
@@ -47,6 +48,7 @@ describe('Disconnect event listener', () => {
 			await (new CahInitialiseGameListener)
 				.setSocket(mocked_user_sockets[user.row.uuid])
 				.setIo(mocked_user_sockets[user.row.uuid])
+				.setRedis(redis_client)
 				.handle()
 		}
 
@@ -59,6 +61,7 @@ describe('Disconnect event listener', () => {
 		await (new CahDisconnectListener)
 			.setSocket(mocked_user_sockets[user.row.uuid])
 			.setIo(mocked_user_sockets[user.row.uuid])
+			.setRedis(redis_client)
 			.handle()
 
 

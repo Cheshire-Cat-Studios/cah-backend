@@ -2,15 +2,14 @@ const
 	keys = require('../../../../../config/redis/keys'),
 	getGameKey = require('../../../../../helpers/getRedisKey/game'),
 	getUserKey = require('../../../../../helpers/getRedisKey/user'),
-	// redis = require('../../../../../modules/redis'),
 	shuffle = require('lodash.shuffle'),
 	game_deck = require('../../../../../config/decks/blackCards.json'),
 	randomiseArray = require('../../../../../helpers/randomiseArray'),
 	drawToHand = require('./helpers/drawToHand'),
-	// {redis_client} = require('jester').modules,
 	user_deck = require('../../../../../config/decks/whiteCards.json'),
 	deleted_placeholder = '(*&^%$RFGHJU)afea',
-	game_data = require('../../../../mocks/game-data')
+	game_data = require('../../../../mocks/game-data'),
+	{RedisConnection} = require('jester')
 
 let current_czar = null
 
@@ -21,7 +20,7 @@ module.exports = async (
 	is_czar_phase = false,
 	players_with_cards_in_play_count = 0
 ) => {
-	const {redis_client} = require('jester').modules
+	const redis_client = await RedisConnection.getClient()
 
 	// await redis_client.rPush(getGameKey('deck', game.row.id), ["_ + _ = _."])
 	await redis_client.rPush(getGameKey('deck', game.row.id), shuffle(game_deck))

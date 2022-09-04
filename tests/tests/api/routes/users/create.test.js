@@ -1,6 +1,6 @@
 const request = require('supertest'),
 	app = require('jester').app(),
-	{redis_client} = require('jester').modules,
+	{RedisConnection} = require('jester'),
 	prepareDatabase = require('../../../../assets/prep/database'),
 	prepareRedis = require('../../../../assets/prep/redis'),
 	User = require('../../../../../models/User'),
@@ -10,9 +10,12 @@ describe('User -> create route', () => {
 	const successful_name = '1234'
 
 	let successful_response,
-		created_user
+		created_user,
+		redis_client
 
 	beforeAll(async done => {
+		redis_client = await RedisConnection.getClient()
+
 		await prepareDatabase()
 		await prepareRedis()
 

@@ -25,6 +25,7 @@ module.exports = class EventHandler {
 					pushToQueue(
 						this.socket.id,
 						this.socket.user.current_game,
+						this.socket.user.id,
 						mapping,
 						[...data]
 					)

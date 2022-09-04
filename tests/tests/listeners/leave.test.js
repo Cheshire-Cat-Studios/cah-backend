@@ -1,5 +1,5 @@
 const
-	{redis_client} = require('jester').modules,
+	{RedisConnection} = require('jester'),
 	prepareGame = require('../../assets/prep/prepare-game'),
 	fireListener = require('../../mocks/fire-listener'),
 	prepareDatabase = require('../../assets/prep/database'),
@@ -8,6 +8,8 @@ const
 	getUserKey = require('../../../helpers/getRedisKey/user'),
 	randomiseArray = require('../../../helpers/randomiseArray'),
 	game_data = require('../../mocks/game-data')
+
+let redis_client
 
 //TODO: mocked client state tests
 async function setUpGame(is_czar_phase = false, players_with_cards_in_play_count = 3, player_count = 5) {
@@ -62,6 +64,11 @@ async function setUpGame(is_czar_phase = false, players_with_cards_in_play_count
 }
 
 describe('Leave event listener', () => {
+	beforeAll(async done => {
+		redis_client = await RedisConnection.getClient()
+
+		done()
+	})
 	test('If czar leaves czar_changes', async () => {
 		const {
 			mocked_user_sockets,

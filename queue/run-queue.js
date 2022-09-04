@@ -5,19 +5,22 @@ const
 	CahCzarChosenListener = require('../sockets/listeners/cah/CahCzarChosenListener'),
 	CahCardsChosenListener = require('../sockets/listeners/cah/CahCardsChosenListener'),
 	CahInitialiseGameListener = require('../sockets/listeners/cah/CahInitialiseGameListener'),
-	//TODO: abstract into config
-	mappings = {
-		'initialise': CahInitialiseGameListener,
-		'leave': CahLeaveListener,
-		'disconnect': CahDisconnectListener,
-		'error': CahDisconnectListener,
-		'start-game': CahStartGameListener,
-		'czar-chosen': CahCzarChosenListener,
-		'cards-chosen': CahCardsChosenListener
-	}
+	{RedisConnection} = require('jester'),
+	User = require('../models/User')
+
+//TODO: abstract into config
+mappings = {
+	'initialise': CahInitialiseGameListener,
+	'leave': CahLeaveListener,
+	'disconnect': CahDisconnectListener,
+	'error': CahDisconnectListener,
+	'start-game': CahStartGameListener,
+	'czar-chosen': CahCzarChosenListener,
+	'cards-chosen': CahCardsChosenListener
+}
 
 module.exports = async (game_id, only_run_once = false, timeout_ms = 100, batch_size = 10) => {
-	const {redis_client} = require('jester').modules
+	const redis_client = await RedisConnection.getClient()
 
 	while (true) {
 		const {io} = require('../server')
@@ -32,19 +35,34 @@ module.exports = async (game_id, only_run_once = false, timeout_ms = 100, batch_
 			await redis_client.sendCommand([
 				'LPOP',
 				`game.${game_id}.events-queue`,
-				batch_size,
+				batch_size+'',
 			])
 		)
 
 		if (batch?.length) {
 			for (const event_string of batch) {
-				const {socket_id, game_id, event_key, event_data} = JSON.parse(event_string),
+				const {socket_id, user_id, game_id, event_key, event_data} = JSON.parse(event_string),
 					socket = io.sockets.sockets.get(socket_id)
 
+				console.log(
+					socket_id,
+					user_id,
+					game_id,
+					event_key,
+					event_data
+				)
+
+
 				await (new mappings[event_key])
-					.setSocket(socket)
+					.setSocket(
+						socket
+						|| {
+							user: (await new User().find(user_id)).row
+						}
+					)
 					.setIo(io)
-					.handle(...event_data)
+					.setRedis(redis_client)
+					.handle(...event_data, user_id)
 			}
 		}
 

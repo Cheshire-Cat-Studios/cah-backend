@@ -1,6 +1,6 @@
 const request = require('supertest'),
 	app = require('jester').app(),
-	{redis_client} = require('jester').modules,
+	{RedisConnection} = require('jester'),
 	prepareDatabase = require('../../../../assets/prep/database'),
 	prepareRedis = require('../../../../assets/prep/redis'),
 	User = require('../../../../../models/User'),
@@ -36,7 +36,11 @@ async function createGame(is_full = false, password = '') {
 }
 
 describe('Game -> join route', () => {
+	let redis_client
+
 	beforeAll(async done => {
+		redis_client = await RedisConnection.getClient()
+
 		await prepareDatabase()
 		await prepareRedis()
 

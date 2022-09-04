@@ -2,7 +2,7 @@ const {Server} = require('socket.io'),
 	cors = require('../config/cors.js'),
 	{verify} = require('jsonwebtoken'),
 	User = require('../models/User'),
-	{redis_client} = require('jester').modules
+	{RedisConnection} = require('jester')
 
 module.exports = {
 	io: null,
@@ -14,6 +14,8 @@ module.exports = {
 	},
 	applyMiddleware() {
 		this.io.use(async (socket, next) => {
+			const redis_client = await RedisConnection.getClient()
+
 			try {
 				const uuid = verify(
 					socket.handshake?.query?.token,

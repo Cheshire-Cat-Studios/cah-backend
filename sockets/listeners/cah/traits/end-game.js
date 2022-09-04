@@ -1,9 +1,12 @@
 const
-	{redis_client} = require('jester').modules,
+	{RedisConnection} = require('jester'),
 	Game = require('../../../../models/Game')
 
 module.exports = () => ({
 	async endGame(){
+		const redis_client = await RedisConnection.getClient()
+
+
 		await this.redis.del(this.getGameRedisKey('state'))
 		await this.redis.del(this.getGameRedisKey('deck'))
 		await this.redis.del(this.getGameRedisKey('players'))

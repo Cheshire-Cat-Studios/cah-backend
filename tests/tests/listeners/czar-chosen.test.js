@@ -1,5 +1,5 @@
 const
-	{redis_client} = require('jester').modules,
+	{RedisConnection} = require('jester'),
 	prepareGame = require('../../assets/prep/prepare-game'),
 	game_data = require('../../mocks/game-data')
 		.reset()
@@ -20,7 +20,8 @@ let mocked_user_sockets = {},
 	original_scoreboard,
 	original_cards_in_play,
 	original_black_card,
-	round_winner_uuid
+	round_winner_uuid,
+	redis_client
 
 
 async function gameIsUnchanged() {
@@ -70,6 +71,8 @@ async function gameIsUnchanged() {
 
 describe('Cards chosen event listener', () => {
 	beforeAll(async done => {
+		redis_client = await RedisConnection.getClient()
+
 		await prepareDatabase()
 		await prepareRedis();
 
