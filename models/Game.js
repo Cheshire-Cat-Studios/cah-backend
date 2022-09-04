@@ -1,6 +1,11 @@
-const Model = require('./Model'),
-	BelongsTo = require('./relationships/BelongsTo'),
-	HasMany = require('./relationships/HasMany')
+const
+	{
+		Model,
+		relationships: {
+			BelongsTo,
+			HasMany
+		}
+	} = require('jester')
 
 module.exports = class Game extends Model {
 	table_name = 'games'

@@ -8,6 +8,7 @@ const
 	getUserKey = require('../../../helpers/getRedisKey/user'),
 	randomiseArray = require('../../../helpers/randomiseArray'),
 	game_data = require('../../mocks/game-data')
+const {game} = require('../../../config/redis/keys')
 
 let redis_client
 
@@ -212,6 +213,8 @@ describe('Leave event listener', () => {
 			'leave',
 			mocked_user_sockets[users[0].row.uuid]
 		)
+
+		delete game_data.player_data[users[0].row.uuid]
 
 		expect(
 			Object.keys(game_data.player_data)

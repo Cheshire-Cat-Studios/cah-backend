@@ -1,5 +1,10 @@
-const Model = require('./Model'),
-	BelongsTo = require('./relationships/BelongsTo')
+const
+	{
+		Model,
+		relationships: {
+			BelongsTo
+		}
+	} = require('jester')
 
 module.exports = class User extends Model {
 	table_name = 'users'

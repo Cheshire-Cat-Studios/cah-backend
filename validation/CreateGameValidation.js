@@ -7,13 +7,11 @@ const
 			Required,
 			Nullable,
 			Min,
+			Exists,
+			Unique,
 
 		}
-	} = require('jester'),
-	{
-		Exists,
-		Unique,
-	} = require('./rules')
+	} = require('jester')
 
 module.exports = class CreateGameValidation extends Validation {
 	aliases = {

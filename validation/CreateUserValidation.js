@@ -5,9 +5,9 @@ const
 			Required,
 			Min,
 			Max,
+			Unique,
 		}
-	} = require('jester'),
-	Unique = require('../validation/rules/Unique')
+	} = require('jester')
 
 module.exports = class CreateUserValidation extends Validation {
 	getRules() {
