@@ -6,8 +6,8 @@ const
 	Router = require('./routes/Router'),
 	Event = require('./events/Event'),
 	EventHandler = require('./events/EventHandler'),
-	redis_client = require('./modules/redis'),
 	Controller = require('./controllers/Controller'),
+	RedisConnection = require('./connections/RedisConnection'),
 	{
 		Command,
 		Help,
@@ -34,6 +34,7 @@ module.exports = {
 	EventHandler,
 	Event,
 	Middleware,
+	RedisConnection,
 	Route,
 	Router,
 	ServiceProvider,
@@ -46,9 +47,6 @@ module.exports = {
 	middleware: {
 		Validation: ValidationMiddleware,
 		Throttle
-	},
-	modules: {
-		redis_client,
 	},
 	providers: {
 		AppServiceProvider,
