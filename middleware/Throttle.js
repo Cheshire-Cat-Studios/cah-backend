@@ -1,6 +1,6 @@
 const Middleware = require('./Middleware'),
-	redisClient = require('../modules/redis'),
-	moment = require('moment')
+	moment = require('moment'),
+	RedisConnection = require('../connections/RedisConnection')
 
 module.exports = class Throttle extends Middleware {
 	constructor(request_limit = 10, limit_window_secs = 60) {
@@ -11,6 +11,8 @@ module.exports = class Throttle extends Middleware {
 	}
 
 	async handle() {
+		const redisClient = await RedisConnection.getClient()
+
 		const redis_key = `rate-limit${this.req.path}|${this.req.ip}`,
 			now = moment.utc().unix()
 
