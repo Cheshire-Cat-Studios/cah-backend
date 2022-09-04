@@ -1,6 +1,6 @@
 const
-	Validation = require('./Validation/Validation'),
 	rules = require('./Validation/rules'),
+	relationships = require('./models/relationships'),
 	app = require('./app'),
 	Route = require('./routes/Route'),
 	Router = require('./routes/Router'),
@@ -8,6 +8,9 @@ const
 	EventHandler = require('./events/EventHandler'),
 	Controller = require('./controllers/Controller'),
 	RedisConnection = require('./connections/RedisConnection'),
+	MysqlConnection = require('./connections/MysqlConnection'),
+	Model = require('./models/Model'),
+	Validation = require('./Validation/Validation'),
 	{
 		Command,
 		Help,
@@ -33,7 +36,9 @@ module.exports = {
 	Command,
 	EventHandler,
 	Event,
+	Model,
 	Middleware,
+	MysqlConnection,
 	RedisConnection,
 	Route,
 	Router,
@@ -53,5 +58,6 @@ module.exports = {
 		RouteServiceProvider,
 		EventServiceProvider
 	},
-	rules: rules,
+	rules,
+	relationships
 }

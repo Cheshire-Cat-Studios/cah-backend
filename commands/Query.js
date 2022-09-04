@@ -49,6 +49,8 @@ module.exports = class Query extends Command {
             )
         } catch (e) {
             colour.error(e.toString())
+            colour.error(e.message)
+            colour.error(e.tr)
         }
     }
 }

@@ -2,7 +2,7 @@
 const applyTraits = require('../../helpers/applyTraits'),
 	JoinQuery = require('./JoinQuery'),
 	WhereQuery = require('./WhereQuery'),
-	mysql = require('../../modules/mysql')
+	MysqlConnection = require('../../connections/MysqlConnection')
 
 module.exports = class Query {
 	constructor() {
@@ -163,7 +163,7 @@ module.exports = class Query {
 
 		this.handleWheres()
 
-		await mysql.query(this.query.sql, this.query.bindings)
+		await this.runQuery()
 	}
 
 	async delete() {
@@ -175,14 +175,14 @@ module.exports = class Query {
 
 		this.handleWheres()
 
-		await mysql.query(this.query.sql, this.query.bindings)
+		await this.runQuery()
 	}
 
 	async get() {
 		this.handleSelect()
 
 		//TODO:: map below as it returns an array of RowDataPacket's ?
-		const results = await mysql.query(this.query.sql, this.query.bindings)
+		const results = await this.runQuery()
 
 		return results.length
 			? results
@@ -196,7 +196,7 @@ module.exports = class Query {
 
 		this.handleSelect()
 
-		const results = await mysql.query(this.query.sql, this.query.bindings)
+		const results = await this.runQuery()
 
 		return results.length
 			? results[0][count_column]
@@ -208,7 +208,7 @@ module.exports = class Query {
 
 		this.handleSelect()
 
-		const results = await mysql.query(this.query.sql, this.query.bindings)
+		const results = await this.runQuery()
 
 		return results.length
 			? results[0]
@@ -262,10 +262,17 @@ module.exports = class Query {
 		this.handleInsert(Object.keys(data[0]))
 		this.handleInsertValues(data)
 
-		return await mysql.query(this.query.sql, this.query.bindings)
+		return await this.runQuery()
 	}
 
 	async create(data) {
 		return (await this.insert([data])).insertId
+	}
+
+	async runQuery() {
+		return await new MysqlConnection()
+			.setQuery(this.query.sql)
+			.setBindings(this.query.bindings)
+			.query()
 	}
 }
