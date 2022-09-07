@@ -2,7 +2,7 @@ const
 	CahListener = require('./CahListener'),
 	{EventHandler} = require('jester'),
 	//TODO: abstract into config
-	timeout = 20000 //20 seconds
+	timeout = 2000 //5 seconds
 
 module.exports = class CahDisconnectListener extends CahListener {
 	async handle() {

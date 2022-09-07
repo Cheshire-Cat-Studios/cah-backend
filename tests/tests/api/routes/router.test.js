@@ -59,12 +59,14 @@ describe('Router/Routes', () => {
 
 			route().post(
 				'controller-post',
-				[TestController, 'post']
+				TestController,
+				'post'
 			)
 
 			route().get(
 				'controller-get',
-				[TestController, 'get']
+				TestController,
+				'get'
 			)
 
 		});

@@ -25,7 +25,7 @@ module.exports = class CahListener {
 		return this.keys
 			.player
 			[key]
-			?.replace('#', player_uuid || this.socket.user.uuid)
+			?.replace('#', player_uuid || this.socket.user.id)
 	}
 
 	getGameRedisKey(key) {

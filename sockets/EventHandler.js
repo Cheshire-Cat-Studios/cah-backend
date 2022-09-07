@@ -1,4 +1,6 @@
 const
+	{RedisConnection} = require('jester'),
+	getUserRedisKey = require('../helpers/getRedisKey/user'),
 	pushToQueue = require('../queue/push-to-queue'),
 	//TODO: abstract into config
 	mappings = [
@@ -21,8 +23,15 @@ module.exports = class EventHandler {
 		for (const mapping of mappings) {
 			this.socket.on(
 				mapping,
-				(...data) => {
-					pushToQueue(
+				async (...data) => {
+					console.log('set true')
+					console.log(getUserRedisKey('is_active', this.socket.user.id))
+					await (await RedisConnection.getClient()).set(
+						getUserRedisKey('is_active', this.socket.user.id),
+						'true'
+					)
+
+					await pushToQueue(
 						this.socket.id,
 						this.socket.user.current_game,
 						this.socket.user.id,

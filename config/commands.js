@@ -1,13 +1,11 @@
 const {
 	Migrate,
 	Help,
-	Query,
-	Test,
+	Query
 } = require('jester').commands
 
 module.exports = {
 	'migrate': Migrate,
 	'help': Help,
 	'query': Query,
-	'test': Test,
 }

@@ -2,6 +2,8 @@ const
 	app = require('jester').app(),
 	socketIoModule = require('./modules/socket-io'),
 	EventHandler = require('./sockets/EventHandler'),
+	{RedisConnection} = require('jester'),
+	getUserRedisKey = require('./helpers/getRedisKey/user'),
 	pushToQueue = require('./queue/push-to-queue'),
 	// CahSocketsBuilder = require('./sockets/builders/cah/CahSocketsBuilder'),
 	server = app.listen(
@@ -16,10 +18,19 @@ const
 		.io
 
 
+
+
 //TODO: abstract the below into a sockets service provider, add a reference to the new provider here or create server config
 io.on(
 	'connection',
 	async socket => {
+		console.log('set true')
+		console.log(getUserRedisKey('is_active', socket.user.id))
+		await (await RedisConnection.getClient()).set(
+			getUserRedisKey('is_active', socket.user.id),
+			'true'
+		)
+
 		await pushToQueue(
 			socket.id,
 			socket.user.current_game,

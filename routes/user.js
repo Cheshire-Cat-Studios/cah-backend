@@ -16,12 +16,12 @@ module.exports = route => {
 				new CreateUserValidation
 			),
 		])
-		.post('/', [UserController, 'create'])
+		.post('/', UserController, 'create')
 
 	route()
 		.setMiddleware([
 			new Auth,
 			new Throttle(200, 10),
 		])
-		.get('verify', [UserController, 'verify'])
+		.get('verify', UserController, 'verify')
 }

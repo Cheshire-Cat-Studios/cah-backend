@@ -7,7 +7,7 @@ const
 	getUserKey = require('../helpers/getRedisKey/user'),
 
 //TODO: abstract into config
-	timeout = 2000
+	timeout = 5000
 
 module.exports = class UserLeft extends Event {
 	constructor() {
@@ -21,7 +21,11 @@ module.exports = class UserLeft extends Event {
 			resolve => setTimeout(resolve, timeout)
 		)
 
-		await redis_client.get(getUserKey('is_active', user_id))
+		const is_active = await redis_client.get(getUserKey('is_active', user_id))
+
+		if(is_active && JSON.parse(is_active)){
+			return
+		}
 
 		await pushToQueue(
 			socket_id,

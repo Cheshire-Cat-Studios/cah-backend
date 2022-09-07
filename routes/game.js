@@ -13,7 +13,7 @@ module.exports = route => {
 			new Auth,
 			new Throttle(100, 60),
 		])
-		.get('/', [GameController, 'index'])
+		.get('/', GameController, 'index')
 
 
 	route()
@@ -21,12 +21,12 @@ module.exports = route => {
 			new Auth,
 			new Throttle,
 		])
-		.post('/join/:game_uuid', [GameController, 'join'])
+		.post('/join/:game_uuid', GameController, 'join')
 
 	route()
 		.setMiddleware([
 			new Auth,
 			new Validation(new CreateGameValidation),
 		])
-		.post('/', [GameController, 'create'])
+		.post('/', GameController, 'create')
 }

@@ -1,4 +1,4 @@
-const Table = require('./Table')
+const {Table} = require('jester')
 
 module.exports = () => {
 	return new Table()

@@ -1,4 +1,5 @@
-const Factory = require('./Factory'),
+const
+	{Factory} = require('jester'),
 	User = require('../../models/User'),
 	createUniqueId = require('../../helpers/createUniqueId')
 
