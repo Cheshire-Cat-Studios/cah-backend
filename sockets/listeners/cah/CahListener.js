@@ -21,11 +21,13 @@ module.exports = class CahListener {
 		return this
 	}
 
+	//TODO: these should really just reference the redis key helper classes for continuities sake
+	// (and only having 1 place to change shouldn the need arise!)
 	getPlayerRedisKey(key, player_uuid) {
 		return this.keys
 			.player
 			[key]
-			?.replace('#', player_uuid || this.socket.user.id)
+			?.replace('#', player_uuid || this.socket.user.uuid)
 	}
 
 	getGameRedisKey(key) {

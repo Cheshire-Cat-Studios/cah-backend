@@ -25,9 +25,9 @@ module.exports = class EventHandler {
 				mapping,
 				async (...data) => {
 					console.log('set true')
-					console.log(getUserRedisKey('is_active', this.socket.user.id))
+					console.log(getUserRedisKey('is_active', this.socket.user.uuid))
 					await (await RedisConnection.getClient()).set(
-						getUserRedisKey('is_active', this.socket.user.id),
+						getUserRedisKey('is_active', this.socket.user.uuid),
 						'true'
 					)
 

@@ -190,14 +190,14 @@ describe('Leave event listener', () => {
 
 		expect(
 			!!await redis_client.exists(
-				getUserKey('deck', user.row.id)
+				getUserKey('deck', user.row.uuid)
 			)
 		)
 			.toBe(false)
 
 		expect(
 			!!await redis_client.exists(
-				getUserKey('hand', user.row.id)
+				getUserKey('hand', user.row.uuid)
 			)
 		)
 			.toBe(false)

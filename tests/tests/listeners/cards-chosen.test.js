@@ -201,21 +201,20 @@ describe('Cards chosen event listener', () => {
 				getGameKey('cards_in_play', game.row.id)
 			),
 			current_czar = await redis_client.hGet(getGameKey('state', game.row.id), 'current_czar'),
-			uuid = randomiseArray(
+			user = randomiseArray(
 				users.filter(
 					user => user.row.uuid !== current_czar
 						&& !chosen_uuids.includes(user.row.uuid)
 				)
 			)
 				.row
-				.uuid
 
 		let expected_cards = []
 
 		for (const card of cards) {
 			expected_cards.push(
 				await redis_client.lIndex(
-					getUserKey('hand', uuid),
+					getUserKey('hand', user.uuid),
 					card
 				)
 			)
@@ -223,7 +222,7 @@ describe('Cards chosen event listener', () => {
 
 		await fireListener(
 			'cards-chosen',
-			mocked_user_sockets[uuid],
+			mocked_user_sockets[user.uuid],
 			cards
 		)
 
@@ -231,7 +230,7 @@ describe('Cards chosen event listener', () => {
 			JSON.parse(
 				await redis_client.HGET(
 					getGameKey('cards_in_play', game.row.id),
-					uuid
+					user.uuid
 				)
 			)
 		)

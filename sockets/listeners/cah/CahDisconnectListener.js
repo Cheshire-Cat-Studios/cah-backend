@@ -10,7 +10,6 @@ module.exports = class CahDisconnectListener extends CahListener {
 			return
 		}
 
-
 		await this.redis.set(
 			this.getPlayerRedisKey('is_active'),
 			'false'

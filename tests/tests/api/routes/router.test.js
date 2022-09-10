@@ -71,7 +71,7 @@ describe('Router/Routes', () => {
 
 		});
 
-		(new Router)
+		new Router()
 			.setApp(app)
 			.setRoute(route)
 			.parseRoutes()

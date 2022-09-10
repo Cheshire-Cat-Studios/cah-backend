@@ -24,10 +24,8 @@ const
 io.on(
 	'connection',
 	async socket => {
-		console.log('set true')
-		console.log(getUserRedisKey('is_active', socket.user.id))
 		await (await RedisConnection.getClient()).set(
-			getUserRedisKey('is_active', socket.user.id),
+			getUserRedisKey('is_active', socket.user.uuid),
 			'true'
 		)
 

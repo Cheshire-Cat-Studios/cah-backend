@@ -1,9 +1,9 @@
 const keys = require('../../config/redis/keys')
 
-module.exports = (key, id) =>
+module.exports = (key, uuid) =>
 	keys.player
 		[key]
 		?.replace(
 			'#',
-			id
+			uuid
 		)
