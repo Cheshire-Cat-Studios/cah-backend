@@ -1,17 +1,14 @@
-const
-    User = require('../models/User'),
-    createUniqueId = require('../helpers/createUniqueId'),
-    {sign} = require('jsonwebtoken'),
-    Game = require('../models/Game'),
-    {RedisConnection} = require('jester'),
-    shuffle = require('lodash.shuffle'),
-    game_deck = require('../config/decks/blackCards.json'),
-    {
-        Controller,
-        EventHandler
-    } = require('jester')
+import createUniqueId from '../helpers/createUniqueId.js'
+import Game from '../models/Game.js'
+import shuffle from 'lodash.shuffle'
+import game_deck from '../config/decks/blackCards.js'
+import {
+    Controller,
+    EventHandler,
+    RedisConnection
+} from '@cheshire-cat-studios/jester'
 
-module.exports = class GameController extends Controller {
+class GameController extends Controller {
     async index(): Promise<void> {
         //TODO: add filter logic here, should be a doddle with the orm
 
@@ -161,3 +158,5 @@ module.exports = class GameController extends Controller {
         )
     }
 }
+
+export default GameController

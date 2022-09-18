@@ -1,10 +1,9 @@
-const
-    User = require('../models/User'),
-    createUniqueId = require('../helpers/createUniqueId'),
-    {sign} = require('jsonwebtoken'),
-    {Controller} = require('jester')
+import User from '../models/User.js'
+import createUniqueId from '../helpers/createUniqueId.js'
+import jwt from 'jsonwebtoken'
+import {Controller} from '@cheshire-cat-studios/jester'
 
-module.exports = class UserController extends Controller {
+class UserController extends Controller {
     async create(): Promise<void> {
         try {
             const user = await new User()
@@ -14,7 +13,7 @@ module.exports = class UserController extends Controller {
                     name: this.req.body.name,
                 })
 
-            const token = sign(
+            const token = jwt.sign(
                 {uuid: user.row.uuid},
                 process.env.JWT_ACCESS_TOKEN_SECRET,
                 {
@@ -46,7 +45,7 @@ module.exports = class UserController extends Controller {
     }
 
     verify(): void {
-        const token = sign(
+        const token = jwt.sign(
             {uuid: this.req.user_model.row.uuid},
             process.env.JWT_ACCESS_TOKEN_SECRET,
             // {
@@ -66,4 +65,4 @@ module.exports = class UserController extends Controller {
     }
 }
 
-export {}
+export default UserController

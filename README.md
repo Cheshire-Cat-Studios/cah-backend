@@ -7,6 +7,9 @@ On initial start up and for testing purposes you will want to initialise/reset t
 - to run both (unix)  ``docker exec cah-backend_redis_1 redis-cli flushall && docker exec cah-backend_node_1 node cah-backend migrate --fresh``
 - to run both (bash)  ``(docker exec cah-backend_redis_1 redis-cli flushall) -and (docker exec cah-backend_node_1 node cah-backend migrate --fresh)``
 
+#Typescript
+This project includes typescript classes, to compile ts files into js ones, run ``npx tsc --declaration``
+
 ##Testing
 This project makes use of jest (using the jasmine test runner) and eventually will incorporate cypress test as well. Most tests will require a connection to either mysql or redis to be configured.
 The tests which use mysql and redis will also clear all stored data as part of the test preparation so **DO NOT RUN TESTS WITH PROD MYSQL/REDIS DETAILS** 
