@@ -1,10 +1,12 @@
-const request = require('supertest'),
-	app = require('jester').app(),
-	{RedisConnection} = require('jester'),
-	prepareDatabase = require('../../../../assets/prep/database'),
-	prepareRedis = require('../../../../assets/prep/redis'),
-	User = require('../../../../../models/User'),
-	{verify} = require('jsonwebtoken')
+import request from 'supertest'
+import {app, RedisConnection} from '@cheshire-cat-studios/jester'
+import prepareDatabase from '../../../../assets/prep/database'
+import prepareRedis from '../../../../assets/prep/redis'
+import User from '../../../../../models/User'
+import {verify} from 'jsonwebtoken'
+import {describe, expect, beforeAll, test, afterAll, vi} from 'vitest'
+
+const initialisedApp = await app()
 
 describe('User -> create route', () => {
 	const successful_name = '1234'
@@ -13,31 +15,27 @@ describe('User -> create route', () => {
 		created_user,
 		redis_client
 
-	beforeAll(async done => {
+	beforeAll(async () => {
 		redis_client = await RedisConnection.getClient()
 
 		await prepareDatabase()
 		await prepareRedis()
-
-		done()
 	})
 
-	test('Request denied when no name is provided', async done => {
-		const response = await request(app).post('/users')
+	test('Request denied when no name is provided', async () => {
+		const response = await request(initialisedApp).post('/users')
 
 		expect(response.statusCode)
 			.toBe(400)
 
 		expect(await (new User).get())
 			.toBe(null)
-
-		done()
 	})
 
-	test('Request denied when name is too short', async done => {
+	test('Request denied when name is too short', async () => {
 		const
 			name = '1',
-			response = await request(app)
+			response = await request(initialisedApp)
 				.post('/users')
 				.send({name: '1'})
 
@@ -46,14 +44,12 @@ describe('User -> create route', () => {
 
 		expect(await (new User).get())
 			.toBe(null)
-
-		done()
 	})
 
-	test('Request denied when name is too long', async done => {
+	test('Request denied when name is too long', async () => {
 		const
 			name = '12345678901234567890123456789012345678901234567890123456789012345678901234567890',
-			response = await request(app)
+			response = await request(initialisedApp)
 				.post('/users')
 				.send({name})
 
@@ -62,12 +58,10 @@ describe('User -> create route', () => {
 
 		expect(await (new User).get())
 			.toBe(null)
-
-		done()
 	})
 
-	test('Request successful when name is correct length', async done => {
-		const response = await request(app)
+	test('Request successful when name is correct length', async () => {
+		const response = await request(initialisedApp)
 			.post('/users')
 			.send({name: successful_name})
 
@@ -75,8 +69,6 @@ describe('User -> create route', () => {
 			.toBe(200)
 
 		successful_response = response
-
-		done()
 	})
 
 	test('-- User is created', async () => {
@@ -95,15 +87,14 @@ describe('User -> create route', () => {
 			successful_response.body.data.token,
 			process.env.JWT_ACCESS_TOKEN_SECRET
 		)
+			// @ts-ignore
 			.uuid
 
 		expect(uuid)
 			.toBe(created_user.row.uuid)
 	})
 
-	afterAll(async done => {
+	afterAll(async () => {
 		await redis_client.disconnect()
-
-		done()
 	})
 })

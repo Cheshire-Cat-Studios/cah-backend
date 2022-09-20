@@ -1,19 +1,20 @@
-const
-	keys = require('../../../../../config/redis/keys'),
-	getGameKey = require('../../../../../helpers/getRedisKey/game'),
-	getUserKey = require('../../../../../helpers/getRedisKey/user'),
-	shuffle = require('lodash.shuffle'),
-	game_deck = require('../../../../../config/decks/blackCards.json'),
-	randomiseArray = require('../../../../../helpers/randomiseArray'),
-	drawToHand = require('./helpers/drawToHand'),
-	user_deck = require('../../../../../config/decks/whiteCards.json'),
-	deleted_placeholder = '(*&^%$RFGHJU)afea',
-	game_data = require('../../../../mocks/game-data'),
-	{RedisConnection} = require('jester')
+import keys  from  '../../../../../config/redis/keys/index.js'
+import getGameKey  from  '../../../../../helpers/getRedisKey/game.js'
+import getUserKey  from  '../../../../../helpers/getRedisKey/user.js'
+import shuffle from  'lodash.shuffle'
+import game_deck  from  '../../../../../config/decks/blackCards.js'
+import randomiseArray  from  '../../../../../helpers/randomiseArray.js'
+import drawToHand  from  './helpers/drawToHand'
+import user_deck  from  '../../../../../config/decks/whiteCards.js'
+import GameData  from  '../../../../mocks/GameData'
+import {RedisConnection}  from  '@cheshire-cat-studios/jester'
+
+const deleted_placeholder = '(*&^%$RFGHJU)afea'
+
 
 let current_czar = null
 
-module.exports = async (
+export default async (
 	game,
 	users,
 	is_started = false,
@@ -44,7 +45,7 @@ module.exports = async (
 		for (const user of users) {
 			let has_chosen_cards = false
 
-			game_data.pushUser(user.row.uuid)
+			GameData.pushUser(user.row.uuid)
 
 			let cards = []
 
@@ -55,7 +56,7 @@ module.exports = async (
 			//If its not the czar phase we can manually set the cards in play for each user to value given
 			!is_czar_phase
 			&& (
-				game_data.player_data[user.row.uuid].cards_in_play_count =
+				GameData.player_data[user.row.uuid].cards_in_play_count =
 					has_chosen_cards
 						? players_with_cards_in_play_count - 1
 						: players_with_cards_in_play_count
@@ -76,6 +77,7 @@ module.exports = async (
 					//Get card value and push it to the cards array
 					cards.push(
 						await redis_client.lIndex(
+							// @ts-ignore
 							getUserKey('hand', user.row.uuid),
 							`${i}`
 						)
@@ -83,6 +85,7 @@ module.exports = async (
 
 					//Get card value and push it to the cards array
 					await redis_client.lSet(
+						// @ts-ignore
 						getUserKey('hand', user.row.uuid),
 						`${i}`,
 						deleted_placeholder
@@ -115,7 +118,7 @@ module.exports = async (
 			}
 
 			for (const user of users) {
-				game_data.player_data[user.row.uuid].cards_in_play = cards_in_play
+				GameData.player_data[user.row.uuid].cards_in_play = cards_in_play
 			}
 		}
 

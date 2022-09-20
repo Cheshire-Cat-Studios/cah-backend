@@ -1,3 +1,5 @@
+import GameData from './GameData.js'
+
 const base_socket_data = {
 	players: {},
 	cards_in_play: {},
@@ -6,8 +8,7 @@ const base_socket_data = {
 	is_czar_phase: false
 }
 
-let game_data = require('./game-data')
-
+//TODO: this is a mess, it needs objectifying
 const createMockedSocket = user => ({
 	socket_data: {},
 	user: user.row,
@@ -16,13 +17,14 @@ const createMockedSocket = user => ({
 	broadcast: {
 		user: user.row,
 		to() {
-			self = this
+			const self = this
 
 			return {
 				emit(event, data) {
-					game_data.takeActionForAllExcluding(
+					GameData.takeActionForAllExcluding(
 						event,
 						data,
+						// @ts-ignore
 						self.user.uuid
 					)
 				}
@@ -31,20 +33,21 @@ const createMockedSocket = user => ({
 
 	},
 	to() {
-		self = this
+		const self = this
 
 		return {
 			emit(event, data) {
-				game_data.takeActionForAllExcluding(
+				GameData.takeActionForAllExcluding(
 					event,
 					data,
+					// @ts-ignore
 					self.user.uuid,
 				)
 			}
 		}
 	},
 	emit(event, data, log) {
-		game_data.takeAction(
+		GameData.takeAction(
 			this.user.uuid,
 			event,
 			data
@@ -54,7 +57,7 @@ const createMockedSocket = user => ({
 		//TODO: does this need logic?
 	},
 	disconnect(){
-		game_data.takeAction(
+		GameData.takeAction(
 			this.user.uuid,
 			'leave'
 		)
@@ -63,13 +66,13 @@ const createMockedSocket = user => ({
 	in() {
 		return {
 			emit(event, data) {
-				game_data.takeActionForAllExcluding(
+				GameData.takeActionForAllExcluding(
 					event,
 					data,
 				)
 			},
 			fetchSockets() {
-				return Object.keys(game_data.player_data)
+				return Object.keys(GameData.player_data)
 					.map(uuid => createMockedSocket({row: {uuid}}))
 			}
 		}
@@ -77,4 +80,4 @@ const createMockedSocket = user => ({
 })
 
 
-module.exports = createMockedSocket
+export default createMockedSocket

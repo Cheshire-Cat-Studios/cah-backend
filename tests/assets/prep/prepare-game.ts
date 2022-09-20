@@ -1,11 +1,11 @@
-require('dotenv').config()
+import * as dotenv from 'dotenv'
+import gameStateDatabase from  './game-state/database'
+import gameStateRedis from  './game-state/redis/game'
+import createSocketMock from  '../../mocks/socket'
 
-const
-	gameStateDatabase = require('./game-state/database'),
-	gameStateRedis = require('./game-state/redis/game'),
-	createSocketMock = require('../../mocks/socket')
+dotenv.config()
 
-module.exports = async (
+export default async (
 	player_count = 2,
 	is_started = false,
 	is_czar_phase = false,

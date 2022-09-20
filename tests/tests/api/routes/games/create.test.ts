@@ -1,18 +1,19 @@
+import request from 'supertest'
+import {app, RedisConnection} from '@cheshire-cat-studios/jester'
+import prepareDatabase from '../../../../assets/prep/database.js'
+import prepareRedis from '../../../../assets/prep/redis.js'
+import User from '../../../../../models/User.js'
+import Game from '../../../../../models/Game.js'
+import {verify, sign} from 'jsonwebtoken'
+import UserFactory from '../../../../../database/factories/UserFactory.js'
+import {describe, expect, beforeAll, test, afterAll, vi} from 'vitest'
 
-const request = require('supertest'),
-	app = require('jester').app(),
-	{RedisConnection} = require('jester'),
-	prepareDatabase = require('../../../../assets/prep/database'),
-	prepareRedis = require('../../../../assets/prep/redis'),
-	User = require('../../../../../models/User'),
-	Game = require('../../../../../models/Game'),
-	{verify, sign} = require('jsonwebtoken'),
-	UserFactory = require('../../../../../database/factories/UserFactory')
+const initialisedApp = await app()
 
-jest.mock(
+vi.mock(
 	'../../../../../events/GameCreated',
 	() => {
-		return class GameCreated {
+		class GameCreated {
 			event_name = 'game-created'
 			async = false
 
@@ -20,17 +21,18 @@ jest.mock(
 			}
 		}
 
+		return {default:GameCreated}
 	}
-);
-
+)
 
 describe('Game -> create route', () => {
-	let successful_response,
+	let
+		successful_response,
 		user,
 		created_game,
 		redis_client
 
-	beforeAll(async done => {
+	beforeAll(async () => {
 		redis_client = await RedisConnection.getClient()
 
 		await prepareDatabase()
@@ -38,13 +40,6 @@ describe('Game -> create route', () => {
 
 		user = await (new UserFactory)
 			.create()
-
-		done()
-	})
-
-	test('Example test', () => {
-		expect(true)
-			.toBe(true)
 	})
 
 	test('Request is successful with valid data', async () => {
@@ -61,7 +56,7 @@ describe('Game -> create route', () => {
 				game_time_limit_mins: 10,
 
 			},
-			response = await request(app)
+			response = await request(initialisedApp)
 				.post('/games/')
 				.set('Authorization', `Bearer ${token}`)
 				.send(game_data)
@@ -73,7 +68,7 @@ describe('Game -> create route', () => {
 			.whereEquals('id', user.row.id)
 			.first()
 
-		expect(new_user.current_game)
+		expect(new_user.row.current_game)
 			.not
 			.toBe(null)
 
@@ -91,9 +86,11 @@ describe('Game -> create route', () => {
 
 	})
 
-	afterAll(async done => {
-		await redis_client.disconnect()
+	test('example test', () => {
+		expect(true).toBe(true)
+	})
 
-		done()
+	afterAll(async () => {
+		await redis_client.disconnect()
 	})
 })

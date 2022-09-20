@@ -1,15 +1,16 @@
-const {RedisConnection} = require('jester'),
-	prepareGame = require('../../assets/prep/prepare-game'),
-	createSocketMock = require('../../mocks/socket'),
-	game_data = require('../../mocks/game-data')
-		.reset()
-		.init(),
-	fireListener = require('../../mocks/fire-listener'),
-	prepareDatabase = require('../../assets/prep/database'),
-	prepareRedis = require('../../assets/prep/redis'),
-	getGameKey = require('../../../helpers/getRedisKey/game'),
-	getUserKey = require('../../../helpers/getRedisKey/user'),
-	randomiseArray = require('../../../helpers/randomiseArray')
+import {RedisConnection} from '@cheshire-cat-studios/jester'
+import prepareGame from '../../assets/prep/prepare-game'
+import createSocketMock from '../../mocks/socket'
+import GameData from '../../mocks/GameData'
+import fireListener from '../../mocks/fire-listener'
+import prepareDatabase from '../../assets/prep/database'
+import prepareRedis from '../../assets/prep/redis'
+import getGameKey from '../../../helpers/getRedisKey/game'
+import getUserKey from '../../../helpers/getRedisKey/user'
+import randomiseArray from '../../../helpers/randomiseArray'
+import {describe, expect, beforeAll, test, afterAll} from 'vitest'
+
+GameData.reset()
 
 let mocked_user_sockets = {},
 	host,
@@ -20,7 +21,7 @@ let mocked_user_sockets = {},
 	cards = []
 
 describe('Cards chosen event listener', () => {
-	beforeAll(async done => {
+	beforeAll(async () => {
 		redis_client = await RedisConnection.getClient()
 
 		await prepareDatabase()
@@ -59,8 +60,6 @@ describe('Cards chosen event listener', () => {
 				mocked_user_sockets[user.row.uuid]
 			)
 		}
-
-		done()
 	})
 
 	test('Player who has already chosen cannot choose again', async () => {
@@ -240,12 +239,12 @@ describe('Cards chosen event listener', () => {
 	test('-- All players have the correct cards in play count', async () => {
 		const chosen_cards = await redis_client.hGetAll(getGameKey('cards_in_play', game.row.id))
 
-		for (const uuid in game_data.player_data) {
+		for (const uuid in GameData.player_data) {
 			const has_chosen = Object.keys(chosen_cards).includes(uuid)
 
 			//Player cards_in_play_count data DOES NOT include their own card
 			//the property is used to track other players who've chosen cards before the round end as they show as blank cards in the fe
-			expect(game_data.player_data[uuid].cards_in_play_count)
+			expect(GameData.player_data[uuid].cards_in_play_count)
 				.toBe(
 					has_chosen
 						? Object.keys(chosen_cards).length - 1
@@ -285,11 +284,11 @@ describe('Cards chosen event listener', () => {
 			.toBe(true)
 	})
 
-	test('-- All players cards in play data match redis', async() => {
+	test('-- All players cards in play data match redis', async () => {
 		const chosen_cards = await redis_client.hGetAll(getGameKey('cards_in_play', game.row.id))
 
-		for (const uuid in game_data.player_data) {
-			const player_data = game_data.player_data[uuid]
+		for (const uuid in GameData.player_data) {
+			const player_data = GameData.player_data[uuid]
 
 			expect(
 				Object.keys(player_data.cards_in_play)
@@ -313,9 +312,7 @@ describe('Cards chosen event listener', () => {
 		}
 	})
 
-	afterAll(async done => {
+	afterAll(async () => {
 		await redis_client.disconnect()
-
-		done()
 	})
 })

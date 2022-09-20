@@ -1,12 +1,14 @@
-const request = require('supertest'),
-	app = require('jester').app(),
-	{RedisConnection} = require('jester'),
-	prepareDatabase = require('../../../../assets/prep/database'),
-	prepareRedis = require('../../../../assets/prep/redis'),
-	User = require('../../../../../models/User'),
-	Game = require('../../../../../models/Game'),
-	{verify, sign} = require('jsonwebtoken'),
-	GameFactory = require('../../../../../database/factories/GameFactory')
+import request from 'supertest'
+import {app, RedisConnection} from '@cheshire-cat-studios/jester'
+import prepareDatabase from '../../../../assets/prep/database.js'
+import prepareRedis from '../../../../assets/prep/redis.js'
+import User from '../../../../../models/User.js'
+import Game from '../../../../../models/Game.js'
+import {verify, sign} from 'jsonwebtoken'
+import GameFactory from '../../../../../database/factories/GameFactory.js'
+import {describe, expect, beforeAll, test, afterAll, vi} from 'vitest'
+
+const initialisedApp = await app()
 
 describe('Game -> get route', () => {
 	let successful_response,
@@ -14,7 +16,7 @@ describe('Game -> get route', () => {
 		games,
 		redis_client
 
-	beforeAll(async done => {
+	beforeAll(async () => {
 		redis_client = await RedisConnection.getClient()
 		await prepareDatabase()
 		await prepareRedis()
@@ -30,8 +32,6 @@ describe('Game -> get route', () => {
 			.store()
 
 		games = await (new Game).get()
-
-		done()
 	})
 
 	test('Request successful when user includes auth headers', async () => {
@@ -40,7 +40,7 @@ describe('Game -> get route', () => {
 			process.env.JWT_ACCESS_TOKEN_SECRET,
 		)
 
-		const response = await request(app).get('/games')
+		const response = await request(initialisedApp).get('/games')
 			.set('Authorization', `Bearer ${token}`)
 
 		expect(response.statusCode)
@@ -94,9 +94,7 @@ describe('Game -> get route', () => {
 		}
 	})
 
-	afterAll(async done => {
+	afterAll(async () => {
 		await redis_client.disconnect()
-
-		done()
 	})
 })

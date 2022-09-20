@@ -1,10 +1,12 @@
-const request = require('supertest'),
-	app = require('jester').app(),
-	{RedisConnection} = require('jester'),
-	prepareDatabase = require('../../../../assets/prep/database'),
-	prepareRedis = require('../../../../assets/prep/redis'),
-	User = require('../../../../../models/User'),
-	{verify, sign} = require('jsonwebtoken')
+import request from 'supertest'
+import {app, RedisConnection} from '@cheshire-cat-studios/jester'
+import prepareDatabase from '../../../../assets/prep/database'
+import prepareRedis from '../../../../assets/prep/redis'
+import User from '../../../../../models/User'
+import {verify, sign} from 'jsonwebtoken'
+import {describe, expect, beforeAll, test, afterAll, vi} from 'vitest'
+
+const initialisedApp = await app()
 
 describe('User -> verify route', () => {
 	let
@@ -13,7 +15,7 @@ describe('User -> verify route', () => {
 		successful_response,
 		redis_client
 
-	beforeAll(async done => {
+	beforeAll(async () => {
 		redis_client = await RedisConnection.getClient()
 
 		await prepareDatabase()
@@ -24,8 +26,6 @@ describe('User -> verify route', () => {
 				'uuid': 'testing-uuid',
 				'name': '1234'
 			})
-
-		done()
 	})
 
 	test('Request successful when user includes auth headers', async () => {
@@ -34,7 +34,7 @@ describe('User -> verify route', () => {
 			process.env.JWT_ACCESS_TOKEN_SECRET,
 		)
 
-		const response = await request(app).get('/users/verify')
+		const response = await request(initialisedApp).get('/users/verify')
 			.set('Authorization', `Bearer ${token}`)
 
 		expect(response.statusCode)
@@ -48,6 +48,7 @@ describe('User -> verify route', () => {
 			successful_response.body.data.token,
 			process.env.JWT_ACCESS_TOKEN_SECRET
 		)
+			//@ts-ignore
 			.uuid
 
 		expect(uuid)
@@ -55,9 +56,7 @@ describe('User -> verify route', () => {
 	})
 
 
-	afterAll(async done => {
+	afterAll(async () => {
 		await redis_client.disconnect()
-
-		done()
 	})
 })

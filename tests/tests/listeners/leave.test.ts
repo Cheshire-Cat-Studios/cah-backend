@@ -1,14 +1,15 @@
-const
-	{RedisConnection} = require('jester'),
-	prepareGame = require('../../assets/prep/prepare-game'),
-	fireListener = require('../../mocks/fire-listener'),
-	prepareDatabase = require('../../assets/prep/database'),
-	prepareRedis = require('../../assets/prep/redis'),
-	getGameKey = require('../../../helpers/getRedisKey/game'),
-	getUserKey = require('../../../helpers/getRedisKey/user'),
-	randomiseArray = require('../../../helpers/randomiseArray'),
-	game_data = require('../../mocks/game-data')
-const {game} = require('../../../config/redis/keys')
+
+	import {RedisConnection}from '@cheshire-cat-studios/jester'
+	import prepareGame from '../../assets/prep/prepare-game'
+	import fireListener from '../../mocks/fire-listener'
+	import prepareDatabase from '../../assets/prep/database'
+	import prepareRedis from '../../assets/prep/redis'
+	import getGameKey from '../../../helpers/getRedisKey/game'
+	import getUserKey from '../../../helpers/getRedisKey/user'
+	import randomiseArray from '../../../helpers/randomiseArray'
+	import GameData from '../../mocks/GameData'
+ 	import {game} from '../../../config/redis/keys'
+	import {describe, expect, beforeAll, beforeEach, test, afterAll} from 'vitest'
 
 let redis_client
 
@@ -17,9 +18,8 @@ async function setUpGame(is_czar_phase = false, players_with_cards_in_play_count
 	await prepareDatabase()
 	await prepareRedis()
 
-	game_data
+	GameData
 		.reset()
-		.init()
 
 		let mocked_user_sockets,
 		game,
@@ -65,11 +65,11 @@ async function setUpGame(is_czar_phase = false, players_with_cards_in_play_count
 }
 
 describe('Leave event listener', () => {
-	beforeAll(async done => {
+	beforeAll(async () => {
 		redis_client = await RedisConnection.getClient()
 
-		done()
 	})
+
 	test('If czar leaves czar_changes', async () => {
 		const {
 			mocked_user_sockets,
@@ -214,17 +214,17 @@ describe('Leave event listener', () => {
 			mocked_user_sockets[users[0].row.uuid]
 		)
 
-		delete game_data.player_data[users[0].row.uuid]
+		delete GameData.player_data[users[0].row.uuid]
 
 		expect(
-			Object.keys(game_data.player_data)
+			Object.keys(GameData.player_data)
 				.length
 		)
 			.toBe(users.length - 1)
 
-		for (const uuid in game_data.player_data) {
+		for (const uuid in GameData.player_data) {
 			expect(
-				game_data.player_data
+				GameData.player_data
 					[uuid]
 					.players
 					.length
@@ -233,9 +233,7 @@ describe('Leave event listener', () => {
 		}
 	})
 
-	afterAll(async done => {
+	afterAll(async () => {
 		await redis_client.disconnect()
-
-		done()
 	})
 })
