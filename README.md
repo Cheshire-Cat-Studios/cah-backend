@@ -13,7 +13,7 @@ This project includes typescript classes, to compile ts files into js ones, run 
 ##Testing
 This project makes use of jest (using the jasmine test runner) and eventually will incorporate cypress test as well. Most tests will require a connection to either mysql or redis to be configured.
 The tests which use mysql and redis will also clear all stored data as part of the test preparation so **DO NOT RUN TESTS WITH PROD MYSQL/REDIS DETAILS** 
-- To run all tests ``jest --runInBand --detectOpenHandles --testPathPattern=tests/tests``
+- To run all tests ``vitest run --no-threads``
 - To run a specific test (replace the file path with the test you wish to run) ``jest --runInBand --detectOpenHandles tests/tests/listeners/leave.test.js``
 
 ## Running commands
