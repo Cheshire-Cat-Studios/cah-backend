@@ -1,0 +1,33 @@
+{
+  "declaration": true,
+  "compilerOptions": {
+    "preserveConstEnums": true,
+    "moduleResolution": "node",
+    "target": "esnext",
+    "module": "esnext",
+    "allowSyntheticDefaultImports": true,
+//    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
+    ]
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  },
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "test/**/*.ts"
+  ]
+  //  "lib": [
+  //    "esnext"
+  //  ]
+}
