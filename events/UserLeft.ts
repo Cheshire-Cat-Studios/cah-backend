@@ -2,7 +2,7 @@ import {
     Event,
     RedisConnection
 } from '@cheshire-cat-studios/jester'
-import pushToQueue  from '../queue/push-to-queue.js'
+// import pushToQueue  from '../queue/push-to-queue.js'
 import getUserKey from '../helpers/getRedisKey/user.js'
 
 //TODO: abstract into config
@@ -26,12 +26,12 @@ class UserLeft extends Event {
             return
         }
 
-        await pushToQueue(
-            socket_id,
-            game_id,
-            user_id,
-            'leave'
-        )
+        // await pushToQueue(
+        //     socket_id,
+        //     game_id,
+        //     user_id,
+        //     'leave'
+        // )
     }
 }
 

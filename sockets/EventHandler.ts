@@ -1,8 +1,8 @@
-import {RedisConnection} from '@cheshire-cat-studios/jester'
+import {CreateQueueEventService, RedisConnection} from '@cheshire-cat-studios/jester'
 import getUserRedisKey from '../helpers/getRedisKey/user.js'
-import pushToQueue from '../queue/push-to-queue.js'
+// import pushToQueue from '../queue/push-to-queue.js'
 import AuthenticatedSocket from './AuthenticatedSocket.js'
-
+import Game from '../models/Game.js'
 
 //TODO: abstract into config
 const mappings = [
@@ -15,19 +15,26 @@ const mappings = [
 ]
 
 class EventHandler {
-    socket:AuthenticatedSocket
+    private socket: AuthenticatedSocket
+    private game: Game
 
-    setSocket(socket:AuthenticatedSocket) {
+    setSocket(socket: AuthenticatedSocket): this {
         this.socket = socket
 
         return this
     }
 
-    handle() {
+    setGame(game: Game): this {
+        this.game = game
+
+        return this
+    }
+
+    handle(): void {
         for (const mapping of mappings) {
             this.socket.on(
                 mapping,
-                async (...data) => {
+                async data => {
                     // console.log('set true')
                     // console.log(getUserRedisKey('is_active', this.socket.user.uuid))
                     await (await RedisConnection.getClient()).set(
@@ -35,13 +42,30 @@ class EventHandler {
                         'true'
                     )
 
-                    await pushToQueue(
-                        this.socket.id,
-                        this.socket.user.current_game,
-                        this.socket.user.id,
-                        mapping,
-                        [...data]
+                    const response = await new CreateQueueEventService(
+                        this.game
+                            .row
+                            .queue_id
                     )
+                        .handle(
+                            mapping,
+                            {
+                                socket_id: this.socket.id,
+                                game_id: this.socket.user.current_game,
+                                user_id: this.socket.user.id,
+                                event_data: data
+                            }
+                        )
+
+                    // console.log(response)
+
+                    // await pushToQueue(
+                    //     this.socket.id,
+                    //     this.socket.user.current_game,
+                    //     this.socket.user.id,
+                    //     mapping,
+                    //     [...data]
+                    // )
                 }
             )
         }

@@ -1,7 +1,7 @@
 import {RedisConnection} from '@cheshire-cat-studios/jester'
-import Game from '../../../models/Game.js'
-import getGameRedisKey from '../../../helpers/getRedisKey/game.js'
-import getPlayerRedisKey from '../../../helpers/getRedisKey/user.js'
+import Game from '../../models/Game.js'
+import getGameRedisKey from '../../helpers/getRedisKey/game.js'
+import getPlayerRedisKey from '../../helpers/getRedisKey/user.js'
 
 
 export default async (game: Game) => {

@@ -4,8 +4,10 @@ import shuffle from 'lodash.shuffle'
 import game_deck from '../config/decks/blackCards.js'
 import {
     Controller,
-    EventHandler,
-    RedisConnection
+    // EventHandler,
+    RedisConnection,
+    CreateQueueService
+    // CreateQueueEventService
 } from '@cheshire-cat-studios/jester'
 
 class GameController extends Controller {
@@ -122,7 +124,6 @@ class GameController extends Controller {
                 ...this.req.validated_data
             })
 
-
         await this.req.user_model
             .joinGame(game)
 
@@ -145,11 +146,14 @@ class GameController extends Controller {
         //TODO: Should this even be an event, makes more sense to do it synchronously?
         //  EventEmitter.emit('game_created', game.row)
 
-        EventHandler
-            .emit(
-                'game-created',
-                game.row.id
-            )
+        const response = await new CreateQueueService()
+            .handle('game')
+
+        if (response.status == 200) {
+            await game.update({
+                queue_id: response.data.data.queue_id
+            })
+        }
 
         this.sendJsend(
             200,

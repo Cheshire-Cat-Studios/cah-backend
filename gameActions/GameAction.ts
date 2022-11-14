@@ -1,7 +1,7 @@
 import {Server} from 'socket.io'
 import {RedisClientType} from 'redis'
-import keys from '../../config/redis/keys/index.js'
-import AuthenticatedSocket from '../AuthenticatedSocket.js'
+import keys from '../config/redis/keys/index.js'
+import AuthenticatedSocket from '../sockets/AuthenticatedSocket.js'
 
 abstract class GameAction {
     socket: AuthenticatedSocket

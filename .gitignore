@@ -3,3 +3,5 @@
 /.docker/data
 .env
 /certs/*
+*.js
+*.d.ts

@@ -1,6 +1,8 @@
 import {Route} from '@cheshire-cat-studios/jester'
+
 import gameRoutes from './game.js'
 import userRoutes from './user.js'
+import eventQueue from './eventQueue.js'
 
 export default (route: () => Route): void => {
     route()
@@ -12,4 +14,9 @@ export default (route: () => Route): void => {
         .setPath('games')
         .setName('games')
         .group(gameRoutes)
+
+    route()
+        .setPath('event-queue')
+        .setName('event-queue')
+        .group(eventQueue)
 }

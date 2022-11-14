@@ -1,7 +1,7 @@
 import GameAction from './GameAction.js'
-import Game from '../../models/Game.js'
-import User from '../../models/User.js'
-import randomiseArray from '../../helpers/randomiseArray.js'
+import Game from '../models/Game.js'
+import User from '../models/User.js'
+import randomiseArray from '../helpers/randomiseArray.js'
 
 class LeaveAction extends GameAction {
 	async handle(): Promise<void> {

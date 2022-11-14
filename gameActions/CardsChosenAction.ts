@@ -2,6 +2,7 @@ import GameAction from './GameAction.js'
 
  class CardsChosenAction extends GameAction {
 	async handle(data) {
+		console.log('CARDS CHOSEN ACTION HIT')
 		const card_count = (
 				(await this.redis.lRange(this.getGameRedisKey('deck'), 0, 0))[0].match(/_/g)
 				|| [1]
@@ -27,6 +28,20 @@ import GameAction from './GameAction.js'
 			|| new Set(data).size !== data.length
 			|| data.length !== card_count
 		) {
+
+
+			// console.log(!JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_started')))
+			// console.log(current_czar_uuid === this.socket.user.uuid)
+			// console.log(JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_czar_phase')))
+			// console.log(await this.redis.hExists(this.getGameRedisKey('cards_in_play'), this.socket.user.uuid))
+			// console.log(!Array.isArray(data))
+			// console.log(data.filter(datum => typeof (datum) !== 'number').length)
+			// console.log(new Set(data).size !== data.length)
+			console.log(data.length)
+			console.log(data.length)
+			console.log(card_count)
+
+			console.log('CARDS CHOSEN VALIDATION FAILED ^ should all be false')
 			return
 		}
 

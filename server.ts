@@ -2,10 +2,13 @@ import {RedisConnection, app} from '@cheshire-cat-studios/jester'
 import SocketConnection from './connections/SocketConnection.js'
 import EventHandler from './sockets/EventHandler.js'
 import getUserRedisKey from './helpers/getRedisKey/user.js'
-import pushToQueue from './queue/push-to-queue.js'
-import AuthenticatedSocket from "./sockets/AuthenticatedSocket.js";
+// import pushToQueue from './queue/push-to-queue.js'
+import AuthenticatedSocket from './sockets/AuthenticatedSocket.js'
+import {CreateQueueEventService} from '../jester/index.js'
+import Game from './models/Game.js'
 
 const server = (await app()).listen(
+        //TODO: use env service from jester
         `${process.env.PORT}`,
         () => {
             // console.log(`Server started on ${process.env.HOST}:${process.env.PORT}`)
@@ -26,15 +29,31 @@ io.on(
             'true'
         )
 
-        await pushToQueue(
-            socket.id,
-            socket.user.current_game,
-            socket.user.id,
-            'initialise'
-        );
+        const
+            game = await new Game().find(socket.user.current_game),
+            response = await new CreateQueueEventService(game.row.queue_id)
+                .handle(
+                    'initialise',
+                    {
+                        socket_id: socket.id,
+                        game_id: socket.user.current_game,
+                        user_id: socket.user.id,
+                    }
+                )
+
+        // console.log(game.row)
+        // console.log(response)
+
+        // await pushToQueue(
+        //     socket.id,
+        //     socket.user.current_game,
+        //     socket.user.id,
+        //     'initialise'
+        // );
 
         await (new EventHandler)
             .setSocket(socket)
+            .setGame(game)
             .handle()
     }
 )
