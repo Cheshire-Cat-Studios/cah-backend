@@ -36,15 +36,6 @@ class ActionEventController extends Controller {
             {socket_id, user_id, game_id, event_data} = JSON.parse(this.req.body.data),
             socket = io.sockets.sockets.get(socket_id)
 
-        console.log(this.req.body.data)
-        // console.log(socket_id)
-        // console.log(user_id)
-        // console.log(game_id)
-        // console.log(event_data)
-        // console.log(socket)
-
-        // console.log(io.sockets.sockets)
-
         if(socket){
             await (new mappings[this.req.body.type])
                 .setSocket(

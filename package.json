@@ -2,12 +2,13 @@
   "type": "module",
   "scripts": {
     "start": "node server",
-    "watch": "nodemon server",
-    "watch -no-run": "nodemon"
+    "watch": "nodemon tsc && server",
+    "test": "vitest run"
   },
   "dependencies": {
-    "@cheshire-cat-studios/jester": "file:../jester",
+    "@cheshire-cat-studios/jester": "0.1.3",
     "@types/jsonwebtoken": "^8.5.9",
+    "axios": "^1.1.3",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "debug": "~2.6.9",

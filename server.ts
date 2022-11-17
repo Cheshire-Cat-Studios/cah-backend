@@ -11,7 +11,7 @@ const server = (await app()).listen(
         //TODO: use env service from jester
         `${process.env.PORT}`,
         () => {
-            // console.log(`Server started on ${process.env.HOST}:${process.env.PORT}`)
+            console.log(`Server started on ${process.env.HOST}:${process.env.PORT}`)
         }
     ),
     io = SocketConnection
@@ -40,16 +40,6 @@ io.on(
                         user_id: socket.user.id,
                     }
                 )
-
-        // console.log(game.row)
-        // console.log(response)
-
-        // await pushToQueue(
-        //     socket.id,
-        //     socket.user.current_game,
-        //     socket.user.id,
-        //     'initialise'
-        // );
 
         await (new EventHandler)
             .setSocket(socket)

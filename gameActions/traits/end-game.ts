@@ -1,4 +1,7 @@
-import {RedisConnection} from '@cheshire-cat-studios/jester'
+import {
+    RedisConnection,
+    TerminateQueueService
+} from '@cheshire-cat-studios/jester'
 import Game from '../../models/Game.js'
 import getGameRedisKey from '../../helpers/getRedisKey/game.js'
 import getPlayerRedisKey from '../../helpers/getRedisKey/user.js'
@@ -40,4 +43,7 @@ export default async (game: Game) => {
         await redisClient.del(getPlayerRedisKey('hand', uuid))
         await redisClient.del(getPlayerRedisKey('is_active', uuid))
     }
+
+    await new TerminateQueueService()
+        .handle(game.row.queue_id)
 }
