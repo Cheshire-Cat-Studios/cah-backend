@@ -56,16 +56,6 @@ class EventHandler {
                                 event_data: data
                             }
                         )
-
-                    // console.log(response)
-
-                    // await pushToQueue(
-                    //     this.socket.id,
-                    //     this.socket.user.current_game,
-                    //     this.socket.user.id,
-                    //     mapping,
-                    //     [...data]
-                    // )
                 }
             )
         }

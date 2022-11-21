@@ -33,7 +33,7 @@ class ActionEventController extends Controller {
         }
 
         const io = SocketConnection.io,
-            {socket_id, user_id, game_id, event_data} = JSON.parse(this.req.body.data),
+            {socket_id, user_id, game_id, event_data} = this.req.body.data,
             socket = io.sockets.sockets.get(socket_id)
 
         if(socket){

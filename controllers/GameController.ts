@@ -143,11 +143,9 @@ class GameController extends Controller {
 
         await redis_client.lPush(`game.${game.row.id}.deck`, shuffle(game_deck))
 
-        //TODO: Should this even be an event, makes more sense to do it synchronously?
-        //  EventEmitter.emit('game_created', game.row)
-
+        //TODO: queue driver ('redis') should be an env variable
         const response = await new CreateQueueService()
-            .handle('game')
+            .handle('game', 'redis')
 
         if (response.status == 200) {
             await game.update({
