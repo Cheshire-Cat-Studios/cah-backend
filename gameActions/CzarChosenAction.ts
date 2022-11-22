@@ -1,9 +1,9 @@
 import shuffle from 'lodash.shuffle'
 import GameAction from './GameAction.js'
-import Game from '../../models/Game.js'
+import Game from '../models/Game.js'
 import endGame from './traits/end-game.js'
-import game_deck from '../../config/decks/blackCards.js'
-import user_deck from '../../config/decks/whiteCards.js'
+import game_deck from '../config/decks/blackCards.js'
+import user_deck from '../config/decks/whiteCards.js'
 
 class CzarChosenAction extends GameAction {
 	async handle(uuid) {

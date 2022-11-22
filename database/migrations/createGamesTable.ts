@@ -23,6 +23,10 @@ export default (): Table => {
                 .integer('host_id')
 
             column()
+                .integer('queue_id')
+                .setNullable()
+
+            column()
                 .boolean('max_score')
 
             column()

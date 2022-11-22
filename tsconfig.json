@@ -1,6 +1,6 @@
 {
-  "declaration": true,
   "compilerOptions": {
+    "declaration": true,
     "preserveConstEnums": true,
     "moduleResolution": "node",
     "target": "esnext",
@@ -25,7 +25,7 @@
   "exclude": [
     "node_modules",
     "**/*.spec.ts",
-    "test/**/*.ts"
+    "tests/**/*.ts"
   ]
   //  "lib": [
   //    "esnext"

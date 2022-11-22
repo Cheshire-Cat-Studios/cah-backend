@@ -12,19 +12,20 @@ services:
     networks:
       - redis
       - mysql
-  jest:
+  #    environment:
+  #      -NPM_TOKEN: ${NPM_TOKEN}
+  test:
     build:
       context: .
-      dockerfile: ./.docker/jest.dockerfile
+      dockerfile: ./.docker/test.dockerfile
     volumes:
       - .:/usr/src/app/
       - /usr/src/app/node_modules/
     networks:
       - redis
       - mysql
-    depends_on:
-      - mysql
-      - redis
+  #    environment:
+  #      -NPM_TOKEN: ${NPM_TOKEN}
   mysql:
     image: mariadb:10.5
     ports:
@@ -45,6 +46,7 @@ services:
       - redis
     ports:
       - ${REDIS_PORT}:${REDIS_PORT}
+    command: redis-server --port ${REDIS_PORT}
 networks:
   mysql:
   redis:

@@ -1,4 +1,4 @@
-import Game from '../../models/Game.js'
+import Game from '../models/Game.js'
 import GameAction from "./GameAction.js"
 
 class CahStartGameAction extends GameAction {

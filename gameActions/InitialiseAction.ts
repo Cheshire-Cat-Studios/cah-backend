@@ -1,6 +1,6 @@
 import shuffle from 'lodash.shuffle'
-import Game from '../../models/Game.js'
-import user_deck from '../../config/decks/whiteCards.js'
+import Game from '../models/Game.js'
+import user_deck from '../config/decks/whiteCards.js'
 import GameAction from './GameAction.js'
 
 class InitialiseAction extends GameAction {
@@ -60,7 +60,7 @@ class InitialiseAction extends GameAction {
 				})
 
 		//TODO: move join to middleware?
-		this.socket.join('game.' + this.socket.user.current_game)
+		await this.socket.join('game.' + this.socket.user.current_game)
 
 		const is_czar_phase = JSON.parse(await this.redis.hGet(this.getGameRedisKey('state'), 'is_czar_phase')),
 			game_data = {
