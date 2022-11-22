@@ -4,4 +4,4 @@
 .env
 /certs/*
 *.js
-*.d.ts
+!types/*.d.ts

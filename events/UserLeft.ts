@@ -2,7 +2,6 @@ import {
     Event,
     RedisConnection
 } from '@cheshire-cat-studios/jester'
-// import pushToQueue  from '../queue/push-to-queue.js'
 import getUserKey from '../helpers/getRedisKey/user.js'
 
 //TODO: abstract into config

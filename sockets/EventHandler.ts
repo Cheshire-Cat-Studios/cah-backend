@@ -1,6 +1,5 @@
 import {CreateQueueEventService, RedisConnection} from '@cheshire-cat-studios/jester'
 import getUserRedisKey from '../helpers/getRedisKey/user.js'
-// import pushToQueue from '../queue/push-to-queue.js'
 import AuthenticatedSocket from './AuthenticatedSocket.js'
 import Game from '../models/Game.js'
 

@@ -1,5 +1,4 @@
 import {Event} from '@cheshire-cat-studios/jester'
-// import runQueue from '../queue/run-queue.js'
 
 class GameCreated extends Event {
 	constructor() {
