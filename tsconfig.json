@@ -1,33 +1,28 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "preserveConstEnums": true,
-    "moduleResolution": "node",
-    "target": "esnext",
-    "module": "esnext",
-    "allowSyntheticDefaultImports": true,
-//    "forceConsistentCasingInFileNames": true,
+    "strictNullChecks": false,
     "esModuleInterop": true,
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "strictPropertyInitialization": false,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
-    "typeRoots": [
-      "./node_modules/@types",
-      "./types"
-    ]
+    "isolatedModules": true,
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
+
   },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "CommonJS"
-    }
-  },
-  "include": [
-    "**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts",
-    "tests/**/*.ts"
-  ]
-  //  "lib": [
-  //    "esnext"
-  //  ]
+  "include": ["*.ts","**/*.ts"],
 }

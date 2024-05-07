@@ -7,7 +7,7 @@ import Game from '../../../../../models/Game'
 import {sign} from 'jsonwebtoken'
 import GameFactory from '../../../../../database/factories/GameFactory'
 import UserFactory from '../../../../../database/factories/UserFactory'
-import {describe, expect, beforeAll, beforeEach, test, afterAll, vi} from 'vitest'
+import {describe, expect, beforeAll, beforeEach, test, afterAll} from 'vitest'
 
 const initialisedApp = await app()
 
@@ -145,6 +145,7 @@ describe('Game -> join route', () => {
     )
 
     afterAll(async () => {
-        await redis_client.disconnect()
+        await RedisConnection.disconnect()
+        // await redis_client.disconnect()
     })
 })

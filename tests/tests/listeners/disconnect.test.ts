@@ -41,8 +41,8 @@ describe('Disconnect event listener', () => {
         await prepareDatabase()
         await prepareRedis();
 
-        await new EventServiceProvider(await app())
-            .handle();
+        // await new EventServiceProvider(await app())
+        //     .handle();
 
         ({users, mocked_user_sockets} = await prepareGame(3))
 
@@ -72,6 +72,7 @@ describe('Disconnect event listener', () => {
     })
 
     afterAll(async () => {
-        await redis_client.disconnect()
+        await RedisConnection.disconnect()
+        // await redis_client.disconnect()
     })
 })

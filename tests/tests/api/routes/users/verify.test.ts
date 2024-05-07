@@ -57,6 +57,7 @@ describe('User -> verify route', () => {
 
 
 	afterAll(async () => {
-		await redis_client.disconnect()
+		await RedisConnection.disconnect()
+		// await redis_client.disconnect()
 	})
 })

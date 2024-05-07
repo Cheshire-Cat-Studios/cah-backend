@@ -1,4 +1,4 @@
-import {Socket} from "socket.io/dist/socket";
+// import {Socket} from "socket.io/dist/socket";
 
 declare global  {
     // type GenericObject = { [key: string]: any }

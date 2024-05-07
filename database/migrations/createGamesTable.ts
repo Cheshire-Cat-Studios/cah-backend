@@ -37,5 +37,15 @@ export default (): Table => {
 
             column()
                 .boolean('game_time_limit_mins')
+
+            column()
+                .dateTime('round_ends_at')
+                .setNullable()
+                .setDefault('NULL', true)
+
+            column()
+                .dateTime('game_ends_at')
+                .setNullable()
+                .setDefault('NULL', true)
         })
 }

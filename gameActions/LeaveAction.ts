@@ -5,6 +5,8 @@ import randomiseArray from '../helpers/randomiseArray.js'
 
 class LeaveAction extends GameAction {
 	async handle(): Promise<void> {
+		console.log('Leave action has been hit')
+
 		const game = await new Game()
 				.find(this.socket.user.current_game),
 			user = await new User()
@@ -37,6 +39,7 @@ class LeaveAction extends GameAction {
 		//Leave game room and disconnect socket
 		if (this.socket.id) {
 			this.socket.leave('game.' + game.row.id)
+			this.socket.emit('leave')
 			this.socket.disconnect()
 		}
 

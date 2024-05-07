@@ -1,7 +1,7 @@
 import shuffle from 'lodash.shuffle'
 import GameAction from './GameAction.js'
 import Game from '../models/Game.js'
-import endGame from './traits/end-game.js'
+import endGame from './traits/endGame.js'
 import game_deck from '../config/decks/blackCards.js'
 import user_deck from '../config/decks/whiteCards.js'
 
@@ -33,11 +33,7 @@ class CzarChosenAction extends GameAction {
 		if (player_data.score >= parseInt(await this.redis.hGet(this.getGameRedisKey('state'), 'max_score'))) {
 
 			//TODO: MIXIN
-			await endGame(game)
-
-			this.io
-				.in('game.' + this.socket.user.current_game)
-				.emit('game-won', player_data)
+			await endGame(game, player_data)
 		} else {
 			!((await this.redis.lLen(this.getGameRedisKey('deck'))) - 1)
 			&& (await this.redis.rPush(this.getGameRedisKey('deck'), shuffle(game_deck)))

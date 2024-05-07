@@ -45,6 +45,7 @@ describe('Game -> create route', () => {
 	test('Request is successful with valid data', async () => {
 		const token = sign(
 				{uuid: user.row.uuid},
+				//TODO: use env service from jester
 				process.env.JWT_ACCESS_TOKEN_SECRET,
 			),
 			game_data = {
@@ -91,6 +92,7 @@ describe('Game -> create route', () => {
 	})
 
 	afterAll(async () => {
-		await redis_client.disconnect()
+		await RedisConnection.disconnect()
+		// await redis_client.disconnect()
 	})
 })

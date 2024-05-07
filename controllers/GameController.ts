@@ -147,7 +147,9 @@ class GameController extends Controller {
         const response = await new CreateQueueService()
             .handle('game', 'redis')
 
-        if (response.status == 200) {
+        console.log(response)
+
+        if (response?.status == 200) {
             await game.update({
                 queue_id: response.data.data.queue_id
             })

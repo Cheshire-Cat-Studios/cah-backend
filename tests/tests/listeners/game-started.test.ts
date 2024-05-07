@@ -1,11 +1,11 @@
 import GameData from "../../mocks/GameData"
 import {RedisConnection} from '@cheshire-cat-studios/jester'
-import prepareGame from '../../assets/prep/prepare-game'
+import prepareGame from '../../assets/prep/prepare-game.js'
 import getGameKey from '../../../helpers/getRedisKey/game.js'
-import fireListener from '../../mocks/fire-listener'
+import fireListener from '../../mocks/fire-listener.js'
 import randomiseArray from '../../../helpers/randomiseArray.js'
-import prepareDatabase from '../../assets/prep/database'
-import prepareRedis from '../../assets/prep/redis'
+import prepareDatabase from '../../assets/prep/database.js'
+import prepareRedis from '../../assets/prep/redis.js'
 import {describe, expect, beforeAll, beforeEach, test, afterAll} from 'vitest'
 
 GameData.reset()
@@ -101,6 +101,7 @@ describe('Game started event listener', () => {
     })
 
     afterAll(async () => {
-        await redis_client.disconnect()
+        await RedisConnection.disconnect()
+        // await redis_client.disconnect()
     })
 })

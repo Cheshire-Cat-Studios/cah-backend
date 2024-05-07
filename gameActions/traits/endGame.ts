@@ -5,9 +5,14 @@ import {
 import Game from '../../models/Game.js'
 import getGameRedisKey from '../../helpers/getRedisKey/game.js'
 import getPlayerRedisKey from '../../helpers/getRedisKey/user.js'
+import SocketConnection from '../../connections/SocketConnection.js'
 
+type winning_player_data = {
+    name: string,
+    score: number,
+}
 
-export default async (game: Game) => {
+export default async (game: Game, winning_player_data:winning_player_data) => {
     const
         redisClient = await RedisConnection.getClient(),
         game_keys = {
@@ -46,4 +51,8 @@ export default async (game: Game) => {
 
     await new TerminateQueueService()
         .handle(game.row.queue_id)
+
+    SocketConnection.io
+        .in('game.' + game.row.id)
+        .emit('game-won', winning_player_data)
 }

@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 export default {
+    //TODO: use env service from jester
     origin: process.env.FRONTEND_URL,
     methods: 'GET,POST'
 }

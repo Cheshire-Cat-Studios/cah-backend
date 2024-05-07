@@ -23,6 +23,7 @@ class SocketConnection {
                 const uuid = jwt.verify(
                     // @ts-ignore
                     socket.handshake?.query?.token,
+                    //TODO: use env servic  e from jester
                     process.env.JWT_ACCESS_TOKEN_SECRET
                 )
                     .uuid

@@ -1,9 +1,12 @@
-version: '3.3'
 services:
   node:
     build:
-      context: .
       dockerfile: ./.docker/node.dockerfile
+      context: .
+      ssh:
+        - default
+      args:
+        - NPM_TOKEN=${NPM_TOKEN}
     ports:
       - "${HOST}:${PORT}:${PORT}"
     volumes:
@@ -12,8 +15,9 @@ services:
     networks:
       - redis
       - mysql
-  #    environment:
-  #      -NPM_TOKEN: ${NPM_TOKEN}
+    depends_on:
+      - mysql
+      - redis
   test:
     build:
       context: .
@@ -21,6 +25,7 @@ services:
     volumes:
       - .:/usr/src/app/
       - /usr/src/app/node_modules/
+    #      - ~/.ssh:/root/.ssh:ro
     networks:
       - redis
       - mysql
@@ -29,7 +34,7 @@ services:
   mysql:
     image: mariadb:10.5
     ports:
-      - ${MYSQL_PORT}:${MYSQL_PORT}
+      - ${MYSQL_PORT}
     environment:
       MYSQL_TCP_PORT: ${MYSQL_PORT}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -45,7 +50,7 @@ services:
     networks:
       - redis
     ports:
-      - ${REDIS_PORT}:${REDIS_PORT}
+      - ${REDIS_PORT}
     command: redis-server --port ${REDIS_PORT}
 networks:
   mysql:

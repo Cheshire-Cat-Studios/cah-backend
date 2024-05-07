@@ -15,6 +15,7 @@ class UserController extends Controller {
 
             const token = jwt.sign(
                 {uuid: user.row.uuid},
+                //TODO: use env service from jester
                 process.env.JWT_ACCESS_TOKEN_SECRET,
                 {
                     expiresIn: parseInt(process.env.JWT_ACCESS_TOKEN_LIFE)
@@ -47,6 +48,7 @@ class UserController extends Controller {
     verify(): void {
         const token = jwt.sign(
             {uuid: this.req.user_model.row.uuid},
+            //TODO: use env service from jester
             process.env.JWT_ACCESS_TOKEN_SECRET,
             // {
             // 	expiresIn: 10000000000000000

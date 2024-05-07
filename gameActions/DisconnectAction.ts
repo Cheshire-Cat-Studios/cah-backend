@@ -1,5 +1,4 @@
 import GameAction from './GameAction.js'
-import {EventHandler} from '@cheshire-cat-studios/jester'
 
 
 //TODO: abstract into config
@@ -16,13 +15,23 @@ class DisconnectAction extends GameAction {
             'false'
         )
 
-        EventHandler
-            .emit(
-                'user-left',
-                this.socket.id,
-                this.socket.user.id,
-                this.socket.user.current_game
-            )
+
+        await new Promise(
+            resolve => setTimeout(resolve, timeout)
+        )
+
+        const is_active = await this.redis.get(this.getPlayerRedisKey('is_active'))
+
+        if (is_active && JSON.parse(is_active)) {
+            return
+        }
+
+        // await pushToQueue(
+        //     socket_id,
+        //     game_id,
+        //     user_id,
+        //     'leave'
+        // )
     }
 }
 

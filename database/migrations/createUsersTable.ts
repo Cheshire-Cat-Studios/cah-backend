@@ -18,5 +18,7 @@ export default () => {
 
 			column().integer('current_game')
 				.setNullable()
+
+			column().dateTime('last_active')
 		})
 }

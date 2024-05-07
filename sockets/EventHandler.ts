@@ -10,7 +10,7 @@ const mappings = [
     'start-game',
     'czar-chosen',
     'cards-chosen',
-    'disconnect'
+    // 'disconnect'
 ]
 
 class EventHandler {
@@ -40,6 +40,17 @@ class EventHandler {
                         getUserRedisKey('is_active', this.socket.user.uuid),
                         'true'
                     )
+
+                    // mapping === 'leave'
+                    // && console.log(
+                    //     mapping,
+                    //     {
+                    //         socket_id: this.socket.id,
+                    //         game_id: this.socket.user.current_game,
+                    //         user_id: this.socket.user.id,
+                    //         event_data: data
+                    //     }
+                    // )
 
                     const response = await new CreateQueueEventService(
                         this.game

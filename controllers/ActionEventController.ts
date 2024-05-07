@@ -11,8 +11,8 @@ import SocketConnection from "../connections/SocketConnection.js";
 const mappings = {
     'initialise': InitialiseAction,
     'leave': LeaveAction,
-    'disconnect': DisconnectAction,
-    'error': DisconnectAction,
+    // 'disconnect': DisconnectAction,
+    // 'error': DisconnectAction,
     'start-game': StartGameAction,
     'czar-chosen': CzarChosenAction,
     'cards-chosen': CardsChosenAction
@@ -36,30 +36,31 @@ class ActionEventController extends Controller {
             {socket_id, user_id, game_id, event_data} = this.req.body.data,
             socket = io.sockets.sockets.get(socket_id)
 
-        if(socket){
-            await (new mappings[this.req.body.type])
-                .setSocket(
-                    socket
-                    // || {
-                    //     user: (await new User().find(user_id)).row
-                    // }
-                )
-                .setIo(io)
-                .setRedis(await RedisConnection.getClient())
-                .handle(event_data, user_id)
-
-            this.sendJsend(200, 'success', {})
+        if(!socket){
+            this.sendJsend(
+                401,
+                'error',
+                {
+                    'message': 'socket id does not correspond to an existing connection'
+                }
+            )
 
             return
         }
 
-        this.sendJsend(
-            401,
-            'error',
-            {
-                'message': 'socket id does not correspond to an existing connection'
-            }
-        )
+        await (new mappings[this.req.body.type])
+            .setSocket(
+                socket
+                // || {
+                //     user: (await new User().find(user_id)).row
+                // }
+            )
+            .setIo(io)
+            .setRedis(await RedisConnection.getClient())
+            .handle(event_data, user_id)
+
+        this.sendJsend(200, 'success', {})
+
     }
 }
 

@@ -7,9 +7,10 @@ class Auth extends Middleware {
         const redis_client = await RedisConnection.getClient(),
             token = this.req.headers?.['authorization']?.split(' ')
 
-        //TODO: this logic is shared by this and the socket middleware, create a user token authentications service!
+        //TODO: this logic is shared by this and the socket middleware, create a user token authentications service!!!
         if (token?.[0] === 'Bearer') {
             try {
+                //TODO: use env service from jester
                 // @ts-ignore
                 const uuid = jwt.verify(token[1], process.env.JWT_ACCESS_TOKEN_SECRET)?.uuid,
                     user = await new User()
@@ -30,6 +31,7 @@ class Auth extends Middleware {
                 if (e.name === 'TokenExpiredError') {
                     const uuid = jwt.verify(
                             token[1],
+                            //TODO: use env service from jester
                             process.env.JWT_ACCESS_TOKEN_SECRET,
                             {ignoreExpiration: true}
                         )
